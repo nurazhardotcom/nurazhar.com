@@ -124,6 +124,69 @@
     </div>
 
     <div>
+        <h1><a href="15-minute-serverless-vapt.html">The 15-Minute VAPT: Zero-Backend Security on Neon and GCP</a></h1>
+        <div><hr /><h1 id="the-15-minute-vapt:-zero-backend-security-on-neon-and-gcp">The 15-Minute VAPT: Zero-Backend Security on Neon and GCP</h1><p>In enterprise environments (like Singapore&apos;s defense and corporate sectors), <strong>Vulnerability Assessment and Penetration Testing (VAPT)</strong> is typically a multi-week bureaucratic slog. You pay a consultant $20,000+, they run standard scanner suites, generate a bloated 50-page PDF report of generic warnings, and hand it back to your developers to spend three months debating and patching.</p><p>It is a high-overhead, low-velocity cycle.</p><p>But when you build using a <strong>&quot;No-Backend&quot; architecture</strong>—eliminating custom middleware servers in favor of static edge clients, serverless database triggers, and a stateless proxy—the attack surface shrinks so dramatically that you can perform a thorough VAPT, write custom sanitizers, harden schema constraints, and redeploy to production in <strong>less than 15 minutes</strong>.</p><p>Here is how we did exactly that for <code>lagu-lagu</code> (a real-time Singapore PayNow payout registry for independent artists).</p><hr /><h2 id="the-minimalist-surface-area">🏗️ The Minimalist Surface Area</h2><p>Our application uses a zero-server runtime model:</p><ol start="1"><li><strong>Frontend:</strong> Static HTML and <strong>HTMX</strong> served from GitHub Pages (100% static CDN).</li><li><strong>Database:</strong> Serverless <strong>Neon Postgres</strong>, with Row-Level Security (RLS) enabled and a PL/pgSQL database trigger calculating the 80/20 split on payment insertion.</li><li><strong>API Gateway:</strong> A stateless <strong>GCP Cloud Function (Node.js)</strong> that secures connection strings, handles incoming webhooks, and returns pre-rendered HTML snippets.</li></ol><p>By deleting standard backend servers (like Spring Boot or Express), we deleted 99% of our dependency overhead. We don&apos;t have server routes to exploit, memory leaks to exploit, or unpatched framework packages.</p><p>But minimalist doesn&apos;t mean bulletproof. We audited the system and found three real vulnerabilities.</p><hr /><h2 id="the-vapt-checklist-&amp;-exploits">🔍 The VAPT Checklist &amp; Exploits</h2><h3 id="1.-stored-xss-via-html-template-injection-(high-severity)">1. Stored XSS via HTML Template Injection (High Severity)</h3><p>Our GCP function was querying the database and generating HTML string templates dynamically to serve back to the HTMX frontend:</p><pre><code class="language-javascript">const html = rows.map(artist =&gt; `&lt;h3&gt;${artist.name}&lt;/h3&gt;...`).join(&quot;&quot;);
+</code></pre><ul><li><strong>The Exploit:</strong> If an attacker registered an artist name containing a malicious script tag (e.g., <code>&lt;script&gt;steal(document.cookie)&lt;/script&gt;</code>), Postgres would store it, the GCP function would fetch it, and the browser would execute it.</li><li><strong>The Fix:</strong> We wrote a lightweight, native HTML escaping function inside Node.js and wrapped all dynamic SQL variables before concatenation:<pre><code class="language-javascript">function escapeHtml(unsafe) {
+  if (!unsafe) return &apos;&apos;;
+  return unsafe.toString()
+    .replace(/&amp;/g, &quot;&amp;amp;&quot;)
+    .replace(/&lt;/g, &quot;&amp;lt;&quot;)
+    .replace(/&gt;/g, &quot;&amp;gt;&quot;)
+    .replace(/&quot;/g, &quot;&amp;quot;&quot;)
+    .replace(/&apos;/g, &quot;&amp;#039;&quot;);
+}
+</code></pre></li></ul><h3 id="2.-lack-of-db-constraints-on-payment-splits-(low-severity)">2. Lack of DB Constraints on Payment Splits (Low Severity)</h3><p>The split trigger calculated the 80/20 division using standard multiplication (<code>NEW.amount * 0.80</code>). But the schema did not explicitly validate that payment amounts were positive.</p><ul><li><strong>The Exploit:</strong> If a negative transaction amount (e.g. <code>SGD -10.00</code>) bypassed frontend validation or was injected via a rogue webhook, the database would generate a negative artist payout (<code>SGD -8.00</code>), causing financial ledger logic corruption.</li><li><strong>The Fix:</strong> We executed raw SQL queries to add constraints directly to the live Neon instance:<pre><code class="language-sql">ALTER TABLE transactions ADD CONSTRAINT check_positive_amount CHECK (amount &gt; 0);
+ALTER TABLE payouts ADD CONSTRAINT check_positive_payout CHECK (amount_sent &gt; 0);
+</code></pre></li></ul><h3 id="3.-error-verbosity-leak-(low-severity)">3. Error Verbosity Leak (Low Severity)</h3><p>In our try-catch block, we returned raw stack errors to the client:</p><pre><code class="language-javascript">catch (error) {
+  return res.status(500).json({ error: error.message });
+}
+</code></pre><ul><li><strong>The Exploit:</strong> If a query crashed, Postgres table names, column structures, and connection parameters would leak directly in the browser console.</li><li><strong>The Fix:</strong> We redirected all detailed traces to GCP Cloud Logging and genericized the HTTP client response to a sanitized string:<pre><code class="language-javascript">catch (error) {
+  console.error(&quot;Internal API error:&quot;, error);
+  return res.status(500).json({ error: &quot;Internal Server Error&quot; });
+}
+</code></pre></li></ul><hr /><h2 id="proactive-prevention:-github-push-protection">🔒 Proactive Prevention: GitHub Push Protection</h2><p>To ensure we never leak a connection string or API token in the future, we used the GitHub CLI to globally configure security settings for our repos:</p><pre><code class="language-bash">echo &apos;{&quot;security_and_analysis&quot;:{&quot;secret_scanning&quot;:{&quot;status&quot;:&quot;enabled&quot;},&quot;secret_scanning_push_protection&quot;:{&quot;status&quot;:&quot;enabled&quot;}}}&apos; \
+  | gh api --method PATCH repos/nurazhardotcom/lagu-lagu --input -
+</code></pre><p>With <strong>Push Protection</strong> enabled, GitHub will intercept and block any git push command at the CLI layer if it detects an exposed password or token before it is committed to the cloud.</p><hr /><h2 id="the-security-lesson">💡 The Security Lesson</h2><p>Modern security compliance (like Singapore&apos;s Cyber Trust Mark or corporate checklists) tends to focus on administrative processes, PDF paperwork, and constant scanning.</p><p>But <strong>complexity is the ultimate enemy of security</strong>.</p><p>The safest line of code is the one you never wrote. By keeping your backend database-native, relying on Postgres constraints for business logic, and routing calls via stateless Cloud Functions, you keep your system so simple that VAPT goes from a multi-week corporate bottleneck to a 15-minute engineering sprint.</p></div>
+        
+        
+        <p><i>Published: 2026-06-14</i></p>
+        
+            <p><i>
+                Tagged:
+                
+                    <span class="tag">
+                        <a href="tags/vapt.html">vapt</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/security.html">security</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/htmx.html">htmx</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/postgres.html">postgres</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/gcp.html">gcp</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/finance.html">finance</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/serverless.html">serverless</a>
+                    </span>
+                
+            </i></p>
+        
+    </div>
+
+    <div>
         <h1><a href="v0-1-set-in-stone-clojure-bitcoin-toolkit.html">Bitcoin v0.1 Set in Stone: Building a functional blockchain toolkit in Clojure</a></h1>
         <div><hr /><h1 id="bitcoin-v0.1-set-in-stone:-building-a-functional-blockchain-toolkit-in-clojure">Bitcoin v0.1 Set in Stone: Building a functional blockchain toolkit in Clojure</h1><p>Over the last few days, I&apos;ve been deep in the blockchain archives. I wanted to build a portfolio project that would let me study the core engine of peer-to-peer electronic cash without wrestling with an ever-mutating spec sheet.</p><p>I ended up building <strong><code>bsv-clj</code></strong>—a complete Clojure toolkit featuring an idiomatic JSON-RPC client, a read-only wallet tool, and a Ring/Hiccup-powered local block explorer. It connects directly to a <strong>Bitcoin SV (BSV)</strong> node.</p><p>Here is the story of how I designed it, and why Clojure and Bitcoin&apos;s original v0.1 protocol are a perfect match.</p><hr /><h2 id="1.-the-design-philosophy:-locking-the-protocol">1. The Design Philosophy: Locking the Protocol</h2><p>On June 17, 2010, Satoshi Nakamoto wrote a post on the Bitcoin forum that would define a core fork in blockchain history:</p><blockquote><p><em>&quot;The nature of Bitcoin is such that once version 0.1 was released, the core design was set in stone for the rest of its lifetime.&quot;</em></p></blockquote><p>In modern blockchain development, this philosophy is rarely followed. BTC has introduced protocol changes like SegWit and Taproot; other chains rewrite their consensus rules every year. But the Bitcoin SV node client preserves the original v0.1 protocol spec: no arbitrary block size limits, no complex alterations of basic opcodes, and the original UTXO transactional mechanics.</p><p>For an engineer wanting to study the system, this stability is a superpower:</p><ul><li>The <strong>RPC interface</strong> maps directly to Satoshi&apos;s original client design.</li><li>The <strong>transaction schema</strong> and <strong>UTXO model</strong> are clean, minimal, and stable.</li><li>You are querying the foundational data structures that launched the entire industry in 2009.</li></ul><p>With this stable backend in place, my goal was to wrap it in an idiomatic Clojure layer to create the ultimate interactive learning environment.</p><hr /><h2 id="2.-why-clojure-+-bitcoin?">2. Why Clojure + Bitcoin?</h2><p>As I built the toolkit, I realized that Bitcoin&apos;s core mechanics are fundamentally functional. The parallels between Bitcoin&apos;s protocol and Clojure&apos;s standard library are striking:</p><table><thead><tr><th>Bitcoin Protocol Concept</th><th>Clojure Equivalent</th></tr></thead><tbody><tr><td>Transactions are <strong>immutable</strong> once written</td><td>Clojure&apos;s <strong>immutable data structures</strong></td></tr><tr><td>UTXOs are consumed and created, never modified</td><td>Pure functions returning new state with <strong>no side effects</strong></td></tr><tr><td>Script is a <strong>stack-based</strong> language</td><td>Clojure&apos;s <strong>list and sequence abstractions</strong></td></tr><tr><td>Blocks form an <strong>append-only</strong> chain</td><td>Persistent data structures with <strong>structural sharing</strong></td></tr><tr><td>Data-driven API (JSON-RPC)</td><td>Clojure is <strong>data-oriented</strong> by design</td></tr></tbody></table><p>When you query a Bitcoin transaction, you are given a map of inputs and outputs. An input consumes a past output; new outputs declare future UTXOs. There is no <code>balance</code> column in a database. Balance is a derived projection of the unspent UTXO set. In Clojure, this feels like home: you simply filter and reduce a collection of maps.</p><hr /><h2 id="3.-designing-bsv-clj">3. Designing <code>bsv-clj</code></h2><p>The codebase is split into three main modules:</p><h3 id="a.-the-core-rpc-client">A. The Core RPC Client</h3><p>Instead of writing a dynamic helper for each of Bitcoin&apos;s hundred-plus RPC methods, I built a lean HTTP client in <code>bsv.rpc.client</code> that acts as a generic, data-driven wrapper around JSON-RPC 1.0:</p><pre><code class="language-clojure">(defn rpc-call [cfg method params]
   (let [body (json/generate-string {:jsonrpc &quot;1.0&quot;
@@ -197,44 +260,6 @@
                 
                     <span class="tag">
                         <a href="tags/bitcoin.html">bitcoin</a>
-                    </span>
-                
-            </i></p>
-        
-    </div>
-
-    <div>
-        <h1><a href="native-clojure-desktop-gui-pivot.html">The Browser is Fragile: Why I Nuked My Web GUI for Native Clojure Desktop</a></h1>
-        <div><hr /><h1 id="the-browser-is-fragile:-why-i-nuked-my-web-gui-for-native-clojure-desktop">The Browser is Fragile: Why I Nuked My Web GUI for Native Clojure Desktop</h1><p>I&apos;ve been building <strong><code>headhunter-agent</code></strong>—a local-first job search assistant and resume compiler—to automate my career strategy.</p><p>Initially, I tried building it as a web app. It was a fragile mess. In under ten minutes of debugging browser errors, I nuked the web files and rewrote the entire thing as a native Clojure desktop app using <strong><code>cljfx</code> (JavaFX)</strong>.</p><p>Here is the unfiltered story of how it went down, and why the browser is the wrong sandbox for local-first tools.</p><hr /><h2 id="1.-the-design:-deep-profiling-&amp;-multi-agent-evaluations">1. The Design: Deep Profiling &amp; Multi-Agent Evaluations</h2><p>The project started as a fork of <code>career-ops</code>, a basic Babashka CLI. But standard resume builders are shallow keyword-stuffers. They produce generic garbage that falls apart in real interviews.</p><p>To fix this, I re-architected it around three core requirements:</p><ul><li><strong>A Data Vault:</strong> An EDN database containing full qualifications, deep work history, and a curated library of <strong>8-12 STAR stories</strong> (Situation, Task, Action, Result).</li><li><strong>A 3-Stage Multi-Agent System (MAS):</strong><ul><li><strong>Agent 1 (FCF Audit):</strong> Auditing the Job Description for legitimacy and Singapore&apos;s Fair Consideration Framework red flags.</li><li><strong>Agent 2 (Fit Analysis):</strong> A brutal comparison of Master Profile gaps/strengths against the JD.</li><li><strong>Agent 3 (Cheat Sheet):</strong> Business model deep dive, tech stack mapping, and cold outreach targets.</li></ul></li><li><strong>Interview Prep:</strong> Cross-referencing the JD with my STAR stories to map out exact answers to the 5 most likely questions.</li></ul><hr /><h2 id="2.-the-browser-fails-(the-10-minute-pivot)">2. The Browser Fails (The 10-Minute Pivot)</h2><p>To build a GUI, I initially went the default route: ClojureScript with Reagent, using <strong>Scittle</strong> to interpret it directly in the browser on GitHub Pages (<code>headhunter.nurazhar.com</code>). I used <code>typst.ts</code> (WASM) to compile PDFs in-browser.</p><p>It was fragile from day one. Web specs evolve, local storage is restrictive, and state-syncing inside a browser sandbox is prone to weird bugs. When <code>headhunter.nurazhar.com</code> failed to load, I didn&apos;t want to waste hours wrestling with browser console errors and JS dependency hell.</p><p>The web stack is bloated. So, we deleted the web code and pivoted.</p><hr /><h2 id="3.-native-desktop-gui-with-cljfx">3. Native Desktop GUI with <code>cljfx</code></h2><p>Instead of the browser, I shifted to <strong><code>cljfx</code></strong>, a declarative wrapper for JavaFX.</p><p>Now, it is a standalone desktop application. No local web servers, no browser tabs, no JavaScript. It runs directly on the JVM, rendering native desktop windows on Arch/CachyOS.</p><p>Why this actually works:</p><ol start="1"><li><strong>Zero Browser Bloat:</strong> It is a compiled program, not a tab running in an engine.</li><li><strong>Immutable UI State:</strong> The entire app state is inside a single Clojure atom. The UI is a pure function of the data. If the data is correct, the UI literally cannot render bugs.</li><li><strong>No Thread Freezing:</strong> Heavy Gemini API calls run in Clojure <code>futures</code> (background threads), while <code>Platform/runLater</code> dispatches the results back to the main UI. The desktop app stays responsive at 60 FPS while the agents run.</li><li><strong>Local Privacy:</strong> Everything is saved as local <code>.edn</code> files. No network syncing, no cloud databases, no trackers.</li></ol><hr /><h2 id="conclusion">Conclusion</h2><p>We are conditioned to default to the web for everything. But for local-first utilities, the browser is just a bloated, insecure sandbox that gets in the way.</p><p>Writing a native desktop app in Clojure is faster, runs better, and is vastly more stable. If your local tools are acting up because of browser quirks, stop trying to fix the JS bundle. Just delete it.</p><p><em>Codebase:</em> <strong><a href="https://github.com/nurazhardotcom/headhunter-agent">headhunter-agent</a></strong></p></div>
-        
-        
-        <p><i>Published: 2026-06-08</i></p>
-        
-            <p><i>
-                Tagged:
-                
-                    <span class="tag">
-                        <a href="tags/automation.html">automation</a>
-                    </span>
-                
-                    <span class="tag">
-                        <a href="tags/clojure.html">clojure</a>
-                    </span>
-                
-                    <span class="tag">
-                        <a href="tags/multi-agent-system.html">multi-agent-system</a>
-                    </span>
-                
-                    <span class="tag">
-                        <a href="tags/cljfx.html">cljfx</a>
-                    </span>
-                
-                    <span class="tag">
-                        <a href="tags/career-ops.html">career-ops</a>
-                    </span>
-                
-                    <span class="tag">
-                        <a href="tags/desktop-gui.html">desktop-gui</a>
                     </span>
                 
             </i></p>

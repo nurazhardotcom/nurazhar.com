@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>The 15-Minute VAPT: Zero-Backend Security on Neon and GCP</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="application/atom+xml" rel="alternate" href="atom.xml" title="The 15-Minute VAPT: Zero-Backend Security on Neon and GCP">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css">
+
+
+
+    <!-- Social sharing (Facebook, Twitter, LinkedIn, etc.) -->
+    <meta name="title" content="The 15-Minute VAPT: Zero-Backend Security on Neon and GCP">
+    <meta name="twitter:title" content="The 15-Minute VAPT: Zero-Backend Security on Neon and GCP">
+    <meta property="og:title" content="The 15-Minute VAPT: Zero-Backend Security on Neon and GCP">
+    <meta property="og:type" content="website">
+
+    <meta name="description" content="Traditional enterprise security audits take months and cost thousands. Here is how we audited, patched, and redeployed a secure, PDPA-compliant serverless payment split engine in under 15 minutes.">
+    <meta name="twitter:description" content="Traditional enterprise security audits take months and cost thousands. Here is how we audited, patched, and redeployed a secure, PDPA-compliant serverless payment split engine in under 15 minutes.">
+    <meta property="og:description" content="Traditional enterprise security audits take months and cost thousands. Here is how we audited, patched, and redeployed a secure, PDPA-compliant serverless payment split engine in under 15 minutes.">
+
+
+    <meta name="twitter:url" content="https://clojure.nurazhar.com/15-minute-serverless-vapt.html">
+    <meta property="og:url" content="https://clojure.nurazhar.com/15-minute-serverless-vapt.html">
+
+
+    <meta name="twitter:card" content="summary">
+
+
+
+  </head>
+  <body>
+
+    <div class="site-header">
+      <div class="wrapper">
+        <div class="site-nav">
+          <a class="page-link" href="archive.html">Archive</a>
+          <a class="page-link" href="tags/index.html">Tags</a>
+          
+	  <a class="page-link" href="atom.xml">
+            Feed
+          </a>
+	  
+	  
+        </div>
+        <div>
+          <h1 class="site-title">
+            <a class="page-link" href="index.html">Clojure.NurAzhar.com</a>
+          </h1>
+	  <p>Thoughts on Clojure, Lisp, Babashka, and system automation.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrapper">
+
+      <h1>
+  
+  The 15-Minute VAPT: Zero-Backend Security on Neon and GCP
+  
+</h1>
+<div><hr /><h1 id="the-15-minute-vapt:-zero-backend-security-on-neon-and-gcp">The 15-Minute VAPT: Zero-Backend Security on Neon and GCP</h1><p>In enterprise environments (like Singapore&apos;s defense and corporate sectors), <strong>Vulnerability Assessment and Penetration Testing (VAPT)</strong> is typically a multi-week bureaucratic slog. You pay a consultant $20,000+, they run standard scanner suites, generate a bloated 50-page PDF report of generic warnings, and hand it back to your developers to spend three months debating and patching.</p><p>It is a high-overhead, low-velocity cycle.</p><p>But when you build using a <strong>&quot;No-Backend&quot; architecture</strong>—eliminating custom middleware servers in favor of static edge clients, serverless database triggers, and a stateless proxy—the attack surface shrinks so dramatically that you can perform a thorough VAPT, write custom sanitizers, harden schema constraints, and redeploy to production in <strong>less than 15 minutes</strong>.</p><p>Here is how we did exactly that for <code>lagu-lagu</code> (a real-time Singapore PayNow payout registry for independent artists).</p><hr /><h2 id="the-minimalist-surface-area">🏗️ The Minimalist Surface Area</h2><p>Our application uses a zero-server runtime model:</p><ol start="1"><li><strong>Frontend:</strong> Static HTML and <strong>HTMX</strong> served from GitHub Pages (100% static CDN).</li><li><strong>Database:</strong> Serverless <strong>Neon Postgres</strong>, with Row-Level Security (RLS) enabled and a PL/pgSQL database trigger calculating the 80/20 split on payment insertion.</li><li><strong>API Gateway:</strong> A stateless <strong>GCP Cloud Function (Node.js)</strong> that secures connection strings, handles incoming webhooks, and returns pre-rendered HTML snippets.</li></ol><p>By deleting standard backend servers (like Spring Boot or Express), we deleted 99% of our dependency overhead. We don&apos;t have server routes to exploit, memory leaks to exploit, or unpatched framework packages.</p><p>But minimalist doesn&apos;t mean bulletproof. We audited the system and found three real vulnerabilities.</p><hr /><h2 id="the-vapt-checklist-&amp;-exploits">🔍 The VAPT Checklist &amp; Exploits</h2><h3 id="1.-stored-xss-via-html-template-injection-(high-severity)">1. Stored XSS via HTML Template Injection (High Severity)</h3><p>Our GCP function was querying the database and generating HTML string templates dynamically to serve back to the HTMX frontend:</p><pre><code class="language-javascript">const html = rows.map(artist =&gt; `&lt;h3&gt;${artist.name}&lt;/h3&gt;...`).join(&quot;&quot;);
+</code></pre><ul><li><strong>The Exploit:</strong> If an attacker registered an artist name containing a malicious script tag (e.g., <code>&lt;script&gt;steal(document.cookie)&lt;/script&gt;</code>), Postgres would store it, the GCP function would fetch it, and the browser would execute it.</li><li><strong>The Fix:</strong> We wrote a lightweight, native HTML escaping function inside Node.js and wrapped all dynamic SQL variables before concatenation:<pre><code class="language-javascript">function escapeHtml(unsafe) {
+  if (!unsafe) return &apos;&apos;;
+  return unsafe.toString()
+    .replace(/&amp;/g, &quot;&amp;amp;&quot;)
+    .replace(/&lt;/g, &quot;&amp;lt;&quot;)
+    .replace(/&gt;/g, &quot;&amp;gt;&quot;)
+    .replace(/&quot;/g, &quot;&amp;quot;&quot;)
+    .replace(/&apos;/g, &quot;&amp;#039;&quot;);
+}
+</code></pre></li></ul><h3 id="2.-lack-of-db-constraints-on-payment-splits-(low-severity)">2. Lack of DB Constraints on Payment Splits (Low Severity)</h3><p>The split trigger calculated the 80/20 division using standard multiplication (<code>NEW.amount * 0.80</code>). But the schema did not explicitly validate that payment amounts were positive.</p><ul><li><strong>The Exploit:</strong> If a negative transaction amount (e.g. <code>SGD -10.00</code>) bypassed frontend validation or was injected via a rogue webhook, the database would generate a negative artist payout (<code>SGD -8.00</code>), causing financial ledger logic corruption.</li><li><strong>The Fix:</strong> We executed raw SQL queries to add constraints directly to the live Neon instance:<pre><code class="language-sql">ALTER TABLE transactions ADD CONSTRAINT check_positive_amount CHECK (amount &gt; 0);
+ALTER TABLE payouts ADD CONSTRAINT check_positive_payout CHECK (amount_sent &gt; 0);
+</code></pre></li></ul><h3 id="3.-error-verbosity-leak-(low-severity)">3. Error Verbosity Leak (Low Severity)</h3><p>In our try-catch block, we returned raw stack errors to the client:</p><pre><code class="language-javascript">catch (error) {
+  return res.status(500).json({ error: error.message });
+}
+</code></pre><ul><li><strong>The Exploit:</strong> If a query crashed, Postgres table names, column structures, and connection parameters would leak directly in the browser console.</li><li><strong>The Fix:</strong> We redirected all detailed traces to GCP Cloud Logging and genericized the HTTP client response to a sanitized string:<pre><code class="language-javascript">catch (error) {
+  console.error(&quot;Internal API error:&quot;, error);
+  return res.status(500).json({ error: &quot;Internal Server Error&quot; });
+}
+</code></pre></li></ul><hr /><h2 id="proactive-prevention:-github-push-protection">🔒 Proactive Prevention: GitHub Push Protection</h2><p>To ensure we never leak a connection string or API token in the future, we used the GitHub CLI to globally configure security settings for our repos:</p><pre><code class="language-bash">echo &apos;{&quot;security_and_analysis&quot;:{&quot;secret_scanning&quot;:{&quot;status&quot;:&quot;enabled&quot;},&quot;secret_scanning_push_protection&quot;:{&quot;status&quot;:&quot;enabled&quot;}}}&apos; \
+  | gh api --method PATCH repos/nurazhardotcom/lagu-lagu --input -
+</code></pre><p>With <strong>Push Protection</strong> enabled, GitHub will intercept and block any git push command at the CLI layer if it detects an exposed password or token before it is committed to the cloud.</p><hr /><h2 id="the-security-lesson">💡 The Security Lesson</h2><p>Modern security compliance (like Singapore&apos;s Cyber Trust Mark or corporate checklists) tends to focus on administrative processes, PDF paperwork, and constant scanning.</p><p>But <strong>complexity is the ultimate enemy of security</strong>.</p><p>The safest line of code is the one you never wrote. By keeping your backend database-native, relying on Postgres constraints for business logic, and routing calls via stateless Cloud Functions, you keep your system so simple that VAPT goes from a multi-week corporate bottleneck to a 15-minute engineering sprint.</p></div>
+
+<p><i>Published: 2026-06-14</i></p>
+
+<p>
+  <i>
+  Tagged:
+  
+  <span class="tag">
+    <a href="tags/vapt.html">vapt</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/security.html">security</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/htmx.html">htmx</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/postgres.html">postgres</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/gcp.html">gcp</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/finance.html">finance</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/serverless.html">serverless</a>
+  </span>
+  
+  </i>
+</p>
+
+
+
+      
+      <div style="margin-bottom: 20px; float: right;">
+        <a class="page-link" href="archive.html">Archive</a>
+      </div>
+      
+    </div>
+  </body>
+</html>
