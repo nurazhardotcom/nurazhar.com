@@ -187,79 +187,49 @@ ALTER TABLE payouts ADD CONSTRAINT check_positive_payout CHECK (amount_sent &gt;
     </div>
 
     <div>
-        <h1><a href="v0-1-set-in-stone-clojure-bitcoin-toolkit.html">Bitcoin v0.1 Set in Stone: Building a functional blockchain toolkit in Clojure</a></h1>
-        <div><hr /><h1 id="bitcoin-v0.1-set-in-stone:-building-a-functional-blockchain-toolkit-in-clojure">Bitcoin v0.1 Set in Stone: Building a functional blockchain toolkit in Clojure</h1><p>Over the last few days, I&apos;ve been deep in the blockchain archives. I wanted to build a portfolio project that would let me study the core engine of peer-to-peer electronic cash without wrestling with an ever-mutating spec sheet.</p><p>I ended up building <strong><code>bsv-clj</code></strong>—a complete Clojure toolkit featuring an idiomatic JSON-RPC client, a read-only wallet tool, and a Ring/Hiccup-powered local block explorer. It connects directly to a <strong>Bitcoin SV (BSV)</strong> node.</p><p>Here is the story of how I designed it, and why Clojure and Bitcoin&apos;s original v0.1 protocol are a perfect match.</p><hr /><h2 id="1.-the-design-philosophy:-locking-the-protocol">1. The Design Philosophy: Locking the Protocol</h2><p>On June 17, 2010, Satoshi Nakamoto wrote a post on the Bitcoin forum that would define a core fork in blockchain history:</p><blockquote><p><em>&quot;The nature of Bitcoin is such that once version 0.1 was released, the core design was set in stone for the rest of its lifetime.&quot;</em></p></blockquote><p>In modern blockchain development, this philosophy is rarely followed. BTC has introduced protocol changes like SegWit and Taproot; other chains rewrite their consensus rules every year. But the Bitcoin SV node client preserves the original v0.1 protocol spec: no arbitrary block size limits, no complex alterations of basic opcodes, and the original UTXO transactional mechanics.</p><p>For an engineer wanting to study the system, this stability is a superpower:</p><ul><li>The <strong>RPC interface</strong> maps directly to Satoshi&apos;s original client design.</li><li>The <strong>transaction schema</strong> and <strong>UTXO model</strong> are clean, minimal, and stable.</li><li>You are querying the foundational data structures that launched the entire industry in 2009.</li></ul><p>With this stable backend in place, my goal was to wrap it in an idiomatic Clojure layer to create the ultimate interactive learning environment.</p><hr /><h2 id="2.-why-clojure-+-bitcoin?">2. Why Clojure + Bitcoin?</h2><p>As I built the toolkit, I realized that Bitcoin&apos;s core mechanics are fundamentally functional. The parallels between Bitcoin&apos;s protocol and Clojure&apos;s standard library are striking:</p><table><thead><tr><th>Bitcoin Protocol Concept</th><th>Clojure Equivalent</th></tr></thead><tbody><tr><td>Transactions are <strong>immutable</strong> once written</td><td>Clojure&apos;s <strong>immutable data structures</strong></td></tr><tr><td>UTXOs are consumed and created, never modified</td><td>Pure functions returning new state with <strong>no side effects</strong></td></tr><tr><td>Script is a <strong>stack-based</strong> language</td><td>Clojure&apos;s <strong>list and sequence abstractions</strong></td></tr><tr><td>Blocks form an <strong>append-only</strong> chain</td><td>Persistent data structures with <strong>structural sharing</strong></td></tr><tr><td>Data-driven API (JSON-RPC)</td><td>Clojure is <strong>data-oriented</strong> by design</td></tr></tbody></table><p>When you query a Bitcoin transaction, you are given a map of inputs and outputs. An input consumes a past output; new outputs declare future UTXOs. There is no <code>balance</code> column in a database. Balance is a derived projection of the unspent UTXO set. In Clojure, this feels like home: you simply filter and reduce a collection of maps.</p><hr /><h2 id="3.-designing-bsv-clj">3. Designing <code>bsv-clj</code></h2><p>The codebase is split into three main modules:</p><h3 id="a.-the-core-rpc-client">A. The Core RPC Client</h3><p>Instead of writing a dynamic helper for each of Bitcoin&apos;s hundred-plus RPC methods, I built a lean HTTP client in <code>bsv.rpc.client</code> that acts as a generic, data-driven wrapper around JSON-RPC 1.0:</p><pre><code class="language-clojure">(defn rpc-call [cfg method params]
-  (let [body (json/generate-string {:jsonrpc &quot;1.0&quot;
-                                    :id (str (java.util.UUID/randomUUID))
-                                    :method method
-                                    :params params})
-        response (client/post (rpc-url cfg)
-                              {:basic-auth [(:user cfg) (:password cfg)]
-                               :body body
-                               :content-type :json
-                               :as :json})]
-    (get-in response [:body :result])))
-</code></pre><p>This single function handles the authentication, HTTP POST request, JSON encoding/decoding via Cheshire, and error wrapping. On top of this core function, I built high-level modules for <code>blockchain</code>, <code>transaction</code>, <code>network</code>, and <code>mining</code> queries.</p><h3 id="b.-the-wallet-toolkit">B. The Wallet Toolkit</h3><p>The wallet module is read-only for safety. It queries the node for the active UTXO set, tracks balances, and resolves address balances. Rather than relying on heavyweight database indexes, it extracts information directly from the node&apos;s mempool and block databases, showing how Clojure&apos;s sequence processing makes it trivial to filter and group blockchain data:</p><pre><code class="language-clojure">(defn group-by-address [utxos]
-  (reduce (fn [acc utxo]
-            (let [addr (:address utxo)
-                  amount (:amount utxo)]
-              (update-in acc [addr] (fnil + 0.0) amount)))
-          {}
-          utxos))
-</code></pre><h3 id="c.-the-hiccup-block-explorer">C. The Hiccup Block Explorer</h3><p>To visualize the blocks and transactions, I built a local web-based explorer using <strong>Ring</strong>, <strong>Compojure</strong>, and <strong>Hiccup</strong>.</p><p>Instead of dealing with a complex JavaScript frontend framework (like React or Vue) or pulling in Tailwind, I used vanilla CSS to style a beautiful, dark-themed dashboard. Hiccup compiles standard Clojure vectors directly into HTML:</p><pre><code class="language-clojure">(defn block-page [block]
-  (layout
-    (str &quot;Block #&quot; (:height block))
-    [:div.container
-     [:h1 (str &quot;Block #&quot; (:height block))]
-     [:div.card
-      [:table
-       [:tr [:td &quot;Hash&quot;] [:td (:hash block)]]
-       [:tr [:td &quot;Time&quot;] [:td (format-time (:time block))]]
-       [:tr [:td &quot;Transactions&quot;] [:td (count (:tx block))]]]]]))
-</code></pre><p>The application launches instantly, renders server-side, and runs at 60 FPS without downloading a single megabyte of frontend JS bundles.</p><hr /><h2 id="4.-the-repl-experience">4. The REPL Experience</h2><p>The magic of Clojure is the REPL. When you run <code>clj -A:dev</code>, the REPL starts and loads the <code>user</code> namespace, which exposes immediate development helpers.</p><p>Instead of relying on log statements or debugger breakpoints, you can interact with the blockchain in real-time:</p><pre><code class="language-clojure">;; Connect to local node
-(connect! &quot;localhost&quot; 8332 &quot;rpcuser&quot; &quot;rpcpass&quot;)
-
-;; Check node synchronization
-(status)
-;; =&gt; {:height 850123, :difficulty 1293847291.82, :connections 8}
-
-;; Grab the latest 3 blocks
-(latest 3)
-;; =&gt; ({:height 850123, :hash &quot;00000...&quot;} ...)
-
-;; Start the local Ring server
-(start!)
-;; =&gt; &quot;Server started at http://localhost:3000&quot;
-</code></pre><p>If you change a route in the explorer or modify the styling, you don&apos;t need to rebuild the project or restart the server. Clojure&apos;s dynamic classloading allows you to re-evaluate the namespace inside your running REPL, and the changes appear instantly on your next page refresh.</p><hr /><h2 id="conclusion">Conclusion</h2><p>Building <code>bsv-clj</code> reinforced my belief that <strong>the data model is the program</strong>.</p><p>By stripping away the bloat of mutable state, heavy frameworks, and shifting protocols, I was able to build a portfolio-quality blockchain toolkit in under 2,500 lines of Clojure. It serves as both a stable toolkit for blockchain protocol research and a demonstration of Clojure&apos;s data-oriented design.</p><p>You can inspect the codebase and try it yourself at: <strong><a href="https://github.com/nurazhardotcom/bsv-clj">github.com/nurazhardotcom/bsv-clj</a></strong>.</p></div>
+        <h1><a href="the-autonomous-os-safety-net-for-agentic-sysops.html">The Autonomous OS: Btrfs, Snapper, and the Safety Net for Agentic SysOps</a></h1>
+        <div><hr /><h1 id="the-autonomous-os:-btrfs,-snapper,-and-the-safety-net-for-agentic-sysops">The Autonomous OS: Btrfs, Snapper, and the Safety Net for Agentic SysOps</h1><p>As of mid-2026, the tech industry has reached a quiet consensus: <strong>AI agents cannot safely manage servers using raw bash terminal access.</strong></p><p>LLMs are probabilistic. They guess the next best token. While a 99% accuracy rate is great for writing marketing copy, a 1% failure rate in system operations (SysOps/LMOps) can mean deleting database volumes, bricking configurations, or corrupting boot partitions.</p><p>So how do we give AI agents the keys to the kingdom without risking total disaster? We build a legacy safety net.</p><p>This post explores the concepts from our deep dive into the <strong>openSUSE Autonomous OS pathway</strong>—specifically, how openSUSE is pairing futuristic AI standard protocols with battle-tested filesystem technologies to build closed-loop self-healing systems.</p><hr /><h2 id="the-core-metaphor:-from-brain-to-machine">🚗 The Core Metaphor: From Brain to Machine</h2><p>To understand how AI interacts with an operating system today, we can break the architecture down into four layers using a simple <strong>Car, Steering Wheel, and Driver</strong> analogy:</p><pre><code class="language-mermaid">graph TD
+    A[&quot;🧠 1. The App / Client (The Driver) &lt;br&gt;Cursor, Claude, Antigravity Client&quot;] --&gt;|Sends MCP commands| B[&quot;🛞 2. Model Context Protocol (The Steering Wheel) &lt;br&gt;Standardized Tool-Calling Protocol&quot;]
+    B --&gt;|Translates to local shell| C[&quot;⚙️ 3. The MCP Server (The ECU / Hands) &lt;br&gt;Local python/node daemon translating commands&quot;]
+    C --&gt;|Executes filesystem changes| D[&quot;🏎️ 4. The Operating System (The Engine) &lt;br&gt;openSUSE, Btrfs, Snapper, Hardware&quot;]
+</code></pre><ol start="1"><li><strong>The App / Client (The Driver):</strong> The AI brain (often running in the cloud or local workstation). It is smart, but has no physical hands. It cannot type or edit local files directly; it only outputs text.</li><li><strong>Model Context Protocol / MCP (The Steering Wheel):</strong> The open-source standard connecting the AI to your computer. Just like USB-C standardized physical hardware connections, MCP standardizes how AI models call tools.</li><li><strong>The MCP Server (The Engine Control Unit / The Hands):</strong> A lightweight background program running on your host machine. It translates the standardized tool-calling instructions from the AI into physical actions (e.g. running a bash script or editing a config).</li><li><strong>The Operating System (The Engine):</strong> The underlying platform (Linux, Btrfs, Snapper, hardware) that performs the physical disk writes and computes the changes.</li></ol><hr /><h2 id="the-four-enterprise-pathways">🗺️ The Four Enterprise Pathways</h2><p>In 2026, different enterprise Linux vendors are approaching AI SysOps from unique angles:</p><table><thead><tr><th style="text-align:left;">Distribution</th><th style="text-align:left;">Core Strategy</th><th style="text-align:left;">Key Technologies</th><th style="text-align:left;">Ideal Workloads</th></tr></thead><tbody><tr><td style="text-align:left;"><strong>openSUSE / SUSE</strong></td><td style="text-align:left;"><strong>The Self-Healing Loop</strong></td><td style="text-align:left;">Btrfs + Snapper + <code>transactional-update</code></td><td style="text-align:left;">Autonomous mitigation, self-updating servers, write-capable AI agents.</td></tr><tr><td style="text-align:left;"><strong>Red Hat / RHEL</strong></td><td style="text-align:left;"><strong>Telemetry &amp; Diagnostics</strong></td><td style="text-align:left;"><code>linux-mcp-server</code> + systemd logs</td><td style="text-align:left;">Compliance-heavy environments, read-only AI audits, remote troubleshooting.</td></tr><tr><td style="text-align:left;"><strong>Amazon Linux</strong></td><td style="text-align:left;"><strong>Cloud Scaling</strong></td><td style="text-align:left;">AWS Agent Toolkit + Amazon Q</td><td style="text-align:left;">Cloud-native microservices, ECS clustering, automated infrastructure scaling.</td></tr><tr><td style="text-align:left;"><strong>Canonical / Ubuntu</strong></td><td style="text-align:left;"><strong>Sovereignty &amp; Local AI</strong></td><td style="text-align:left;">Local LLMs + Snap/Flatpak sandboxes</td><td style="text-align:left;">Offline developer setups, on-device training, high-privacy data processing.</td></tr></tbody></table><hr /><h2 id="the-opensuse-solution:-btrfs-&amp;-snapper-as-a-safety-net">🛡️ The openSUSE Solution: Btrfs &amp; Snapper as a Safety Net</h2><p>SUSE&apos;s key advantage is that they didn&apos;t write new, experimental code to protect systems from AI hallucinations. Instead, they leveraged their <strong>decade-old, bulletproof filesystem technology: Btrfs and Snapper</strong>.</p><p>This creates the <strong>Self-Healing Loop</strong>:</p><pre><code class="language-text">  [ AI Agent ] 
+       │
+       ├─► 1. Save Checkpoint (AI triggers Snapper snapshot e.g. Snapshot #100)
+       ├─► 2. Execute Action (AI runs system upgrade or writes configuration)
+       ├─► 3. Validate (AI runs post-change diagnostic tests)
+       │
+       ├───► If SUCCESS: Keep changes.
+       └───► If FAILURE: Trigger Snapper rollback to Snapshot #100.
+</code></pre><p>If the AI makes a destructive change, the entire OS is rolled back to the clean snapshot instantaneously. Because <code>/home</code> is typically kept on a separate subvolume/partition, the system is restored to safety <strong>without deleting any of your personal source code</strong>.</p><hr /><h2 id="arch-linux-&amp;-cachyos:-bridging-the-plumbing-gap">🔧 Arch Linux &amp; CachyOS: Bridging the Plumbing Gap</h2><p>During our session, we noticed a critical plumbing difference when trying to implement this self-healing loop on a non-SUSE system (like <strong>CachyOS / Arch Linux</strong>):</p><ul><li><strong>The openSUSE Way:</strong> Uses a heavily patched GRUB bootloader maintained by SUSE. When you trigger a rollback, the bootloader dynamically changes which snapshot to boot into.</li><li><strong>The Arch Way:</strong> Most Arch-based systems use modern, minimal bootloaders like <strong>Limine</strong> or standard <strong>systemd-boot</strong>, which hardcode boot arguments (e.g., <code>rootflags=subvol=/@</code>).</li></ul><p>To run SUSE-style rollbacks on Arch/CachyOS without breaking the boot sequence, we use the community tool <strong><code>snapper-rollback</code></strong>.</p><p>Instead of changing bootloader configurations, <code>snapper-rollback</code> renames the Btrfs subvolumes behind the scenes:</p><ol start="1"><li>It renames the broken subvolume (<code>/@</code>) to a backup directory.</li><li>It makes a read-write clone of the selected clean snapshot and names it <code>/@</code>.</li><li>The bootloader boots normally, thinking it&apos;s loading the usual folder, but loads the restored system instead.</li></ol><h2 id="conclusion">🏁 Conclusion</h2><p>The future of systems operations isn&apos;t just about making AI models smarter. It&apos;s about designing architectures where <strong>non-deterministic AI brains are safely sandbox-guarded by deterministic filesystems</strong>. By combining modern MCP integration with legacy partition rollbacks, we get the best of both worlds: autonomous AI operations with a zero-cost undo button.</p></div>
         
         
-        <p><i>Published: 2026-06-09</i></p>
+        <p><i>Published: 2026-06-14</i></p>
         
             <p><i>
                 Tagged:
                 
                     <span class="tag">
-                        <a href="tags/clojure.html">clojure</a>
+                        <a href="tags/automation.html">automation</a>
                     </span>
                 
                     <span class="tag">
-                        <a href="tags/blockchain.html">blockchain</a>
+                        <a href="tags/linux.html">linux</a>
                     </span>
                 
                     <span class="tag">
-                        <a href="tags/functional-programming.html">functional-programming</a>
+                        <a href="tags/agents.html">agents</a>
                     </span>
                 
                     <span class="tag">
-                        <a href="tags/repl.html">repl</a>
+                        <a href="tags/opensuse.html">opensuse</a>
                     </span>
                 
                     <span class="tag">
-                        <a href="tags/web-development.html">web-development</a>
+                        <a href="tags/mcp.html">mcp</a>
                     </span>
                 
                     <span class="tag">
-                        <a href="tags/bitcoin.html">bitcoin</a>
+                        <a href="tags/systems.html">systems</a>
                     </span>
                 
             </i></p>
