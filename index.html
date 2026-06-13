@@ -316,6 +316,58 @@
     </div>
 
     <div>
+        <h1><a href="quickblog-double-title-gotcha.html">Quickblog Gotcha: Why Your Post Titles Are Displaying Twice</a></h1>
+        <div><hr /><h1 id="quickblog-gotcha:-why-your-post-titles-are-displaying-twice">Quickblog Gotcha: Why Your Post Titles Are Displaying Twice</h1><p>When migrating articles from other static site generators (like Hugo, Jekyll, or standard GitHub-flavored Markdown) to <strong><a href="https://github.com/borkdude/quickblog">Quickblog</a></strong>, you might run into a jarring visual bug: your post titles show up twice at the top of the page.</p><p>Here is why it happens, and how to programmatically fix it across your entire codebase.</p><hr /><h2 id="the-root-cause:-template-vs.-body">The Root Cause: Template vs. Body</h2><p>In standard Markdown styling, it is natural to start your file with an H1 header matching your title:</p><pre><code class="language-markdown">Title: My Great Post
+Date: 2026-06-14
+---
+# My Great Post
+
+This is the content of my post...
+</code></pre><p>However, Quickblog uses a rendering template (typically found in <code>templates/post.html</code>) to dynamically construct your posts. If you inspect the default template, you will see it already wraps your metadata <code>{{title}}</code> in an H1 block:</p><pre><code class="language-html">&lt;h1&gt;
+  {% if post-link %}&lt;a href=&quot;{{post-link}}&quot;&gt;{% endif %}
+  {{title}}
+  {% if post-link %}&lt;/a&gt;{% endif %}
+&lt;/h1&gt;
+{{body | safe}}
+</code></pre><p>Because Quickblog inserts the title dynamically, any <code># Title</code> header you manually write inside the Markdown body will result in a double title on the compiled HTML page.</p><hr /><h2 id="the-fix:-programmatic-refactoring">The Fix: Programmatic Refactoring</h2><p>Instead of manually editing dozens of markdown files to delete the redundant H1 header, you can clean them all up instantly using a quick Python regex script.</p><p>Run this command in your repository root:</p><pre><code class="language-bash">python3 -c &apos;
+import glob, re
+for f in glob.glob(&quot;posts/*.md&quot;):
+    with open(f, &quot;r&quot;) as file:
+        content = file.read()
+    # Remove the first H1 header line and any trailing empty lines immediately after it
+    new_content = re.sub(r&quot;(?m)^# .*\n\n?&quot;, &quot;&quot;, content, count=1)
+    with open(f, &quot;w&quot;) as file:
+        file.write(new_content)
+&apos;
+</code></pre><p>This script:</p><ol start="1"><li>Loops through every Markdown file in your <code>posts/</code> folder.</li><li>Uses a regex pattern (<code>(?m)^# .*\n\n?</code>) to find only the first occurrence of an H1 header (<code># </code>) at the beginning of a line.</li><li>Removes it along with any trailing blank lines.</li><li>Rewrites the file, leaving your metadata header and standard body intact.</li></ol><p>Once completed, run <code>bb quickblog render</code> to rebuild the pages, and the layout will render perfectly with a single title block.</p></div>
+        
+        
+        <p><i>Published: 2026-06-14</i></p>
+        
+            <p><i>
+                Tagged:
+                
+                    <span class="tag">
+                        <a href="tags/simplicity.html">simplicity</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/automation.html">automation</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/clojure.html">clojure</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/web-development.html">web-development</a>
+                    </span>
+                
+            </i></p>
+        
+    </div>
+
+    <div>
         <h1><a href="quickblog-minimalist-architecture.html">Quickblog: The Zen of Minimalist Static Site Generation</a></h1>
         <div><hr /><p>When building a personal blog, modern web development defaults to overkill. Setting up dynamic frameworks (like Next.js, Remix, or MERN stacks) with backend databases, authentication layers, and real-time APIs introduces a massive maintenance burden, security attack surface, and slow page-load times.</p><p>For a blog, <strong>static HTML is the ultimate architecture</strong>. This blog is powered by <strong><a href="https://github.com/borkdude/quickblog">Quickblog</a></strong>, a lightweight static site generator designed for the Clojure/Babashka ecosystem by Michiel Borkent (@borkdude).</p><p>Here is a breakdown of how it works under the hood and why this architecture is a superior design choice.</p><hr /><h2 id="1.-the-core-runtime:-babashka">1. The Core Runtime: Babashka</h2><p>At the heart of Quickblog is <strong><a href="https://babashka.org/">Babashka</a></strong>, a fast-starting scripting runtime for Clojure.</p><p>Traditional Clojure runs on the JVM, which is powerful but suffers from a slow startup time (often several seconds)—making it tedious for quick CLI utilities and scripts. Babashka solves this by using GraalVM to compile the Clojure interpreter into a native binary. This gives us:</p><ul><li><strong>Instant startup</strong> (measured in milliseconds).</li><li><strong>Zero JVM overhead</strong> on the host.</li><li>A rich subset of Clojure libraries (like shell execution, filesystem navigation, and HTTP client/server) pre-baked into the runtime.</li></ul><p>Quickblog is executed entirely as a Babashka task defined in <code>bb.edn</code>.</p><hr /><h2 id="2.-compilation-flow">2. Compilation Flow</h2><p>Quickblog&apos;s architecture follows a clean, functional pipeline:</p><pre><code class="language-mermaid">graph TD
     A[Markdown Posts /posts] --&gt; B(Babashka CLI / bb.edn)

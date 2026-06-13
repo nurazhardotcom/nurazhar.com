@@ -3,7 +3,7 @@
   <title>Nur Azhar's</title>
   <link href="https://blog.nurazhar.com/atom.xml" rel="self"/>
   <link href="https://blog.nurazhar.com"/>
-  <updated>2026-06-13T20:38:09+00:00</updated>
+  <updated>2026-06-13T20:39:12+00:00</updated>
   <id>https://blog.nurazhar.com</id>
   <author>
     <name>Nur Azhar</name>
@@ -130,6 +130,35 @@
 ;; Example: Run a low-cost, fast query
 (println (query-gemini &quot;Generate a basic Babashka task definition for file-syncing.&quot; 0))
 </code></pre><hr /><h2 id="conclusion">🎯 Conclusion</h2><p>Treating LLM usage like hardware memory management makes you a highly efficient developer:</p><ul><li>Use <strong>Low</strong> by default for 90% of your coding and rapid chatting.</li><li>Elevate to <strong>High</strong> reasoning exclusively for architectural bottlenecks or macro debugging.</li><li>Keep your chat history short.</li></ul></div>]]></content>
+  </entry>
+  <entry>
+    <id>https://blog.nurazhar.com/quickblog-double-title-gotcha.html</id>
+    <link href="https://blog.nurazhar.com/quickblog-double-title-gotcha.html"/>
+    <title>Quickblog Gotcha: Why Your Post Titles Are Displaying Twice</title>
+    <updated>2026-06-14T23:59:59+00:00</updated>
+    <content type="html"><![CDATA[<div><hr /><h1 id="quickblog-gotcha:-why-your-post-titles-are-displaying-twice">Quickblog Gotcha: Why Your Post Titles Are Displaying Twice</h1><p>When migrating articles from other static site generators (like Hugo, Jekyll, or standard GitHub-flavored Markdown) to <strong><a href="https://github.com/borkdude/quickblog">Quickblog</a></strong>, you might run into a jarring visual bug: your post titles show up twice at the top of the page.</p><p>Here is why it happens, and how to programmatically fix it across your entire codebase.</p><hr /><h2 id="the-root-cause:-template-vs.-body">The Root Cause: Template vs. Body</h2><p>In standard Markdown styling, it is natural to start your file with an H1 header matching your title:</p><pre><code class="language-markdown">Title: My Great Post
+Date: 2026-06-14
+---
+# My Great Post
+
+This is the content of my post...
+</code></pre><p>However, Quickblog uses a rendering template (typically found in <code>templates/post.html</code>) to dynamically construct your posts. If you inspect the default template, you will see it already wraps your metadata <code>{{title}}</code> in an H1 block:</p><pre><code class="language-html">&lt;h1&gt;
+  {% if post-link %}&lt;a href=&quot;{{post-link}}&quot;&gt;{% endif %}
+  {{title}}
+  {% if post-link %}&lt;/a&gt;{% endif %}
+&lt;/h1&gt;
+{{body | safe}}
+</code></pre><p>Because Quickblog inserts the title dynamically, any <code># Title</code> header you manually write inside the Markdown body will result in a double title on the compiled HTML page.</p><hr /><h2 id="the-fix:-programmatic-refactoring">The Fix: Programmatic Refactoring</h2><p>Instead of manually editing dozens of markdown files to delete the redundant H1 header, you can clean them all up instantly using a quick Python regex script.</p><p>Run this command in your repository root:</p><pre><code class="language-bash">python3 -c &apos;
+import glob, re
+for f in glob.glob(&quot;posts/*.md&quot;):
+    with open(f, &quot;r&quot;) as file:
+        content = file.read()
+    # Remove the first H1 header line and any trailing empty lines immediately after it
+    new_content = re.sub(r&quot;(?m)^# .*\n\n?&quot;, &quot;&quot;, content, count=1)
+    with open(f, &quot;w&quot;) as file:
+        file.write(new_content)
+&apos;
+</code></pre><p>This script:</p><ol start="1"><li>Loops through every Markdown file in your <code>posts/</code> folder.</li><li>Uses a regex pattern (<code>(?m)^# .*\n\n?</code>) to find only the first occurrence of an H1 header (<code># </code>) at the beginning of a line.</li><li>Removes it along with any trailing blank lines.</li><li>Rewrites the file, leaving your metadata header and standard body intact.</li></ol><p>Once completed, run <code>bb quickblog render</code> to rebuild the pages, and the layout will render perfectly with a single title block.</p></div>]]></content>
   </entry>
   <entry>
     <id>https://blog.nurazhar.com/quickblog-minimalist-architecture.html</id>
