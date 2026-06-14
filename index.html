@@ -351,6 +351,86 @@ package() {
     </div>
 
     <div>
+        <h1><a href="integrating-aur-audit-into-paru.html">Hardening the Arch/CachyOS Build Pipeline: Native AUR Auditing with Paru &amp; Babashka</a></h1>
+        <div><hr /><p>When updating an Arch-based system (like CachyOS) via AUR helpers, we are executing arbitrary build scripts (<code>PKGBUILD</code> and <code>.install</code> scripts) written by community members. During supply chain incidents, relying on manual human checks is a massive liability.</p><p>This post serves as a high-signal reference to automate static analysis on these scripts natively before compilation.</p><hr /><h3 id="the-architecture:-before-vs.-after">The Architecture: Before vs. After</h3><pre><code class="language-mermaid">graph TD
+    subgraph Legacy Workflow [Risky: Before aur-audit]
+        A1[paru install google-chrome] --&gt; A2[Fetch AUR Git Repository]
+        A2 --&gt; A3[Human Review / Pager]
+        A3 --&gt;|User presses q / confirms| A4[Execute PKGBUILD / makepkg]
+        A4 --&gt;|Malicious code runs on host| A5[System Compromised]
+    end
+
+    subgraph Secure Workflow [Hardened: After aur-audit]
+        B1[paru install google-chrome] --&gt; B2[Fetch AUR Git Repository]
+        B2 --&gt; B3[Trigger: PreBuildCommand]
+        B3 --&gt; B4{aur-audit.clj Scan}
+        B4 --&gt;|Exit Code: 1 / Threat Found| B5[Abort Build &amp; Halt execution]
+        B4 --&gt;|Exit Code: 0 / Clean| B6[Execute PKGBUILD / makepkg]
+        B6 --&gt; B7[Secure Installation]
+    end
+    
+    style A5 fill:#f38ba8,stroke:#111,stroke-width:2px,color:#111
+    style B5 fill:#f9e2af,stroke:#111,stroke-width:2px,color:#111
+    style B7 fill:#a6e3a1,stroke:#111,stroke-width:2px,color:#111
+</code></pre><hr /><h3 id="security-execution-matrix">Security Execution Matrix</h3><table><thead><tr><th style="text-align:left;">Metric</th><th style="text-align:left;">Before Integration</th><th style="text-align:left;">After Integration</th></tr></thead><tbody><tr><td style="text-align:left;"><strong>Verification Gate</strong></td><td style="text-align:left;">Manual scrolling (Human eye)</td><td style="text-align:left;">Automated regex parser + human backup</td></tr><tr><td style="text-align:left;"><strong>Halt Condition</strong></td><td style="text-align:left;">User notices anomaly and presses Ctrl+C</td><td style="text-align:left;">Exit Code <code>1</code> from <code>PreBuildCommand</code> kills loop</td></tr><tr><td style="text-align:left;"><strong>Verification Speed</strong></td><td style="text-align:left;">Slow, prone to fatigue</td><td style="text-align:left;">Instant (Milliseconds via Babashka)</td></tr><tr><td style="text-align:left;"><strong>Audit Scope</strong></td><td style="text-align:left;">Only files shown in the pager</td><td style="text-align:left;">Deep scan of both <code>PKGBUILD</code> and <code>.install</code> scripts</td></tr><tr><td style="text-align:left;"><strong>Vulnerability Signatures</strong></td><td style="text-align:left;">None</td><td style="text-align:left;">Scans for curl/wget payloads, systemd persistence, profile injections</td></tr></tbody></table><hr /><h3 id="system-integration-commands">System Integration Commands</h3><p>To configure this setup, we link our scanner to our local userspace path and hook it directly into <code>paru</code>&apos;s execution engine.</p><h4 id="1.-symlink-and-make-executable">1. Symlink and Make Executable</h4><p>We place the compiler/script within our local userspace bin directory:</p><pre><code class="language-fish">ln -sf /home/nurazhar/Documents/Bugs/aur-audit/aur-audit.clj $HOME/.local/bin/aur-audit
+chmod +x $HOME/.local/bin/aur-audit
+</code></pre><h4 id="2.-native-paru-hook-configuration">2. Native Paru Hook configuration</h4><p>Append the pre-build trigger configuration to your local <code>paru.conf</code> file:</p><pre><code class="language-ini"># ~/.config/paru/paru.conf
+[options]
+PreBuildCommand = /home/nurazhar/.local/bin/aur-audit
+</code></pre><hr /><h3 id="threat-scanner-flow">Threat Scanner Flow</h3><p>Whenever a build begins, the pre-build phase executes the following logic inside the package source directory:</p><pre><code class="language-mermaid">stateDiagram-v2
+    [*] --&gt; ReadTargets : Triggered inside AUR repo cache
+    ReadTargets --&gt; ScanPKGBUILD : Locate PKGBUILD
+    ReadTargets --&gt; ScanInstallScripts : Locate *.install files
+    
+    state ScanPKGBUILD {
+        [*] --&gt; CheckNetwork : Regex matches curl/wget/sockets
+        CheckNetwork --&gt; CheckObfuscation : Regex matches base64/eval/openssl
+        CheckObfuscation --&gt; CheckPersistence : Regex matches systemd/cron/profile
+    }
+    
+    ScanPKGBUILD --&gt; EvaluateResults
+    ScanInstallScripts --&gt; EvaluateResults
+    
+    state EvaluateResults {
+        [*] --&gt; HighRiskFound : Threat matches critical rules
+        [*] --&gt; Clean : No anomalies detected
+    }
+    
+    HighRiskFound --&gt; SystemExit1 : Exit Code 1 (paru halts build)
+    Clean --&gt; SystemExit0 : Exit Code 0 (paru compiles package)
+</code></pre><p>With this integration, you establish a system-enforced defense gate that eliminates cognitive fatigue during package upgrades.</p></div>
+        
+        
+        <p><i>Published: 2026-06-14</i></p>
+        
+            <p><i>
+                Tagged:
+                
+                    <span class="tag">
+                        <a href="tags/devops.html">devops</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/security.html">security</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/linux.html">linux</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/systems.html">systems</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/archlinux.html">archlinux</a>
+                    </span>
+                
+            </i></p>
+        
+    </div>
+
+    <div>
         <h1><a href="how-to-maximize-clojure-usage-token-on-antigravity-ide.html">How to Maximize Clojure Usage &amp; Minimize Token Quota on Antigravity IDE</a></h1>
         <div><hr /><p>Developing Clojure applications with AI assistance introduces a unique challenge: Clojure namespaces are dense, data structures are deeply nested, and code-as-data constructs demand precise context. If you feed entire namespaces and REPL outputs to reasoning-focused LLMs without a strategy, you will burn through your token quotas (and API budget) rapidly.</p><p>Here is how to optimize your developer workflow in <strong>Antigravity IDE</strong> using Gemini&apos;s <strong>Thinking Budget</strong> configurations.</p><hr /><h2 id="understanding-the-reasoning-settings-(thinking-levels)">🧠 Understanding the Reasoning Settings (Thinking Levels)</h2><p>Modern models (like Gemini 2.5/3.5 Flash and Pro) introduce a configurable <strong>Thinking Level</strong> (or Reasoning Budget). This setting represents how many internal, step-by-step reasoning tokens the model compiles before writing the final code.</p><p>To manage your tokens, you need to understand when to toggle between them:</p><table><thead><tr><th style="text-align:left;">Setting</th><th style="text-align:left;">When to Use</th><th style="text-align:left;">Clojure Dev Tasks</th><th style="text-align:left;">Quota Consumption</th><th style="text-align:left;">Latency</th></tr></thead><tbody><tr><td style="text-align:left;"><strong>Low / Off</strong></td><td style="text-align:left;">Simple, rote coding and direct translations</td><td style="text-align:left;">Boilerplate templating, converting JSON to edn, writing basic Babashka shell scripts.</td><td style="text-align:left;"><strong>Minimal</strong> (Input + Output only)</td><td style="text-align:left;"><strong>Very Fast</strong></td></tr><tr><td style="text-align:left;"><strong>Medium</strong></td><td style="text-align:left;">Logical, multi-step coding problems</td><td style="text-align:left;">Standard app functions, writing test suites, refactoring standard functions.</td><td style="text-align:left;"><strong>Moderate</strong></td><td style="text-align:left;"><strong>Moderate</strong></td></tr><tr><td style="text-align:left;"><strong>High</strong></td><td style="text-align:left;">Highly complex, stateful, or abstract logic</td><td style="text-align:left;">Designing advanced macros, debugging race conditions in <code>core.async</code> pipelines, orchestrating multi-agent systems.</td><td style="text-align:left;"><strong>Maximum</strong> (Adds hidden thinking tokens)</td><td style="text-align:left;"><strong>Slower</strong></td></tr></tbody></table><hr /><h2 id="tactical-rules-for-clojure-token-preservation">🛠️ Tactical Rules for Clojure Token Preservation</h2><h3 id="1.-repl-driven-prompting-(don&apos;t-copy-paste-entire-files)">1. REPL-Driven Prompting (Don&apos;t Copy-Paste Entire Files)</h3><p>Instead of copy-pasting your entire <code>core.clj</code> namespace to fix an error:</p><ol start="1"><li>Copy <strong>only</strong> the function signature and its spec (if you use <code>clojure.spec</code>).</li><li>Paste the exact stack trace from your REPL.</li><li>Keep the thinking level on <strong>Low</strong>. The model doesn&apos;t need to reason about your whole system to fix a syntax bug or structural partition mismatch.</li></ol><h3 id="2.-guard-against-the-chat-history-multiplier">2. Guard Against the Chat History Multiplier</h3><p>In interactive chats, the IDE sends your entire chat history back to the model on every new turn. If your previous prompts returned responses that consumed <strong>2,000 thinking tokens</strong>, those tokens are sent back as input on the next turn.</p><ul><li><strong>The Fix:</strong> Treat chat threads as transient. Once a bug is resolved or a concept is clear, close the chat thread and start a fresh one. This resets your input context back to zero.</li></ul><h3 id="3.-programmatic-control-via-babashka">3. Programmatic Control via Babashka</h3><p>If you write automation scripts that query the Gemini API directly, you can configure the thinking budget dynamically in your payload using <code>generationConfig</code>.</p><p>Here is a Babashka script template showing how to switch thinking budgets dynamically:</p><pre><code class="language-clojure">#!/usr/bin/env bb
 (require &apos;[babashka.http-client :as http]
