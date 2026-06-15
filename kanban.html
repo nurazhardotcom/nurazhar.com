@@ -39,58 +39,58 @@
       });
     </script>
 
-{% if favicon-tags %}{{favicon-tags | safe}}{% endif %}
+{{favicon-tags | safe}}
 
     <!-- Social sharing (Facebook, Twitter, LinkedIn, etc.) -->
     <meta name="title" content=" Public Board">
     <meta name="twitter:title" content=" Public Board">
     <meta property="og:title" content=" Public Board">
     <meta property="og:type" content="website">
-{% if sharing.description %}
+
     <meta name="description" content="{{sharing.description}}">
     <meta name="twitter:description" content="{{sharing.description}}">
     <meta property="og:description" content="{{sharing.description}}">
-{% endif %}
-{% if sharing.url %}
+
+
     <meta name="twitter:url" content="{{sharing.url}}">
     <meta property="og:url" content="{{sharing.url}}">
-{% endif %}
-{% if sharing.image %}
+
+
     <meta name="twitter:image" content="{{sharing.image}}">
     <meta name="twitter:card" content="summary_large_image">
     <meta property="og:image" content="{{sharing.image}}">
     <meta property="og:image:alt" content="{{sharing.image-alt}}">
-{% else %}
+
     <meta name="twitter:card" content="summary">
-{% endif %}
-{% if sharing.author %}
+
+
     <meta name="twitter:creator" content="{{sharing.author}}">
-{% endif %}
-{% if sharing.twitter-handle %}
+
+
     <meta name="twitter:site" content="{{sharing.twitter-handle}}">
-{% endif %}
+
   </head>
   <body>
 
     <div class="site-header">
       <div class="wrapper">
         <div class="site-nav">
-          <a class="page-link" href="stats{{page-suffix}}">Stats</a>
-          <a class="page-link" href="kanban{{page-suffix}}">Kanban</a>
-          <a class="page-link" href="archive{{page-suffix}}">Archive</a>
+          <a class="page-link" href="stats.html">Stats</a>
+          <a class="page-link" href="kanban.html">Kanban</a>
+          <a class="page-link" href="archive.html">Archive</a>
           <a class="page-link" href="tags/index.html">Tags</a>
-          {% if discuss-link %}<a class="page-link" href="{{discuss-link}}">Discuss</a>{% endif %}
+          <a class="page-link" href="{{discuss-link}}">Discuss</a>
 	  <a class="page-link" href="atom.xml">
             Feed
           </a>
-	  {% if twitter-handle %}
+	  
 	  <a class="page-link" href="https://twitter.com/{{twitter-handle}}">
             Twitter
           </a>
-	  {% endif %}
-	  {% if about-link %}
+	  
+	  
 	  <a class="page-link" href="{{about-link}}">About</a>
-	  {% endif %}
+	  
           <button id="theme-toggle" style="background: none; border: none; cursor: pointer; padding: 0 10px; font-size: 1.2rem; vertical-align: middle;" aria-label="Toggle theme">🌙</button>
         </div>
         <div>
@@ -227,11 +227,11 @@
 </script>
 
 
-      {% if not skip-archive %}
+      
       <div style="margin-bottom: 20px; float: right;">
-        <a class="page-link" href="archive{{page-suffix}}">Archive</a>
+        <a class="page-link" href="archive.html">Archive</a>
       </div>
-      {% endif %}
+      
     </div>
     
     <footer class="site-footer" style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--code-border); font-size: 0.85rem; color: var(--text-color); opacity: 0.8;">
