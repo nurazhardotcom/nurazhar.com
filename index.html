@@ -305,6 +305,40 @@
     </div>
 
     <div>
+        <h1><a href="sandbox-token-override-security.html">Sandbox vs. Keyring: Understanding Credential Precedence in Developer Security</a></h1>
+        <div><hr /><p>When building automated workflows, running developer agents, or operating within containers, you eventually run into a weird git authentication error. Your local machine is fully authenticated, your GitHub CLI (<code>gh</code>) is logged in, but the terminal inside your workspace flatly refuses to push:</p><pre><code class="language-text">remote: Invalid username or token. Password authentication is not supported.
+fatal: Authentication failed.
+</code></pre><p>The culprit? A silent security design pattern: <strong>Environment Variable Precedence</strong>.</p><p>Here is why secure sandboxes inject dummy or low-privilege tokens, how they override your system’s credentials, and why understanding this is a major security asset.</p><hr /><h2 id="the-credential-hierarchy">The Credential Hierarchy</h2><p>When you run a command like <code>git push</code> or <code>gh repo sync</code>, the utility determines how to authenticate by stepping through a strict hierarchy:</p><ol start="1"><li><strong>Environment Variables:</strong> Checked first (e.g., <code>GITHUB_TOKEN</code>, <code>GH_TOKEN</code>).</li><li><strong>Local Configuration:</strong> Repo-level configuration files (e.g., <code>.git/config</code>).</li><li><strong>Global Configuration:</strong> User-level configuration (e.g., <code>~/.gitconfig</code>).</li><li><strong>Credential Helpers / OS Keyring:</strong> Calls to macOS Keychain, Windows Credential Manager, or Linux <code>secret-tool</code>/<code>pass</code>.</li></ol><p>Because environment variables sit at the <strong>very top</strong> of this food chain, any variable defined in your current shell session will immediately override whatever secure keys you have saved in your operating system&apos;s keyring.</p><hr /><h2 id="why-sandboxes-hijack-your-session-(by-design)">Why Sandboxes Hijack Your Session (By Design)</h2><p>In modern development environments (including VS Code devcontainers, GitHub Codespaces, or agentic IDE sandboxes), the runtime environment will purposefully inject a scoped <code>GITHUB_TOKEN</code> environment variable.</p><p>This is not a bug; it is an active security boundary designed to enforce <strong>Least Privilege</strong>:</p><h3 id="1.-hardening-the-blast-radius">1. Hardening the Blast Radius</h3><p>If you run third-party scripts, test npm packages, or execute untrusted code in a workspace, those scripts run with the privileges of your terminal. If the terminal could read your master OS keyring, a compromised dependency could steal your global GitHub credentials. By forcing the process to use a scoped, temporary <code>GITHUB_TOKEN</code> set in the environment, the sandbox limits the damage a rogue script can do.</p><h3 id="2.-preventing-&quot;leakage&quot;-to-remote-sessions">2. Preventing &quot;Leakage&quot; to Remote Sessions</h3><p>When using remote shells or agents, injecting a temporary environment token prevents your private, long-lived SSH keys or master tokens from ever being sent over the network or exposed to the executing agent.</p><hr /><h2 id="how-to-safe-bypass-the-override">How to Safe-Bypass the Override</h2><p>When you are explicitly interacting with a command and need to fallback to your secure keyring, you don&apos;t need to delete your global environment configurations. You can temporarily unset the overriding variable just for the scope of that single command execution:</p><pre><code class="language-bash"># Temporarily drop the environment token so git looks at the OS keyring
+env -u GITHUB_TOKEN git push origin main
+</code></pre><p>Using <code>env -u</code> tells the system to execute the subsequent command in an environment that is clean of the specified variable, restoring the standard lookup chain down to the credential helper.</p><hr /><h2 id="is-this-worth-documenting?-(resume-perspective)">Is This Worth Documenting? (Resume Perspective)</h2><p>For engineers targeting <strong>DevSecOps, Platform Engineering, or Infrastructure</strong> roles, detailing these nuances is highly valuable:</p><ul><li><strong>It proves systems depth:</strong> Anyone can type <code>git push</code>. Understanding how Git resolves credentials across environment contexts, helper layers, and system keyrings shows you actually know how the tooling interacts with the host OS.</li><li><strong>It highlights security-first thinking:</strong> Documenting how to troubleshoot token precedence without simply turning off security settings (like blindly hardcoding credentials or changing file permissions) shows you respect organizational security boundaries.</li></ul></div>
+        
+        
+        <p><i>Published: 2026-06-15</i></p>
+        
+            <p><i>
+                Tagged:
+                
+                    <span class="tag">
+                        <a href="tags/devops.html">devops</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/architecture.html">architecture</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/security.html">security</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/linux.html">linux</a>
+                    </span>
+                
+            </i></p>
+        
+    </div>
+
+    <div>
         <h1><a href="postgres-threshold-batching.html">Scaling Micro-Transactions: Many-to-One Payout Batching inside Postgres</a></h1>
         <div><hr /><p>In a &quot;No-Backend&quot; architecture where the database is the primary application engine, writing clean and optimized business logic directly inside the database is key.</p><p>Recently, while building <strong><a href="https://github.com/nurazhardotcom/lagu-lagu">lagu-lagu</a></strong>—a stateless payout registry for independent musicians—we ran into a common micro-transaction scaling bottleneck: <strong>notary fee bloat</strong>.</p><p>If a fan tips an artist $1.00, triggering an outbound bank payout (via Tazapay) and committing a cryptographic proof to a public ledger (BSV Notary API) for <em>every single transaction</em> eats up all the artist&apos;s micro-liquidity in network transaction fees.</p><p>The solution? <strong>Threshold Payout Batching</strong> implemented natively in Postgres.</p><hr /><h2 id="1.-shifting-from-1-to-1-to-many-to-one-relations">1. Shifting from 1-to-1 to Many-to-One Relations</h2><p>Initially, our <code>payouts</code> table had a <code>transaction_id</code> column with a <code>UNIQUE</code> constraint. This enforced a strict 1-to-1 relationship between fan payments and artist payouts:</p><pre><code class="language-mermaid">graph LR
     subgraph Old Architecture: 1-to-1
