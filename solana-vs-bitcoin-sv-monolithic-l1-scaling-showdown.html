@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      (function() {
+        try {
+          const savedTheme = localStorage.getItem('theme');
+          const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+    <title>Solana vs. Bitcoin SV: Two Approaches to Monolithic L1 Scaling</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="application/atom+xml" rel="alternate" href="atom.xml" title="Solana vs. Bitcoin SV: Two Approaches to Monolithic L1 Scaling">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css">
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      mermaid.initialize({ startOnLoad: false, theme: isDark ? 'dark' : 'default' });
+      document.addEventListener("DOMContentLoaded", async () => {
+        const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
+        for (const codeBlock of codeBlocks) {
+          const pre = codeBlock.parentElement;
+          const div = document.createElement("div");
+          div.className = "mermaid";
+          div.textContent = codeBlock.textContent;
+          pre.replaceWith(div);
+        }
+        await mermaid.run();
+      });
+    </script>
+
+
+
+    <!-- Social sharing (Facebook, Twitter, LinkedIn, etc.) -->
+    <meta name="title" content="Solana vs. Bitcoin SV: Two Approaches to Monolithic L1 Scaling">
+    <meta name="twitter:title" content="Solana vs. Bitcoin SV: Two Approaches to Monolithic L1 Scaling">
+    <meta property="og:title" content="Solana vs. Bitcoin SV: Two Approaches to Monolithic L1 Scaling">
+    <meta property="og:type" content="website">
+
+    <meta name="description" content="A deep systems engineering comparison of monolithic L1 scaling: dissecting Solana&#39;s account-based parallel execution (Sealevel) against Bitcoin SV&#39;s UTXO parallelism and database state designs.">
+    <meta name="twitter:description" content="A deep systems engineering comparison of monolithic L1 scaling: dissecting Solana&#39;s account-based parallel execution (Sealevel) against Bitcoin SV&#39;s UTXO parallelism and database state designs.">
+    <meta property="og:description" content="A deep systems engineering comparison of monolithic L1 scaling: dissecting Solana&#39;s account-based parallel execution (Sealevel) against Bitcoin SV&#39;s UTXO parallelism and database state designs.">
+
+
+    <meta name="twitter:url" content="https://blog.nurazhar.com/solana-vs-bitcoin-sv-monolithic-l1-scaling-showdown.html">
+    <meta property="og:url" content="https://blog.nurazhar.com/solana-vs-bitcoin-sv-monolithic-l1-scaling-showdown.html">
+
+
+    <meta name="twitter:card" content="summary">
+
+
+
+  </head>
+  <body>
+
+    <div class="site-header">
+      <div class="wrapper">
+        <div class="site-nav">
+          <a class="page-link" href="stats.html">Stats</a>
+          <a class="page-link" href="archive.html">Archive</a>
+          <a class="page-link" href="tags/index.html">Tags</a>
+          
+	  <a class="page-link" href="atom.xml">
+            Feed
+          </a>
+	  
+	  
+          <button id="theme-toggle" style="background: none; border: none; cursor: pointer; padding: 0 10px; font-size: 1.2rem; vertical-align: middle;" aria-label="Toggle theme">🌙</button>
+        </div>
+        <div>
+          <h1 class="site-title">
+            <a class="page-link" href="index.html">Nur Azhar&#39;s</a>
+          </h1>
+	  <p>Thoughts on clojure, linux, security and Bitcoin&#39;s 0.1v (Satoshi Nakamoto&#39;s Design) in an era of artificial intelligence</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrapper">
+
+      <h1>
+  
+  Solana vs. Bitcoin SV: Two Approaches to Monolithic L1 Scaling
+  
+</h1>
+<div><hr /><p>When it comes to scaling blockchains, the industry is split into two major camps: the <strong>modular camp</strong> (which offloads transaction execution to Layer-2 rollups, like Ethereum and Bitcoin Cash&apos;s current trajectory) and the <strong>monolithic camp</strong> (which scales everything on a single, high-throughput Layer-1).</p><p>Inside the monolithic camp, two projects stand out for their polar-opposite approaches to solving the same throughput problem: <strong>Solana (<span class="formula">SOL)** and **Bitcoin SV (</span>BSV)</strong>.</p><p>Both networks aim for sub-cent transaction fees, high throughput, and immediate settlement on the L1. However, their underlying systems architectures are completely different.</p><p>Here is a deep-dive systems engineering comparison of Solana&apos;s account-based parallel engine against Bitcoin SV&apos;s UTXO-based database state.</p><hr /><h2 id="1.-concurrency:-solana-sealevel-vs.-utxo-parallelism">1. Concurrency: Solana Sealevel vs. UTXO Parallelism</h2><p>To process tens of thousands of transactions per second, a blockchain cannot run transactions sequentially on a single thread. It must execute them concurrently. How they achieve concurrency is the core difference between the two architectures.</p><pre><code class="language-mermaid">graph TD
+    subgraph Solana (Account Locks)
+        tx1[Tx 1: Read/Write Acc A] --&gt; lockA[Lock Account A]
+        tx2[Tx 2: Read/Write Acc B] --&gt; lockB[Lock Account B]
+        lockA --&gt; exec1[Thread 1]
+        lockB --&gt; exec2[Thread 2]
+        tx3[Tx 3: Read/Write Acc A] --&gt; wait[Wait for Lock A]
+    end
+    subgraph BSV (UTXO Independence)
+        txA[Tx A: Spend UTXO 1] --&gt; execA[Thread 1]
+        txB[Tx B: Spend UTXO 2] --&gt; execB[Thread 2]
+        txC[Tx C: Spend UTXO 3] --&gt; execC[Thread 3]
+    end
+</code></pre><h3 id="solana:-sealevel-and-account-access-lists">Solana: Sealevel and Account Access Lists</h3><p>Solana is an account-based system (like Ethereum). To prevent two transactions from modifying the same account balance simultaneously, Solana developed <strong>Sealevel</strong>, a parallel smart contract runtime.</p><ul><li><strong>How it works</strong>: Every Solana transaction must declare exactly which accounts it will read and write to (the &quot;Access List&quot;).</li><li><strong>The Scheduler</strong>: The validator&apos;s runtime scheduler reads these access lists. If two transactions modify different accounts (e.g., Alice sending to Bob, and Charlie sending to Dave), they are scheduled to run concurrently on separate GPU/CPU cores. If they modify the same account (e.g., both interacting with the same liquidity pool), the scheduler locks the account and executes them sequentially.</li><li><strong>The Bottleneck</strong>: High-demand accounts (like popular DeFi pools or mint events) create massive locking congestion, degrading performance.</li></ul><h3 id="bitcoin-sv:-native-utxo-parallelism">Bitcoin SV: Native UTXO Parallelism</h3><p>BSV uses the <strong>UTXO (Unspent Transaction Output)</strong> model. There are no &quot;accounts&quot; or global states to lock.</p><ul><li><strong>How it works</strong>: A transaction simply consumes specific outputs (UTXOs) and creates new ones. Every UTXO is completely independent.</li><li><strong>Parallel by Design</strong>: Because UTXOs are discrete, any two transactions that spend different inputs have <strong>zero shared state</strong>. A miner can validate them concurrently on separate threads with absolute safety and zero scheduler overhead. There are no &quot;hot spots&quot; or account locking delays.</li><li><strong>The Bottleneck</strong>: Concurrency is pushed to the client side. If a user wants to send multiple transactions rapidly, their wallet must manage and split their UTXOs (creating a pool of change outputs) so they don&apos;t try to spend the same UTXO twice in parallel.</li></ul><hr /><h2 id="2.-state-management-and-node-hardware">2. State Management and Node Hardware</h2><p>A blockchain&apos;s biggest bottleneck is not processing transactions—it is <strong>writing and reading state from disk</strong>.</p><h3 id="solana:-the-state-bloat-problem">Solana: The State Bloat Problem</h3><p>On Solana, the &quot;Accounts DB&quot; holds the active state of all balances, smart contracts, and storage on the network.</p><ul><li><strong>Memory Mapping</strong>: To keep up with high speeds, validators must store this state in fast memory (RAM) or highly optimized PCIe Gen4 NVMe SSDs.</li><li><strong>Hardware Inflation</strong>: Because Solana allows smart contracts to store persistent data on-chain, the size of the state database grows rapidly. This forces validators to run enterprise-grade hardware (minimum 256GB RAM, high-core CPUs, and 1Gbps symmetrical fiber connections). It is practically impossible to run a Solana validator on consumer-grade hardware.</li></ul><h3 id="bitcoin-sv:-lightweight-miners,-heavy-indexers">Bitcoin SV: Lightweight Miners, Heavy Indexers</h3><p>On BSV, miners do not need to keep track of contract states or account histories.</p><ul><li><strong>Pruning</strong>: Miners only need to index the active <strong>UTXO set</strong> (which is a fraction of the total blockchain size) to prevent double-spending. Once a transaction is processed, the raw data can be archived or pruned by the miner.</li><li><strong>Division of Labor</strong>: BSV separates the <em>consensus network</em> (miners) from the <em>application queries</em> (indexers). Miners focus solely on processing raw transaction volume, while application-specific indexers (like Gorilla Pool or Babbage) run custom databases to extract and query token states, ordinals, and identities.</li><li><strong>The Tradeoff</strong>: If indexers are centralized or crash (as happens during wallet downtime), the user-facing apps stop working, even if the mining network is processing blocks smoothly.</li></ul><hr /><h2 id="3.-clock-synchronization-vs.-block-times">3. Clock Synchronization vs. Block Times</h2><p>How do nodes agree on the sequence of events without slowing down the network?</p><table><thead><tr><th style="text-align:left;">Feature</th><th style="text-align:left;">Solana ($SOL)</th><th style="text-align:left;">Bitcoin SV ($BSV)</th></tr></thead><tbody><tr><td style="text-align:left;"><strong>Clock Mechanism</strong></td><td style="text-align:left;"><strong>Proof of History (PoH)</strong> (VDF sequencer)</td><td style="text-align:left;"><strong>Nakamoto Consensus</strong> (PoW mining)</td></tr><tr><td style="text-align:left;"><strong>Slot/Block Time</strong></td><td style="text-align:left;"><strong>~400 milliseconds</strong></td><td style="text-align:left;"><strong>~10 minutes</strong> (with instant 0-conf)</td></tr><tr><td style="text-align:left;"><strong>Finality</strong></td><td style="text-align:left;">Consensus voting (~2 seconds)</td><td style="text-align:left;">Miner block inclusion + proof accumulation</td></tr></tbody></table><h3 id="solana&apos;s-proof-of-history-(poh)">Solana&apos;s Proof of History (PoH)</h3><p>Solana uses PoH, a Verifiable Delay Function (VDF) that acts as a decentralized clock. By hashing its outputs continuously, the network creates a verifiable timeline of when transactions occurred.</p><ul><li><strong>Result</strong>: Validators can sequence transactions without waiting for global block consensus first. This allows Solana to have <strong>400ms slot times</strong>, delivering incredibly fast UX.</li></ul><h3 id="bsv&apos;s-nakamoto-consensus">BSV&apos;s Nakamoto Consensus</h3><p>BSV sticks to Bitcoin&apos;s 10-minute block times. However, it scales by allowing <strong>zero-confirmation (0-conf) transactions</strong>.</p><ul><li><strong>Result</strong>: Because miners propagate transactions peer-to-peer instantly, and double-spending a transaction is economically difficult on a highly connected miner network, dApps accept transactions as &quot;complete&quot; in milliseconds before they are actually mined into a block.</li></ul><hr /><h2 id="the-architectural-verdict">The Architectural Verdict</h2><p>Solana and Bitcoin SV represent two different answers to the same scaling problem:</p><ul><li><strong>Solana</strong> is a <strong>hardware-scaling Account machine</strong>. It achieves high performance by demanding elite hardware from its validators and utilizing a complex parallel scheduler (Sealevel) to manage shared state.</li><li><strong>Bitcoin SV</strong> is a <strong>network-scaling UTXO machine</strong>. It achieves performance by keeping the base protocol simple, leveraging the natural parallelism of UTXOs, and offloading state management and indexing to the application layer.</li></ul><p>For developers, <strong>Solana</strong> offers immediate speed and unified state access, but at the cost of high RPC fees, extreme hardware requirements, and account-locking bottlenecks. <strong>Bitcoin SV</strong> offers uncapped parallel throughput and zero-cent fees, but at the cost of managing complex client-side UTXO routing and relying on fragile external indexer infrastructure.</p></div>
+
+<p><i>Published: 2026-06-15</i></p>
+
+<p>
+  <i>
+  Tagged:
+  
+  <span class="tag">
+    <a href="tags/solana.html">solana</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/architecture.html">architecture</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/blockchain.html">blockchain</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/database.html">database</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/bitcoin.html">bitcoin</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/performance.html">performance</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/systems.html">systems</a>
+  </span>
+  
+  </i>
+</p>
+
+
+
+      
+      <div style="margin-bottom: 20px; float: right;">
+        <a class="page-link" href="archive.html">Archive</a>
+      </div>
+      
+    </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.getElementById('theme-toggle');
+        if (toggleButton) {
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          toggleButton.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+          
+          toggleButton.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            try {
+              localStorage.setItem('theme', next);
+            } catch (e) {
+              console.warn('Storage blocked: theme preference will not persist.');
+            }
+            toggleButton.textContent = next === 'dark' ? '☀️' : '🌙';
+          });
+        }
+      });
+    </script>
+    <script>
+      (function() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+        
+        fetch('https://asia-southeast1-nurazhardotcom.cloudfunctions.net/blog-analytics-api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: window.location.pathname,
+            referrer: document.referrer || null
+          })
+        }).catch(err => console.error('Tracking failed', err));
+      })();
+    </script>
+  </body>
+</html>
