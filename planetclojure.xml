@@ -3,11 +3,53 @@
   <title>Nur Azhar's</title>
   <link href="https://blog.nurazhar.com/atom.xml" rel="self"/>
   <link href="https://blog.nurazhar.com"/>
-  <updated>2026-06-15T07:01:46+00:00</updated>
+  <updated>2026-06-15T07:02:30+00:00</updated>
   <id>https://blog.nurazhar.com</id>
   <author>
     <name>Nur Azhar</name>
   </author>
+  <entry>
+    <id>https://blog.nurazhar.com/decoupled-static-dashboards.html</id>
+    <link href="https://blog.nurazhar.com/decoupled-static-dashboards.html"/>
+    <title>Decoupled Static Dashboards: Building Transparent roadmaps in Public</title>
+    <updated>2026-06-15T23:59:59+00:00</updated>
+    <content type="html"><![CDATA[<div><hr /><p>When you decide to <strong>build in public</strong>, transparency is the primary asset. You want your readers, users, and future contributors to see exactly what features are completed, what is in active development, and what is coming next.</p><p>But building this dashboard traditionally introduces unnecessary architectural choices:</p><ul><li>Spin up a database to host card states? (Adds connection limits and DB maintenance).</li><li>Deploy a dynamic API server? (Breaks the $0 idle server cost baseline).</li><li>Embed a third-party corporate widget like GitHub Projects? (Leaks reader telemetry and looks generic).</li></ul><p>To keep our architecture clean and completely free of operational overhead, we decided to host our roadmap board natively on the blog under <code>/kanban.html</code>.</p><p>Here is the exact decoupled design pattern we used to build it.</p><hr /><h2 id="1.-the-zero-entropy-pipeline">1. The Zero-Entropy Pipeline</h2><p>Instead of running an active backend database, we treat our repository as the <strong>Single Source of Truth</strong>. The tasks are stored inside a plain JSON manifest file (<code>kanban_state.json</code>) directly in the blog&apos;s code structure:</p><pre><code class="language-json">{
+  &quot;tasks&quot;: [
+    {
+      &quot;id&quot;: &quot;task-1&quot;,
+      &quot;title&quot;: &quot;Refactor Payout splits to Decoupled Settlement&quot;,
+      &quot;desc&quot;: &quot;Splitting 85/15 database writes immediately instead of pooling batch structures.&quot;,
+      &quot;status&quot;: &quot;done&quot;
+    }
+  ]
+}
+</code></pre><p>Every time we write code or complete a task locally, we simply edit this JSON file.</p><hr /><h2 id="2.-compile-time-html-injection">2. Compile-Time HTML Injection</h2><p>To render this board, we don&apos;t fetch the JSON dynamically over the network when a user opens the page (which would require API calls and trigger cold starts). Instead, the tasks are injected <strong>directly into the HTML code at compile-time</strong> by our Babashka static site builder.</p><p>In <code>bb.edn</code>, we read both the HTML template and the JSON file:</p><pre><code class="language-clojure">(let [base (slurp &quot;templates/base.html&quot;)
+      kanban-body (slurp &quot;templates/kanban.html&quot;)
+      kanban-state (slurp &quot;kanban_state.json&quot;)
+      rendered (-&gt; base
+                   (clojure.string/replace &quot;{{title}}&quot; &quot;lagu-lagu&quot;)
+                   (clojure.string/replace &quot;{{body | safe }}&quot; kanban-body)
+                   (clojure.string/replace &quot;{{kanban-state | safe}}&quot; kanban-state))]
+  (spit &quot;public/kanban.html&quot; rendered))
+</code></pre><p>Inside <a href="https://github.com/nurazhardotcom/blog.nurazhar.com/blob/main/templates/kanban.html">templates/kanban.html</a>, a simple script parses the pre-injected JSON variable and maps the elements to their CSS columns on the fly:</p><pre><code class="language-javascript">(function() {
+  // Directly compiled from local JSON during rendering
+  const state = {{kanban-state | safe}};
+  
+  function renderBoard() {
+    state.tasks.forEach(t =&gt; {
+      const column = document.getElementById(&apos;tasks-&apos; + t.status);
+      // Create and append task card element...
+    });
+  }
+  renderBoard();
+})();
+</code></pre><hr /><h2 id="3.-the-execution-flow">3. The Execution Flow</h2><pre><code class="language-mermaid">graph LR
+    Local[&quot;💻 Developer (Local laptop)&quot;] --&gt;|1. Edit kanban_state.json| Git[&quot;🐙 Git Commit &amp; Push&quot;]
+    Git --&gt;|2. Trigger Workflow| CI[&quot;☁️ GitHub Actions (bb quickblog render)&quot;]
+    CI --&gt;|3. Compile JSON into HTML| Pages[&quot;🌐 GitHub Pages CDN&quot;]
+    Pages --&gt;|4. Serve 100% static file| Reader[&quot;👥 Blog Reader&quot;]
+</code></pre><ol start="1"><li><strong>Commit</strong>: We modify our local <code>kanban_state.json</code> file as we code.</li><li><strong>Compile</strong>: Pushing to GitHub triggers our Actions runner (<code>bb quickblog render</code>) which compiles the JSON data straight into the static HTML layout.</li><li><strong>Serve</strong>: The completed static page is pushed to GitHub Pages. The reader loads a 100% pre-compiled HTML page from a globally cached CDN.</li></ol><hr /><h2 id="the-takeaway">The Takeaway</h2><p>By choosing a <strong>decoupled static design</strong>, we get:</p><ul><li><strong>Zero Server Overhead</strong>: Idle costs remain $0. No databases to manage.</li><li><strong>Fast Load Times</strong>: The browser doesn&apos;t wait for API roundtrips.</li><li><strong>Developer Ownership</strong>: You write your documentation, posts, and roadmap in plain text files using your favorite local editor. The compiler handles the presentation.</li></ul><p>This is the exact setup now running live for <strong><a href="https://blog.nurazhar.com/kanban.html">lagu-lagu</a></strong>.</p></div>]]></content>
+  </entry>
   <entry>
     <id>https://blog.nurazhar.com/designing-zero-config-developer-sandbox.html</id>
     <link href="https://blog.nurazhar.com/designing-zero-config-developer-sandbox.html"/>

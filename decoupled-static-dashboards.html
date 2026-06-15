@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      (function() {
+        try {
+          const savedTheme = localStorage.getItem('theme');
+          const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+    <title>Decoupled Static Dashboards: Building Transparent roadmaps in Public</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="application/atom+xml" rel="alternate" href="atom.xml" title="Decoupled Static Dashboards: Building Transparent roadmaps in Public">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css">
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      mermaid.initialize({ startOnLoad: false, theme: isDark ? 'dark' : 'default' });
+      document.addEventListener("DOMContentLoaded", async () => {
+        const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
+        for (const codeBlock of codeBlocks) {
+          const pre = codeBlock.parentElement;
+          const div = document.createElement("div");
+          div.className = "mermaid";
+          div.textContent = codeBlock.textContent;
+          pre.replaceWith(div);
+        }
+        await mermaid.run();
+      });
+    </script>
+
+
+
+    <!-- Social sharing (Facebook, Twitter, LinkedIn, etc.) -->
+    <meta name="title" content="Decoupled Static Dashboards: Building Transparent roadmaps in Public">
+    <meta name="twitter:title" content="Decoupled Static Dashboards: Building Transparent roadmaps in Public">
+    <meta property="og:title" content="Decoupled Static Dashboards: Building Transparent roadmaps in Public">
+    <meta property="og:type" content="website">
+
+    <meta name="description" content="How to build and serve interactive, public project roadmaps natively to readers at zero compute cost using static compiler pipelines.">
+    <meta name="twitter:description" content="How to build and serve interactive, public project roadmaps natively to readers at zero compute cost using static compiler pipelines.">
+    <meta property="og:description" content="How to build and serve interactive, public project roadmaps natively to readers at zero compute cost using static compiler pipelines.">
+
+
+    <meta name="twitter:url" content="https://blog.nurazhar.com/decoupled-static-dashboards.html">
+    <meta property="og:url" content="https://blog.nurazhar.com/decoupled-static-dashboards.html">
+
+
+    <meta name="twitter:card" content="summary">
+
+
+
+  </head>
+  <body>
+
+    <div class="site-header">
+      <div class="wrapper">
+        <div class="site-nav">
+          <a class="page-link" href="stats.html">Stats</a>
+          <a class="page-link" href="kanban.html">Kanban</a>
+          <a class="page-link" href="archive.html">Archive</a>
+          <a class="page-link" href="tags/index.html">Tags</a>
+          
+	  <a class="page-link" href="atom.xml">
+            Feed
+          </a>
+	  
+	  
+          <button id="theme-toggle" style="background: none; border: none; cursor: pointer; padding: 0 10px; font-size: 1.2rem; vertical-align: middle;" aria-label="Toggle theme">🌙</button>
+        </div>
+        <div>
+          <h1 class="site-title">
+            <a class="page-link" href="index.html">Nur Azhar&#39;s</a>
+          </h1>
+	  <p>Thoughts on clojure, linux, security and Bitcoin&#39;s 0.1v (Satoshi Nakamoto&#39;s Design) in an era of artificial intelligence</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrapper">
+
+      <h1>
+  
+  Decoupled Static Dashboards: Building Transparent roadmaps in Public
+  
+</h1>
+<div><hr /><p>When you decide to <strong>build in public</strong>, transparency is the primary asset. You want your readers, users, and future contributors to see exactly what features are completed, what is in active development, and what is coming next.</p><p>But building this dashboard traditionally introduces unnecessary architectural choices:</p><ul><li>Spin up a database to host card states? (Adds connection limits and DB maintenance).</li><li>Deploy a dynamic API server? (Breaks the $0 idle server cost baseline).</li><li>Embed a third-party corporate widget like GitHub Projects? (Leaks reader telemetry and looks generic).</li></ul><p>To keep our architecture clean and completely free of operational overhead, we decided to host our roadmap board natively on the blog under <code>/kanban.html</code>.</p><p>Here is the exact decoupled design pattern we used to build it.</p><hr /><h2 id="1.-the-zero-entropy-pipeline">1. The Zero-Entropy Pipeline</h2><p>Instead of running an active backend database, we treat our repository as the <strong>Single Source of Truth</strong>. The tasks are stored inside a plain JSON manifest file (<code>kanban_state.json</code>) directly in the blog&apos;s code structure:</p><pre><code class="language-json">{
+  &quot;tasks&quot;: [
+    {
+      &quot;id&quot;: &quot;task-1&quot;,
+      &quot;title&quot;: &quot;Refactor Payout splits to Decoupled Settlement&quot;,
+      &quot;desc&quot;: &quot;Splitting 85/15 database writes immediately instead of pooling batch structures.&quot;,
+      &quot;status&quot;: &quot;done&quot;
+    }
+  ]
+}
+</code></pre><p>Every time we write code or complete a task locally, we simply edit this JSON file.</p><hr /><h2 id="2.-compile-time-html-injection">2. Compile-Time HTML Injection</h2><p>To render this board, we don&apos;t fetch the JSON dynamically over the network when a user opens the page (which would require API calls and trigger cold starts). Instead, the tasks are injected <strong>directly into the HTML code at compile-time</strong> by our Babashka static site builder.</p><p>In <code>bb.edn</code>, we read both the HTML template and the JSON file:</p><pre><code class="language-clojure">(let [base (slurp &quot;templates/base.html&quot;)
+      kanban-body (slurp &quot;templates/kanban.html&quot;)
+      kanban-state (slurp &quot;kanban_state.json&quot;)
+      rendered (-&gt; base
+                   (clojure.string/replace &quot;{{title}}&quot; &quot;lagu-lagu&quot;)
+                   (clojure.string/replace &quot;{{body | safe }}&quot; kanban-body)
+                   (clojure.string/replace &quot;{{kanban-state | safe}}&quot; kanban-state))]
+  (spit &quot;public/kanban.html&quot; rendered))
+</code></pre><p>Inside <a href="https://github.com/nurazhardotcom/blog.nurazhar.com/blob/main/templates/kanban.html">templates/kanban.html</a>, a simple script parses the pre-injected JSON variable and maps the elements to their CSS columns on the fly:</p><pre><code class="language-javascript">(function() {
+  // Directly compiled from local JSON during rendering
+  const state = {{kanban-state | safe}};
+  
+  function renderBoard() {
+    state.tasks.forEach(t =&gt; {
+      const column = document.getElementById(&apos;tasks-&apos; + t.status);
+      // Create and append task card element...
+    });
+  }
+  renderBoard();
+})();
+</code></pre><hr /><h2 id="3.-the-execution-flow">3. The Execution Flow</h2><pre><code class="language-mermaid">graph LR
+    Local[&quot;💻 Developer (Local laptop)&quot;] --&gt;|1. Edit kanban_state.json| Git[&quot;🐙 Git Commit &amp; Push&quot;]
+    Git --&gt;|2. Trigger Workflow| CI[&quot;☁️ GitHub Actions (bb quickblog render)&quot;]
+    CI --&gt;|3. Compile JSON into HTML| Pages[&quot;🌐 GitHub Pages CDN&quot;]
+    Pages --&gt;|4. Serve 100% static file| Reader[&quot;👥 Blog Reader&quot;]
+</code></pre><ol start="1"><li><strong>Commit</strong>: We modify our local <code>kanban_state.json</code> file as we code.</li><li><strong>Compile</strong>: Pushing to GitHub triggers our Actions runner (<code>bb quickblog render</code>) which compiles the JSON data straight into the static HTML layout.</li><li><strong>Serve</strong>: The completed static page is pushed to GitHub Pages. The reader loads a 100% pre-compiled HTML page from a globally cached CDN.</li></ol><hr /><h2 id="the-takeaway">The Takeaway</h2><p>By choosing a <strong>decoupled static design</strong>, we get:</p><ul><li><strong>Zero Server Overhead</strong>: Idle costs remain $0. No databases to manage.</li><li><strong>Fast Load Times</strong>: The browser doesn&apos;t wait for API roundtrips.</li><li><strong>Developer Ownership</strong>: You write your documentation, posts, and roadmap in plain text files using your favorite local editor. The compiler handles the presentation.</li></ul><p>This is the exact setup now running live for <strong><a href="https://blog.nurazhar.com/kanban.html">lagu-lagu</a></strong>.</p></div>
+
+<p><i>Published: 2026-06-15</i></p>
+
+<p>
+  <i>
+  Tagged:
+  
+  <span class="tag">
+    <a href="tags/architecture.html">architecture</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/automation.html">automation</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/clojure.html">clojure</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/web.html">web</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/minimalism.html">minimalism</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/babashka.html">babashka</a>
+  </span>
+  
+  </i>
+</p>
+
+
+
+      
+      <div style="margin-bottom: 20px; float: right;">
+        <a class="page-link" href="archive.html">Archive</a>
+      </div>
+      
+    </div>
+    
+    <footer class="site-footer" style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--code-border); font-size: 0.85rem; color: var(--text-color); opacity: 0.8;">
+      <div class="wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
+            <img alt="Creative Commons License" style="border-width:0; height: 31px;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+          </a>
+        </div>
+        <div>
+          This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" style="color: var(--link-color); text-decoration: underline;">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+        </div>
+        <div style="font-size: 0.75rem; opacity: 0.6;">
+          &copy; 2026 Nur Azhar. Build in public.
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.getElementById('theme-toggle');
+        if (toggleButton) {
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          toggleButton.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+          
+          toggleButton.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            try {
+              localStorage.setItem('theme', next);
+            } catch (e) {
+              console.warn('Storage blocked: theme preference will not persist.');
+            }
+            toggleButton.textContent = next === 'dark' ? '☀️' : '🌙';
+          });
+        }
+      });
+    </script>
+    <script>
+      (function() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+        
+        fetch('https://asia-southeast1-nurazhardotcom.cloudfunctions.net/blog-analytics-api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: window.location.pathname,
+            referrer: document.referrer || null
+          })
+        }).catch(err => console.error('Tracking failed', err));
+      })();
+    </script>
+  </body>
+</html>
