@@ -94,7 +94,7 @@
   
 </h1>
 <div><hr /><p>In the landscape of AI security engineering, the threat model has shifted. We are no longer just securing static databases; we are securing <strong>dynamic, probabilistic execution runtimes (LLMs &amp; Autonomous Agents)</strong>.</p><p>To land roles in AI Security Engineering (such as at leading digital asset platforms), an engineer must understand both sides of the coin: <strong>how attackers weaponize LLMs</strong> and <strong>how to construct deterministic defensive verification gates</strong>.</p><p>Here is the structural blueprint of AI-driven threat generation and the architectural frameworks required to defend them.</p><hr /><h3 id="the-threat-model:-how-attackers-leverage-llms">The Threat Model: How Attackers Leverage LLMs</h3><p>Attackers use LLMs as automated, force-multiplying compilation engines rather than simple query-answering bots.</p><pre><code class="language-mermaid">graph TD
-    subgraph Offensive AI Pipeline [The Adversarial Loop]
+    subgraph OffensiveAIPipeline [&quot;The Adversarial Loop&quot;]
         A[Uncensored Local LLM] --&gt;|1. Generate Polymorphic Code| B[Polymorphic Script]
         A --&gt;|2. Search Source Code| C[Locate Zero-Day Logic Bug]
         
@@ -108,7 +108,7 @@
     style A fill:#f38ba8,stroke:#111,stroke-width:2px,color:#111
     style F fill:#f9e2af,stroke:#111,stroke-width:2px,color:#111
 </code></pre><h4 id="1.-polymorphic-payload-generation">1. Polymorphic Payload Generation</h4><p>Traditional security systems look for static indicators of compromise (hashes or signature strings). Attackers use local, fine-tuned LLMs to rewrite the syntax of malicious shell scripts dynamically on every download.</p><ul><li>By changing variable naming structures, altering execution pathways, and obfuscating payloads (e.g., swapping standard calls for dynamically computed base64 evaluation hooks), the malware performs the exact same function but completely evades signature-based static detection.</li></ul><h4 id="2.-automated-vulnerability-auditing-(targeting-zero-days)">2. Automated Vulnerability Auditing (Targeting Zero-Days)</h4><p>State-sponsored groups feed massive codebases (such as open-source libraries or OS modules) into automated agent pipelines. These agents are programmed to trace variable bounds, look for memory leaks, and identify injection points, generating functional exploit payloads at scale.</p><hr /><h3 id="the-defensive-architecture:-constructing-the-test-harness">The Defensive Architecture: Constructing the Test Harness</h3><p>To secure LLM integrations and agentic workflows, we must treat the probabilistic model output as an <strong>untrusted process</strong>. We apply classic sandboxing and input/output contract boundaries.</p><pre><code class="language-mermaid">graph TD
-    subgraph Defensive Engineering [The Hardened RAG Gateway]
+    subgraph DefensiveEngineering [&quot;The Hardened RAG Gateway&quot;]
         Input[User Prompt / File Input] --&gt; Gate1[Input Guardrail: Prompt Injection Filter]
         Gate1 --&gt;|Clean Context| Model[Probabilistic LLM Engine]
         Model --&gt;|Raw String Output| Gate2[Output Validator: Deterministic JSON Schema Parser]

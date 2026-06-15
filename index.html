@@ -126,11 +126,11 @@ env -u GITHUB_TOKEN git push origin main
     <div>
         <h1><a href="postgres-threshold-batching.html">Scaling Micro-Transactions: Many-to-One Payout Batching inside Postgres</a></h1>
         <div><hr /><p>In a &quot;No-Backend&quot; architecture where the database is the primary application engine, writing clean and optimized business logic directly inside the database is key.</p><p>Recently, while building <strong><a href="https://github.com/nurazhardotcom/lagu-lagu">lagu-lagu</a></strong>—a stateless payout registry for independent musicians—we ran into a common micro-transaction scaling bottleneck: <strong>notary fee bloat</strong>.</p><p>If a fan tips an artist $1.00, triggering an outbound bank payout (via Tazapay) and committing a cryptographic proof to a public ledger (BSV Notary API) for <em>every single transaction</em> eats up all the artist&apos;s micro-liquidity in network transaction fees.</p><p>The solution? <strong>Threshold Payout Batching</strong> implemented natively in Postgres.</p><hr /><h2 id="1.-shifting-from-1-to-1-to-many-to-one-relations">1. Shifting from 1-to-1 to Many-to-One Relations</h2><p>Initially, our <code>payouts</code> table had a <code>transaction_id</code> column with a <code>UNIQUE</code> constraint. This enforced a strict 1-to-1 relationship between fan payments and artist payouts:</p><pre><code class="language-mermaid">graph LR
-    subgraph Old Architecture: 1-to-1
+    subgraph OldArchitecture [&quot;Old Architecture: 1-to-1&quot;]
         Tx[Fan Transaction] --&gt;|Unique Link| P1[Artist Payout]
     end
 </code></pre><p>To support batching, we inverted this relation. A single <code>payout</code> can clear multiple incoming <code>transactions</code>. The database structure became <strong>many-to-one</strong>:</p><pre><code class="language-mermaid">graph TD
-    subgraph New Architecture: Many-to-One
+    subgraph NewArchitecture [&quot;New Architecture: Many-to-One&quot;]
         T1[Fan Transaction 1 - $4.00] --&gt;|payout_id| P[Grouped Payout - $12.00]
         T2[Fan Transaction 2 - $4.00] --&gt;|payout_id| P
         T3[Fan Transaction 3 - $4.00] --&gt;|payout_id| P
@@ -553,14 +553,14 @@ package() {
     <div>
         <h1><a href="integrating-aur-audit-into-paru.html">Hardening the Arch/CachyOS Build Pipeline: Native AUR Auditing with Paru &amp; Babashka</a></h1>
         <div><hr /><p>When updating an Arch-based system (like CachyOS) via AUR helpers, we are executing arbitrary build scripts (<code>PKGBUILD</code> and <code>.install</code> scripts) written by community members. During supply chain incidents, relying on manual human checks is a massive liability.</p><p>This post serves as a high-signal reference to automate static analysis on these scripts natively before compilation.</p><hr /><h3 id="the-architecture:-before-vs.-after">The Architecture: Before vs. After</h3><pre><code class="language-mermaid">graph TD
-    subgraph Legacy Workflow [Risky: Before aur-audit]
+    subgraph LegacyWorkflow [&quot;Risky: Before aur-audit&quot;]
         A1[paru install google-chrome] --&gt; A2[Fetch AUR Git Repository]
         A2 --&gt; A3[Human Review / Pager]
         A3 --&gt;|User presses q / confirms| A4[Execute PKGBUILD / makepkg]
         A4 --&gt;|Malicious code runs on host| A5[System Compromised]
     end
 
-    subgraph Secure Workflow [Hardened: After aur-audit]
+    subgraph SecureWorkflow [&quot;Hardened: After aur-audit&quot;]
         B1[paru install google-chrome] --&gt; B2[Fetch AUR Git Repository]
         B2 --&gt; B3[Trigger: PreBuildCommand]
         B3 --&gt; B4{aur-audit.clj Scan}
@@ -824,7 +824,7 @@ for f in glob.glob(&quot;posts/*.md&quot;):
     <div>
         <h1><a href="red-teaming-ai-pipelines.html">Red Teaming AI Pipelines: How Attackers Weaponize LLMs &amp; How to Build Defensive Harnesses</a></h1>
         <div><hr /><p>In the landscape of AI security engineering, the threat model has shifted. We are no longer just securing static databases; we are securing <strong>dynamic, probabilistic execution runtimes (LLMs &amp; Autonomous Agents)</strong>.</p><p>To land roles in AI Security Engineering (such as at leading digital asset platforms), an engineer must understand both sides of the coin: <strong>how attackers weaponize LLMs</strong> and <strong>how to construct deterministic defensive verification gates</strong>.</p><p>Here is the structural blueprint of AI-driven threat generation and the architectural frameworks required to defend them.</p><hr /><h3 id="the-threat-model:-how-attackers-leverage-llms">The Threat Model: How Attackers Leverage LLMs</h3><p>Attackers use LLMs as automated, force-multiplying compilation engines rather than simple query-answering bots.</p><pre><code class="language-mermaid">graph TD
-    subgraph Offensive AI Pipeline [The Adversarial Loop]
+    subgraph OffensiveAIPipeline [&quot;The Adversarial Loop&quot;]
         A[Uncensored Local LLM] --&gt;|1. Generate Polymorphic Code| B[Polymorphic Script]
         A --&gt;|2. Search Source Code| C[Locate Zero-Day Logic Bug]
         
@@ -838,7 +838,7 @@ for f in glob.glob(&quot;posts/*.md&quot;):
     style A fill:#f38ba8,stroke:#111,stroke-width:2px,color:#111
     style F fill:#f9e2af,stroke:#111,stroke-width:2px,color:#111
 </code></pre><h4 id="1.-polymorphic-payload-generation">1. Polymorphic Payload Generation</h4><p>Traditional security systems look for static indicators of compromise (hashes or signature strings). Attackers use local, fine-tuned LLMs to rewrite the syntax of malicious shell scripts dynamically on every download.</p><ul><li>By changing variable naming structures, altering execution pathways, and obfuscating payloads (e.g., swapping standard calls for dynamically computed base64 evaluation hooks), the malware performs the exact same function but completely evades signature-based static detection.</li></ul><h4 id="2.-automated-vulnerability-auditing-(targeting-zero-days)">2. Automated Vulnerability Auditing (Targeting Zero-Days)</h4><p>State-sponsored groups feed massive codebases (such as open-source libraries or OS modules) into automated agent pipelines. These agents are programmed to trace variable bounds, look for memory leaks, and identify injection points, generating functional exploit payloads at scale.</p><hr /><h3 id="the-defensive-architecture:-constructing-the-test-harness">The Defensive Architecture: Constructing the Test Harness</h3><p>To secure LLM integrations and agentic workflows, we must treat the probabilistic model output as an <strong>untrusted process</strong>. We apply classic sandboxing and input/output contract boundaries.</p><pre><code class="language-mermaid">graph TD
-    subgraph Defensive Engineering [The Hardened RAG Gateway]
+    subgraph DefensiveEngineering [&quot;The Hardened RAG Gateway&quot;]
         Input[User Prompt / File Input] --&gt; Gate1[Input Guardrail: Prompt Injection Filter]
         Gate1 --&gt;|Clean Context| Model[Probabilistic LLM Engine]
         Model --&gt;|Raw String Output| Gate2[Output Validator: Deterministic JSON Schema Parser]

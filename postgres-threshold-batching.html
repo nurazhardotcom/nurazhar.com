@@ -94,11 +94,11 @@
   
 </h1>
 <div><hr /><p>In a &quot;No-Backend&quot; architecture where the database is the primary application engine, writing clean and optimized business logic directly inside the database is key.</p><p>Recently, while building <strong><a href="https://github.com/nurazhardotcom/lagu-lagu">lagu-lagu</a></strong>—a stateless payout registry for independent musicians—we ran into a common micro-transaction scaling bottleneck: <strong>notary fee bloat</strong>.</p><p>If a fan tips an artist $1.00, triggering an outbound bank payout (via Tazapay) and committing a cryptographic proof to a public ledger (BSV Notary API) for <em>every single transaction</em> eats up all the artist&apos;s micro-liquidity in network transaction fees.</p><p>The solution? <strong>Threshold Payout Batching</strong> implemented natively in Postgres.</p><hr /><h2 id="1.-shifting-from-1-to-1-to-many-to-one-relations">1. Shifting from 1-to-1 to Many-to-One Relations</h2><p>Initially, our <code>payouts</code> table had a <code>transaction_id</code> column with a <code>UNIQUE</code> constraint. This enforced a strict 1-to-1 relationship between fan payments and artist payouts:</p><pre><code class="language-mermaid">graph LR
-    subgraph Old Architecture: 1-to-1
+    subgraph OldArchitecture [&quot;Old Architecture: 1-to-1&quot;]
         Tx[Fan Transaction] --&gt;|Unique Link| P1[Artist Payout]
     end
 </code></pre><p>To support batching, we inverted this relation. A single <code>payout</code> can clear multiple incoming <code>transactions</code>. The database structure became <strong>many-to-one</strong>:</p><pre><code class="language-mermaid">graph TD
-    subgraph New Architecture: Many-to-One
+    subgraph NewArchitecture [&quot;New Architecture: Many-to-One&quot;]
         T1[Fan Transaction 1 - $4.00] --&gt;|payout_id| P[Grouped Payout - $12.00]
         T2[Fan Transaction 2 - $4.00] --&gt;|payout_id| P
         T3[Fan Transaction 3 - $4.00] --&gt;|payout_id| P
