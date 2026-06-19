@@ -94,7 +94,8 @@
       
     <div>
         <h1><a href="hermes-desktop-bulk-session-archive.html">Fixing the Session Archive Problem in Hermes Desktop</a></h1>
-        <div><hr /><h2 id="the-problem:-37-sessions-and-no-way-to-clean-them">The Problem: 37 Sessions and No Way to Clean Them</h2><p>Hermes Desktop sidebar showed 37 sessions. Each needed clicking the kebab menu → Archive. No multi-select, no bulk action.</p><p>I use Hermes for everything - blog drafts, job hunt tracking, Clojure experiments. The session list grows fast.</p><p>Need: Select multiple sessions and archive them in one click.</p><h2 id="pr-workflow">PR Workflow</h2><pre><code class="language-mermaid">flowchart TD
+        <div><hr /><h2 id="the-problem:-37-sessions-and-no-way-to-clean-them">The Problem: 37 Sessions and No Way to Clean Them</h2><p>Hermes Desktop sidebar showed 37 sessions. Each needed clicking the kebab menu → Archive. No multi-select, no bulk action.</p><p>I use Hermes for everything - blog drafts, job hunt tracking, Clojure experiments. The session list grows fast.</p><p>Need: Select multiple sessions and archive them in one click.</p><h2 id="pr-workflow">PR Workflow</h2><pre><code class="language-mermaid">%%{init: {&quot;theme&quot;: &quot;default&quot;}}%%
+flowchart TD
     A[&quot;GitHub Issue #48843&lt;br/&gt;feat: bulk session archive&quot;]:::issue
     B[&quot;Create branch&lt;br/&gt;feature/bulk-session-archive&quot;]:::branch
     C[&quot;Implement endpoint&lt;br/&gt;hermes_cli/web_server.py&lt;br/&gt;POST /api/sessions/bulk-archive&quot;]:::code
@@ -105,13 +106,14 @@
     
     A --&gt; B --&gt; C --&gt; D --&gt; E --&gt; F --&gt; G
     
-    classDef issue fill:#11111b,stroke:#fab387,stroke-width:2px,color:#cdd6f4;
-    classDef branch fill:#11111b,stroke:#a6e3a1,stroke-width:2px,color:#cdd6f4;
-    classDef code fill:#11111b,stroke:#89b4fa,stroke-width:2px,color:#cdd6f4;
-    classDef test fill:#11111b,stroke:#f9e2af,stroke-width:2px,color:#cdd6f4;
-    classDef push fill:#11111b,stroke:#f38ba8,stroke-width:2px,color:#cdd6f4;
-    classDef pr fill:#11111b,stroke:#b4befe,stroke-width:2px,color:#cdd6f4;
-</code></pre><h2 id="the-terminal-approval-bug">The Terminal Approval Bug</h2><pre><code class="language-mermaid">flowchart TD
+    classDef issue fill:#fff3e0,stroke:#ff9800,stroke-width:2px;
+    classDef branch fill:#e8f5e9,stroke:#4caf50,stroke-width:2px;
+    classDef code fill:#e3f2fd,stroke:#2196f3,stroke-width:2px;
+    classDef test fill:#fffde7,stroke:#ffc107,stroke-width:2px;
+    classDef push fill:#ffebee,stroke:#f44336,stroke-width:2px;
+    classDef pr fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px;
+</code></pre><h2 id="the-terminal-approval-bug">The Terminal Approval Bug</h2><pre><code class="language-mermaid">%%{init: {&quot;theme&quot;: &quot;default&quot;}}%%
+flowchart TD
     A[&quot;Desktop executed&lt;br/&gt;git push fork ...&quot;]:::desktop
     B[&quot;No approval prompt shown&lt;br/&gt;(should block terminal)&quot;]:::bug
     C[&quot;Commits pushed without&lt;br/&gt;explicit consent&quot;]:::bug
@@ -119,9 +121,9 @@
     
     A --&gt; B --&gt; C --&gt; D
     
-    classDef desktop fill:#11111b,stroke:#89b4fa,stroke-width:2px,color:#cdd6f4;
-    classDef bug fill:#11111b,stroke:#f38ba8,stroke-width:2px,color:#cdd6f4;
-    classDef risk fill:#11111b,stroke:#fab387,stroke-width:2px,color:#cdd6f4;
+    classDef desktop fill:#e3f2fd,stroke:#2196f3,stroke-width:2px;
+    classDef bug fill:#ffebee,stroke:#f44336,stroke-width:2px;
+    classDef risk fill:#fff3e0,stroke:#ff9800,stroke-width:2px;
 </code></pre><h2 id="implementation-details">Implementation Details</h2><h3 id="backend">Backend</h3><p>Added <code>POST /api/sessions/bulk-archive</code> endpoint in <code>hermes_cli/web_server.py</code>:</p><pre><code class="language-python">class BulkArchiveSessions(BaseModel):
     ids: List[str]
     archived: bool = True
