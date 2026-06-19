@@ -96,17 +96,42 @@
   Fixing the Session Archive Problem in Hermes Desktop
   
 </h1>
-<div><hr /><h2 id="the-problem:-37-sessions-and-no-way-to-clean-them">The Problem: 37 Sessions and No Way to Clean Them</h2><p>Hermes Desktop sidebar showed 37 sessions. Each needed clicking the kebab menu → Archive. No multi-select, no bulk action.</p><p>I use Hermes for everything - blog drafts, job hunt tracking, Clojure experiments. The session list grows fast.</p><p>Need: Select multiple sessions and archive them in one click.</p><h2 id="how-i-fixed-it-(pr-workflow)">How I Fixed It (PR Workflow)</h2><h3 id="step-1:-find-the-pattern">Step 1: Find the Pattern</h3><p>Looked at existing bulk-delete for sessions - <code>POST /api/sessions/bulk-delete</code> with <code>{&quot;ids&quot;: [...]}</code>. Sessions sidebar uses React + TypeScript.</p><h3 id="step-2:-create-an-issue">Step 2: Create an Issue</h3><p>Opened <a href="https://github.com/NousResearch/hermes-agent/issues/48843">Issue #48843</a> describing the feature request.</p><h3 id="step-3:-implement">Step 3: Implement</h3><p>Created branch <code>feature/bulk-session-archive</code>:</p><p><strong>Backend (<code>hermes_cli/web_server.py</code>):</strong></p><pre><code class="language-python"># Added endpoint
-@app.post(&quot;/api/sessions/bulk-archive&quot;)
-async def bulk_archive_sessions_endpoint(...):
-    # Mirrors bulk-delete pattern
-    # 500-item hard cap for safety
-</code></pre><p><strong>Frontend (<code>apps/desktop/src/hermes.ts</code>):</strong></p><pre><code class="language-typescript">export function archiveSessions(ids: string[], archived: boolean, profile?: string) {
-  return window.hermesDesktop.api(...) // calls the backend
+<div><hr /><h2 id="the-problem:-37-sessions-and-no-way-to-clean-them">The Problem: 37 Sessions and No Way to Clean Them</h2><p>Hermes Desktop sidebar showed 37 sessions. Each needed clicking the kebab menu → Archive. No multi-select, no bulk action.</p><p>I use Hermes for everything - blog drafts, job hunt tracking, Clojure experiments. The session list grows fast.</p><p>Need: Select multiple sessions and archive them in one click.</p><h2 id="pr-workflow">PR Workflow</h2><pre><code class="language-mermaid">flowchart TD
+    A[&quot;GitHub Issue #48843&lt;br/&gt;feat: bulk session archive&quot;]:::issue
+    B[&quot;Create branch&lt;br/&gt;feature/bulk-session-archive&quot;]:::branch
+    C[&quot;Implement endpoint&lt;br/&gt;hermes_cli/web_server.py&lt;br/&gt;POST /api/sessions/bulk-archive&quot;]:::code
+    D[&quot;Add frontend helper&lt;br/&gt;apps/desktop/src/hermes.ts&lt;br/&gt;archiveSessions()&quot;]:::code
+    E[&quot;Add tests&lt;br/&gt;tests/hermes_cli/test_web_server.py&quot;]:::test
+    F[&quot;Push to fork&lt;br/&gt;nurazhardotcom/hermes-agent&quot;]:::push
+    G[&quot;Create PR&lt;br/&gt;github.com/nurazhardotcom/hermes-agent/pull/2&quot;]:::pr
+    
+    A --&gt; B --&gt; C --&gt; D --&gt; E --&gt; F --&gt; G
+    
+    classDef issue fill:#11111b,stroke:#fab387,stroke-width:2px,color:#cdd6f4;
+    classDef branch fill:#11111b,stroke:#a6e3a1,stroke-width:2px,color:#cdd6f4;
+    classDef code fill:#11111b,stroke:#89b4fa,stroke-width:2px,color:#cdd6f4;
+    classDef test fill:#11111b,stroke:#f9e2af,stroke-width:2px,color:#cdd6f4;
+    classDef push fill:#11111b,stroke:#f38ba8,stroke-width:2px,color:#cdd6f4;
+    classDef pr fill:#11111b,stroke:#b4befe,stroke-width:2px,color:#cdd6f4;
+</code></pre><h2 id="the-terminal-approval-bug">The Terminal Approval Bug</h2><pre><code class="language-mermaid">flowchart TD
+    A[&quot;Desktop executed&lt;br/&gt;git push fork ...&quot;]:::desktop
+    B[&quot;No approval prompt shown&lt;br/&gt;(should block terminal)&quot;]:::bug
+    C[&quot;Commits pushed without&lt;br/&gt;explicit consent&quot;]:::bug
+    D[&quot;Potential security issue&lt;br/&gt;data could leak&quot;]:::risk
+    
+    A --&gt; B --&gt; C --&gt; D
+    
+    classDef desktop fill:#11111b,stroke:#89b4fa,stroke-width:2px,color:#cdd6f4;
+    classDef bug fill:#11111b,stroke:#f38ba8,stroke-width:2px,color:#cdd6f4;
+    classDef risk fill:#11111b,stroke:#fab387,stroke-width:2px,color:#cdd6f4;
+</code></pre><h2 id="implementation-details">Implementation Details</h2><h3 id="backend">Backend</h3><p>Added <code>POST /api/sessions/bulk-archive</code> endpoint in <code>hermes_cli/web_server.py</code>:</p><pre><code class="language-python">class BulkArchiveSessions(BaseModel):
+    ids: List[str]
+    archived: bool = True
+    profile: Optional[str] = None
+</code></pre><p>Same pattern as bulk-delete, with 500-item safety cap.</p><h3 id="frontend">Frontend</h3><p>Added helper in <code>apps/desktop/src/hermes.ts</code>:</p><pre><code class="language-typescript">export function archiveSessions(ids: string[], archived: boolean, profile?: string) {
+  return window.hermesDesktop.api(...) // calls backend endpoint
 }
-</code></pre><p><strong>Tests:</strong> Added <code>test_bulk_archive_sessions</code> and <code>test_bulk_unarchive_sessions</code>.</p><h3 id="step-4:-push-to-fork">Step 4: Push to Fork</h3><pre><code class="language-bash">git remote add fork https://github.com/nurazhardotcom/hermes-agent.git
-git push fork feature/bulk-session-archive
-</code></pre><p>Created PR at <a href="https://github.com/nurazhardotcom/hermes-agent/pull/2">https://github.com/nurazhardotcom/hermes-agent/pull/2</a></p><h2 id="related-bug:-desktop-terminal-bypass">Related Bug: Desktop Terminal Bypass</h2><p>While implementing, I noticed the desktop executed shell commands without approval prompts. I committed and pushed without explicit consent. That&apos;s a bug - the desktop should gate terminal access.</p><p>Filed as part of Issue #48843.</p><h2 id="status">Status</h2><ul><li>Backend + frontend helper: Done (<a href="https://github.com/nurazhardotcom/hermes-agent/pull/2">PR #2</a>)</li><li>UI selection checkboxes: Still needed (React work)</li><li>Terminal approval prompt: Separate fix required</li></ul></div>
+</code></pre><h3 id="tests">Tests</h3><p>Added <code>test_bulk_archive_sessions</code> and <code>test_bulk_unarchive_sessions</code> in <code>tests/hermes_cli/test_web_server.py</code>.</p><h2 id="remaining-work">Remaining Work</h2><ul><li><strong>UI checkboxes</strong> in sessions sidebar (React selection state + bulk action bar)</li><li><strong>Terminal approval prompt</strong> - desktop should block terminal commands until user approves</li></ul><h2 id="links">Links</h2><ul><li><a href="https://github.com/NousResearch/hermes-agent/issues/48843">Issue #48843</a></li><li><a href="https://github.com/nurazhardotcom/hermes-agent/pull/2">PR #2</a></li></ul></div>
 
 <p><i>Published: 2026-06-19</i></p>
 
