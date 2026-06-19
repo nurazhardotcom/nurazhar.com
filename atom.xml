@@ -3,7 +3,7 @@
   <title>Nur Azhar's</title>
   <link href="https://blog.nurazhar.com/atom.xml" rel="self"/>
   <link href="https://blog.nurazhar.com"/>
-  <updated>2026-06-19T08:38:11+00:00</updated>
+  <updated>2026-06-19T08:40:06+00:00</updated>
   <id>https://blog.nurazhar.com</id>
   <author>
     <name>Nur Azhar</name>
@@ -13,19 +13,69 @@
     <link href="https://blog.nurazhar.com/github-fork-explained.html"/>
     <title>What Is a GitHub Fork? (And Why Mine Was Broken)</title>
     <updated>2026-06-20T23:59:59+00:00</updated>
-    <content type="html"><![CDATA[<div><hr /><h2 id="the-confusion">The Confusion</h2><p>I built a <a href="/hermes-desktop-bulk-session-archive.html">bulk session archive feature</a> for Hermes Desktop. To contribute it back to the project, I needed to create a pull request to <code>NousResearch/hermes-agent</code>.</p><p>But GitHub said: <em>&quot;There isn&apos;t anything to compare.&quot;</em></p><p>I had a repo called <code>nurazhardotcom/hermes-agent</code> with the code, the branch, and the commits. It should work, right?</p><p>Wrong. My repo was <strong>not a fork</strong>. It was a standalone copy.</p><p>I didn&apos;t understand what a GitHub fork actually was. Here&apos;s what I learned.</p><h2 id="traditional-fork-vs-github-fork">Traditional Fork vs GitHub Fork</h2><p>When I hear &quot;fork,&quot; I think of Ubuntu and Debian:</p><pre><code class="language-mermaid">%%{init: {&quot;theme&quot;: &quot;default&quot;}}%%
+    <content type="html"><![CDATA[<div><hr /><h2 id="the-confusion">The Confusion</h2><p>I built a <a href="/hermes-desktop-bulk-session-archive.html">bulk session archive feature</a> for Hermes Desktop. To contribute it back to the project, I needed to create a pull request to <code>NousResearch/hermes-agent</code>.</p><p>But GitHub said: <em>&quot;There isn&apos;t anything to compare.&quot;</em></p><p>I had a repo called <code>nurazhardotcom/hermes-agent</code> with the code, the branch, and the commits. It should work, right?</p><p>Wrong. My repo was <strong>not a fork</strong>. It was a standalone copy.</p><p>I didn&apos;t understand what a GitHub fork actually was. Here&apos;s what I learned.</p><h2 id="traditional-fork-vs-github-fork">Traditional Fork vs GitHub Fork</h2><p>When I hear &quot;fork,&quot; I think of real divergences — projects that split and became independent. Let me show you three examples.</p><h3 id="linux-distributions">Linux Distributions</h3><pre><code class="language-mermaid">%%{init: {&quot;theme&quot;: &quot;default&quot;}}%%
 flowchart TD
-    D[&quot;Debian&lt;br/&gt;1993&quot;]:::d
-    U[&quot;Ubuntu&lt;br/&gt;2004&quot;]:::u
+    D[&quot;Debian&lt;br/&gt;1993&quot;]:::base
+    U[&quot;Ubuntu&lt;br/&gt;2004&quot;]:::fork
+    A[&quot;Arch Linux&lt;br/&gt;2002&quot;]:::fork
+    C[&quot;CentOS&lt;br/&gt;2004&quot;]:::fork
+    R[&quot;RHEL&quot;]:::rhel
+    SUSE[&quot;SUSE Linux&lt;br/&gt;1994&quot;]:::fork
     
-    D --&gt;|&quot;forked&quot;| U
+    D --&gt;|&quot;fork → diverged&quot;| U
+    D --&gt;|&quot;inspired&quot;| A
+    R --&gt;|&quot;fork of&quot;| C
     
-    D --&gt;|&quot;continues on&lt;br/&gt;separate path&quot;| D2[&quot;Debian → → →&quot;]:::d
-    U --&gt;|&quot;continues on&lt;br/&gt;separate path&quot;| U2[&quot;Ubuntu → → →&quot;]:::u
+    D --&gt;|&quot;continues independently&quot;| D2[&quot;Debian → → →&quot;]:::base
+    U --&gt;|&quot;continues independently&quot;| U2[&quot;Ubuntu → → →&quot;]:::fork
+    A --&gt;|&quot;continues independently&quot;| A2[&quot;Arch → → →&quot;]:::fork
+    C --&gt;|&quot;continues independently&quot;| C2[&quot;CentOS → → →&quot;]:::fork
     
-    classDef d fill:#e3f2fd,stroke:#2196f3,stroke-width:2px;
-    classDef u fill:#fff3e0,stroke:#ff9800,stroke-width:2px;
-</code></pre><p>Ubuntu forked Debian. They went separate ways. Different package managers, different release cycles, different communities. The fork created <strong>two independent projects</strong>.</p><p>That&apos;s what I thought a fork was. And that&apos;s why I didn&apos;t want one. I didn&apos;t want to be Ubuntu. I wanted to contribute to Debian.</p><h2 id="what-a-github-fork-actually-is">What a GitHub Fork Actually Is</h2><p>A GitHub fork is the <strong>opposite</strong> of a divergence. It&apos;s a <strong>link that points back to the original</strong>.</p><pre><code class="language-mermaid">%%{init: {&quot;theme&quot;: &quot;default&quot;}}%%
+    SUSE ~~~|&quot;no connection&quot;| D
+    
+    classDef base fill:#e3f2fd,stroke:#2196f3,stroke-width:2px;
+    classDef fork fill:#fff3e0,stroke:#ff9800,stroke-width:2px;
+    classDef rhel fill:#e8f5e9,stroke:#4caf50,stroke-width:2px;
+</code></pre><p>Ubuntu forked Debian. They went separate ways — different package managers (apt vs dpkg directly), different release cycles, different communities. The fork created <strong>two independent projects</strong> that never merge back.</p><h3 id="bitcoin">Bitcoin</h3><pre><code class="language-mermaid">%%{init: {&quot;theme&quot;: &quot;default&quot;}}%%
+flowchart TD
+    BTC[&quot;Bitcoin (BTC)&lt;br/&gt;2009&lt;br/&gt;Satoshi&apos;s whitepaper&quot;]:::base
+    
+    BCH[&quot;Bitcoin Cash (BCH)&lt;br/&gt;2017&lt;br/&gt;block size debate&quot;]:::fork
+    BSV[&quot;Bitcoin SV (BSV)&lt;br/&gt;2018&lt;br/&gt;on-chain scaling&quot;]:::fork
+    LTC[&quot;Litecoin (LTC)&lt;br/&gt;2011&lt;br/&gt;faster blocks&quot;]:::fork
+    DOGE[&quot;Dogecoin&lt;br/&gt;2013&lt;br/&gt;meme fork&quot;]:::fork
+    
+    BTC --&gt;|&quot;hard fork&lt;br/&gt;irreversible split&quot;| BCH
+    BCH --&gt;|&quot;hard fork&lt;br/&gt;irreversible split&quot;| BSV
+    BTC --&gt;|&quot;inspired fork&quot;| LTC
+    BTC --&gt;|&quot;inspired fork&quot;| DOGE
+    
+    BTC ~~~|&quot;no re-merging&quot;| BCH
+    BSV ~~~|&quot;no re-merging&quot;| DOGE
+    
+    classDef base fill:#e3f2fd,stroke:#2196f3,stroke-width:2px;
+    classDef fork fill:#fff3e0,stroke:#ff9800,stroke-width:2px;
+</code></pre><p>Bitcoin Cash forked Bitcoin in 2017 over the block size debate. BSV forked Bitcoin Cash in 2018 over on-chain scaling vision. These are <strong>permanent splits</strong>. BTC never merges back BCH changes. BSV never merges back from BTC. They&apos;re separate currencies now. That&apos;s a traditional fork — a <strong>divergence that never comes back</strong>.</p><h3 id="the-pattern">The Pattern</h3><pre><code class="language-mermaid">%%{init: {&quot;theme&quot;: &quot;default&quot;}}%%
+flowchart LR
+    ORIGINAL[&quot;Original Project&quot;]:::base
+    
+    FK1[&quot;Fork A&lt;br/&gt;goes own way&quot;]:::fork
+    FK2[&quot;Fork B&lt;br/&gt;goes own way&quot;]:::fork
+    FK3[&quot;Fork C&lt;br/&gt;goes own way&quot;]:::fork
+    
+    ORIGINAL --&gt;|&quot;fork&lt;br/&gt;(depart)&quot;| FK1
+    ORIGINAL --&gt;|&quot;fork&lt;br/&gt;depart)&quot;| FK2
+    ORIGINAL --&gt;|&quot;fork&lt;br/&gt;depart)&quot;| FK3
+    
+    ORIGINAL --&gt;|&quot;continues&quot;| ORIGINAL2[&quot;Original → → →&quot;]:::base
+    
+    FK1 ~~~|&quot;never merges back&quot;| ORIGINAL
+    FK2 ~~~|&quot;never merges back&quot;| ORIGINAL
+    FK3 ~~~|&quot;never merges back&quot;| ORIGINAL
+    
+    classDef base fill:#e3f2fd,stroke:#2196f3,stroke-width:2px;
+    classDef fork fill:#fff3e0,stroke:#ff9800,stroke-width:2px;
+</code></pre><p>Every traditional fork follows this pattern:</p><ol start="1"><li><strong>Split</strong> — copy the code, go your own way</li><li><strong>Diverge</strong> — different features, different direction</li><li><strong>Independent</strong> — no merging back, no communication</li></ol><p>That&apos;s what I thought a GitHub fork was. And that&apos;s why I didn&apos;t want one. I didn&apos;t want to be Bitcoin Cash. I wanted to contribute to Bitcoin.</p><h2 id="what-a-github-fork-actually-is">What a GitHub Fork Actually Is</h2><p>A GitHub fork is the <strong>opposite</strong> of a divergence. It&apos;s a <strong>link that points back to the original</strong>.</p><pre><code class="language-mermaid">%%{init: {&quot;theme&quot;: &quot;default&quot;}}%%
 flowchart TD
     UP[&quot;NousResearch/hermes-agent&lt;br/&gt;UPSTREAM&quot;]:::upstream
     FK[&quot;nurazhardotcom/hermes-agent&lt;br/&gt;FORK&quot;]:::fork
@@ -70,7 +120,7 @@ flowchart LR
     classDef opt3 fill:#f5f5f5,stroke:#9e9e9e,stroke-width:2px;
     classDef good fill:#e8f5e9,stroke:#4caf50,stroke-width:2px;
     classDef bad fill:#ffebee,stroke:#f44336,stroke-width:2px;
-</code></pre><h3 id="option-1:-delete-&amp;-re-fork-(cleanest)">Option 1: Delete &amp; Re-Fork (Cleanest)</h3><p>Delete <code>nurazhardotcom/hermes-agent</code>. Then use GitHub&apos;s &quot;Fork&quot; button on <code>NousResearch/hermes-agent</code> to create a proper linked fork with the same name. Push your feature branch. Open the PR.</p><p><strong>Pros:</strong> Clean. Same repo name. PR works natively. <strong>Cons:</strong> Lose the existing repo (stars, watchers, any history — though you have none on this one).</p><h3 id="option-2:-rename-&amp;-re-fork-(safely)">Option 2: Rename &amp; Re-Fork (Safely)</h3><p>Rename your current repo to <code>nurazhardotcom/hermes-agent-backup</code>. Fork <code>NousResearch/hermes-agent</code> into the now-free <code>nurazhardotcom/hermes-agent</code> name. Push your branch. Open the PR.</p><p><strong>Pros:</strong> Keep your old repo around. <strong>Cons:</strong> Two repos to manage.</p><h3 id="option-3:-keep-as-is-(no-upstream)">Option 3: Keep As-Is (No Upstream)</h3><p>Leave everything where it is. Your feature lives in your repo only.</p><p><strong>Pros:</strong> Nothing to fix. <strong>Cons:</strong> You can&apos;t contribute to upstream. No PR possible.</p><h2 id="the-difference-in-one-table">The Difference in One Table</h2><table><thead><tr><th>Concept</th><th>Traditional Fork (Ubuntu/Debian)</th><th>GitHub Fork</th></tr></thead><tbody><tr><td><strong>Relationship</strong></td><td>Diverges, becomes independent</td><td>Linked, points back to original</td></tr><tr><td><strong>Direction</strong></td><td>One-way departure</td><td>Two-way: pull from upstream, PR back</td></tr><tr><td><strong>Goal</strong></td><td>Become your own project</td><td>Contribute to the original</td></tr><tr><td><strong>Communication</strong></td><td>None after fork</td><td>PRs, &quot;Fetch upstream&quot; sync</td></tr><tr><td><strong>I wanted this?</strong></td><td>No — I wanted to be Ubuntu</td><td>Yes — this is &quot;contribute to Debian&quot;</td></tr></tbody></table><h2 id="what-&quot;fetch-upstream&quot;-means">What &quot;Fetch Upstream&quot; Means</h2><p>On a proper GitHub fork, GitHub shows a &quot;Fetch upstream&quot; button:</p><pre><code class="language-mermaid">%%{init: {&quot;theme&quot;: &quot;default&quot;}}%%
+</code></pre><h3 id="option-1:-delete-&amp;-re-fork-(cleanest)">Option 1: Delete &amp; Re-Fork (Cleanest)</h3><p>Delete <code>nurazhardotcom/hermes-agent</code>. Then use GitHub&apos;s &quot;Fork&quot; button on <code>NousResearch/hermes-agent</code> to create a proper linked fork with the same name. Push your feature branch. Open the PR.</p><p><strong>Pros:</strong> Clean. Same repo name. PR works natively. <strong>Cons:</strong> Lose the existing repo (stars, watchers, any history — though you have none on this one).</p><h3 id="option-2:-rename-&amp;-re-fork-(safely)">Option 2: Rename &amp; Re-Fork (Safely)</h3><p>Rename your current repo to <code>nurazhardotcom/hermes-agent-backup</code>. Fork <code>NousResearch/hermes-agent</code> into the now-free <code>nurazhardotcom/hermes-agent</code> name. Push your branch. Open the PR.</p><p><strong>Pros:</strong> Keep your old repo around. <strong>Cons:</strong> Two repos to manage.</p><h3 id="option-3:-keep-as-is-(no-upstream)">Option 3: Keep As-Is (No Upstream)</h3><p>Leave everything where it is. Your feature lives in your repo only.</p><p><strong>Pros:</strong> Nothing to fix. <strong>Cons:</strong> You can&apos;t contribute to upstream. No PR possible.</p><h2 id="the-difference-in-one-table">The Difference in One Table</h2><table><thead><tr><th>Concept</th><th>Traditional Fork (Ubuntu, BCH)</th><th>GitHub Fork</th></tr></thead><tbody><tr><td><strong>Mechanism</strong></td><td>Copy code, diverge permanently</td><td>GitHub &quot;Fork&quot; button creates linked copy</td></tr><tr><td><strong>Relationship</strong></td><td>Becomes independent immediately</td><td>Stays connected to parent (&quot;forked from...&quot;)</td></tr><tr><td><strong>Direction</strong></td><td>One-way departure</td><td>Two-way: pull from upstream, PR back</td></tr><tr><td><strong>Merging back</strong></td><td>Never re-merges</td><td>Designed for PRs back to original</td></tr><tr><td><strong>Communication</strong></td><td>Ceases after fork</td><td>&quot;Fetch upstream&quot; keeps you synced</td></tr><tr><td><strong>Network effect</strong></td><td>Fragmented — N isolated projects</td><td>Consolidated — contributors cluster on one upstream</td></tr><tr><td><strong>Goal</strong></td><td>Become your own project</td><td>Contribute to the original</td></tr><tr><td><strong>Real examples</strong></td><td>Ubuntu, BCH, BSV, CentOS</td><td>Your fork of NousResearch/hermes-agent</td></tr><tr><td><strong>Metaphor</strong></td><td>Bitcoin Cash leaving Bitcoin</td><td>A branch on a different remote</td></tr></tbody></table><p>A GitHub fork is really a <strong>branch that lives in your own namespace</strong>. Not a departure.</p><h2 id="what-&quot;fetch-upstream&quot;-means">What &quot;Fetch Upstream&quot; Means</h2><p>On a proper GitHub fork, GitHub shows a &quot;Fetch upstream&quot; button:</p><pre><code class="language-mermaid">%%{init: {&quot;theme&quot;: &quot;default&quot;}}%%
 flowchart LR
     UP[&quot;NousResearch/hermes-agent&lt;br/&gt;has new commits&quot;]:::upstream
     SYNC[&quot;Fetch upstream&lt;br/&gt;sync button&quot;]:::sync
