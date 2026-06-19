@@ -100,7 +100,7 @@
 </code></pre><h4 id="step-2:-configure-the-user-path-in-fish">Step 2: Configure the User Path in Fish</h4><p>Instead of manually editing config files, Fish provides the <code>fish_add_path</code> helper. This modifies the <code>fish_user_paths</code> universal variable securely and permanently.</p><pre><code class="language-fish">fish_add_path $HOME/.cargo/bin
 </code></pre><p>This updates your user path configuration immediately across all active and future Fish sessions.</p><hr /><h3 id="verification">Verification</h3><p>Confirm that the compiler is running from userspace:</p><pre><code class="language-fish">which rustc
 # Output: /home/username/.cargo/bin/rustc
-</code></pre><p>By confining the compiler, compiler tooling, and cargo crates to userspace, we achieve zero system footprint, high version control flexibility, and a much cleaner security posture.</p></div>
+</code></pre><p>By confining the compiler, compiler tooling, and cargo crates to userspace, we achieve zero system footprint, high version control flexibility, and a much cleaner security posture.</p><hr /><p><em>Related: <a href="./cachyos-rate-mirrors-timer-fix.md">CachyOS Mirror Timer Fix</a></em></p></div>
 
 <p><i>Published: 2026-06-14</i></p>
 

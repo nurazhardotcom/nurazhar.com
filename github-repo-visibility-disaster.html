@@ -96,13 +96,11 @@
   How I Accidentally Hid My Entire GitHub — and What It Taught Me About Visibility, Forks, and Irreversible Decisions
   
 </h1>
-<div><hr /><h2 id="the-24-hours-that-broke-my-github">The 24 Hours That Broke My GitHub</h2><p>Yesterday, I made a decision that cost me an entire day of visibility on GitHub. This is the detailed breakdown of what happened, why it happened, and the technical mechanics behind it — with Mermaid diagrams so you can see exactly what went wrong.</p><hr /><h2 id="act-i:-the-bad-advice">Act I: The Bad Advice</h2><p>I was doing a &quot;GitHub audit&quot; for job hunting. The goal: make my GitHub profile look clean for Singapore cybersecurity hiring managers.</p><p>An AI assistant (yes, I got bad advice from another AI — the irony is not lost on me) gave me this table:</p><table><thead><tr><th>Repository</th><th>Called It</th><th>Actual Status</th></tr></thead><tbody><tr><td><code>bitcoin</code></td><td>&quot;Fork, no contribution&quot;</td><td><strong>Not a fork</strong> — standalone repo</td></tr><tr><td><code>bitcoin-wiki</code></td><td>&quot;Academic, irrelevant&quot;</td><td><strong>Not a fork</strong> — standalone repo</td></tr><tr><td><code>bug-hunter</code></td><td>&quot;Fork, AI buzzword&quot;</td><td><strong>Not a fork</strong> — standalone repo</td></tr><tr><td><code>CachyOS-PKGBUILDS</code></td><td>&quot;Fork, distro packaging&quot;</td><td><strong>Not a fork</strong> — standalone repo</td></tr><tr><td><code>frontend</code></td><td>&quot;Fork, abandoned&quot;</td><td><strong>Not a fork</strong> — standalone repo</td></tr><tr><td><code>hermes-agent</code></td><td>&quot;Fork, not your code&quot;</td><td><strong>Not a fork</strong> — standalone repo</td></tr><tr><td><code>learn-harness-engineering</code></td><td>&quot;Tutorial fork&quot;</td><td><strong>Not a fork</strong> — standalone repo</td></tr><tr><td><code>linux-cachyos</code></td><td>&quot;Fork, kernel config&quot;</td><td><strong>Not a fork</strong> — standalone repo</td></tr><tr><td><code>spec-kit</code></td><td>&quot;Fork, spec-driven dev&quot;</td><td><strong>Not a fork</strong> — standalone repo</td></tr><tr><td><code>career-ops</code></td><td>&quot;Fork, AI job search&quot;</td><td><strong>Not a fork</strong> — standalone repo</td></tr><tr><td><code>permitops-os</code></td><td>&quot;Fork, CA permit domain&quot;</td><td><strong>Not a fork</strong> — standalone repo</td></tr></tbody></table><p><strong>Every single one was labeled &quot;fork.&quot; Not one was actually a fork.</strong></p><p>The advice: make all 12 private. &quot;Clean signal: 3–5 relevant projects.&quot; &quot;Noise: forks, tutorials, abandoned experiments.&quot;</p><p>I said yes.</p><hr /><h2 id="act-ii:-the-execution">Act II: The Execution</h2><pre><code class="language-bash">for r in bitcoin bitcoin-wiki bug-hunter CachyOS-PKGBUILDS frontend hermes-agent \
-         learn-harness-engineering linux-cachyos spec-kit career-ops permitops-os; do
+<div><hr /><h2 id="the-24-hours-that-broke-my-github">The 24 Hours That Broke My GitHub</h2><p>Yesterday, I made a decision that cost me an entire day of visibility on GitHub. This is the detailed breakdown of what happened, why it happened, and the technical mechanics behind it — with Mermaid diagrams so you can see exactly what went wrong.</p><hr /><h2 id="act-i:-the-bad-advice">Act I: The Bad Advice</h2><p>I was doing a &quot;GitHub audit&quot; for job hunting. The goal: make my GitHub profile look clean for Singapore cybersecurity hiring managers.</p><p>An AI assistant (yes, I got bad advice from another AI — the irony is not lost on me) gave me this table:</p><table><thead><tr><th>Repository</th><th>Called It</th><th>Actual Status</th></tr></thead><tbody><tr><td><code>bitcoin</code></td><td>&quot;Fork, no contribution&quot;</td><td><strong>Not a fork</strong> — standalone repo</td></tr><tr><td><code>bitcoin-wiki</code></td><td>&quot;Academic, irrelevant&quot;</td><td><strong>Not a fork</strong> — standalone repo</td></tr><tr><td><code>frontend</code></td><td>&quot;Fork, abandoned&quot;</td><td><strong>Not a fork</strong> — standalone repo</td></tr><tr><td><code>hermes-agent</code></td><td>&quot;Fork, not your code&quot;</td><td><strong>Not a fork</strong> — standalone repo</td></tr><tr><td><code>headhunter-agent</code></td><td>&quot;Fork, AI agent&quot;</td><td><strong>Not a fork</strong> — standalone repo</td></tr></tbody></table><p><strong>Every single one was labeled &quot;fork.&quot; Not one was actually a fork.</strong></p><p>The advice: make all 12 private. &quot;Clean signal: 3–5 relevant projects.&quot; &quot;Noise: forks, tutorials, abandoned experiments.&quot;</p><p>I said yes.</p><hr /><h2 id="act-ii:-the-execution">Act II: The Execution</h2><pre><code class="language-bash">for r in bitcoin bitcoin-wiki frontend hermes-agent headhunter-agent; do
   gh repo edit nurazhardotcom/$r --visibility private \
     --accept-visibility-change-consequences
 done
-</code></pre><p>One by one, 12 repos went dark.</p><hr /><h2 id="act-iii:-the-reversal">Act III: The Reversal</h2><p>This morning, I realized the advice was wrong. I ran:</p><pre><code class="language-bash">for r in bitcoin bitcoin-wiki bug-hunter CachyOS-PKGBUILDS frontend hermes-agent \
-         learn-harness-engineering linux-cachyos spec-kit career-ops permitops-os; do
+</code></pre><p>One by one, 12 repos went dark.</p><hr /><h2 id="act-iii:-the-reversal">Act III: The Reversal</h2><p>This morning, I realized the advice was wrong. I ran:</p><pre><code class="language-bash">for r in bitcoin bitcoin-wiki frontend hermes-agent headhunter-agent; do
   gh repo edit nurazhardotcom/$r --visibility public \
     --accept-visibility-change-consequences
 done
@@ -181,22 +179,15 @@ PUBLIC  blog.nurazhar.com
 PUBLIC  hermes-agent
 PUBLIC  sol-de-tracker
 PUBLIC  nurazhardotcom
-PUBLIC  career-ops
-PUBLIC  permitops-os
 PUBLIC  lagu-lagu
 PUBLIC  frontend
 PUBLIC  bsv-clj
 PUBLIC  aur-audit
-PUBLIC  CachyOS-PKGBUILDS
-PUBLIC  linux-cachyos
-PUBLIC  bug-hunter
 PUBLIC  bitcoin-wiki
-PUBLIC  learn-harness-engineering
 PUBLIC  headhunter-agent
 PUBLIC  bitcoin
 PUBLIC  lithan_smartshop
 PUBLIC  lithan_assignments
-PUBLIC  spec-kit
 PUBLIC  lithan-dev-sandbox
 </code></pre><hr /><h2 id="key-takeaway">Key Takeaway</h2><blockquote><p><strong>Never change repo visibility based on unverified advice.</strong></p><p>One API call. Five seconds. Would have saved 24 hours.</p></blockquote><hr /><p><em>Written at 2:00 AM because I couldn&apos;t sleep thinking about this. The Mermaid diagrams render on GitHub natively — if you&apos;re reading this in a viewer that doesn&apos;t support Mermaid, the source is in the <a href="https://github.com/nurazhardotcom/blog.nurazhar.com">blog repo</a>.</em></p></div>
 
