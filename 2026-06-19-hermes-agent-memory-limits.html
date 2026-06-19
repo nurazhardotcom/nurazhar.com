@@ -13,10 +13,10 @@
         }
       })();
     </script>
-    <title>Why Hermes Agent&#39;s Memory Has a Character Limit (And Why That&#39;s Good)</title>
+    <title>Debugging Hermes Agent&#39;s Memory Character Limit</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link type="application/atom+xml" rel="alternate" href="atom.xml" title="Why Hermes Agent&#39;s Memory Has a Character Limit (And Why That&#39;s Good)">
+    <link type="application/atom+xml" rel="alternate" href="atom.xml" title="Debugging Hermes Agent&#39;s Memory Character Limit">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
@@ -42,14 +42,14 @@
 
 
     <!-- Social sharing (Facebook, Twitter, LinkedIn, etc.) -->
-    <meta name="title" content="Why Hermes Agent&#39;s Memory Has a Character Limit (And Why That&#39;s Good)">
-    <meta name="twitter:title" content="Why Hermes Agent&#39;s Memory Has a Character Limit (And Why That&#39;s Good)">
-    <meta property="og:title" content="Why Hermes Agent&#39;s Memory Has a Character Limit (And Why That&#39;s Good)">
+    <meta name="title" content="Debugging Hermes Agent&#39;s Memory Character Limit">
+    <meta name="twitter:title" content="Debugging Hermes Agent&#39;s Memory Character Limit">
+    <meta property="og:title" content="Debugging Hermes Agent&#39;s Memory Character Limit">
     <meta property="og:type" content="website">
 
-    <meta name="description" content="Hermes Agent&#39;s memory store has a hard character limit. Here&#39;s why that constraint exists and how to work with it instead of against it.">
-    <meta name="twitter:description" content="Hermes Agent&#39;s memory store has a hard character limit. Here&#39;s why that constraint exists and how to work with it instead of against it.">
-    <meta property="og:description" content="Hermes Agent&#39;s memory store has a hard character limit. Here&#39;s why that constraint exists and how to work with it instead of against it.">
+    <meta name="description" content="Hermes Agent&#39;s memory store rejected my write at 1,375 characters. Here&#39;s the exact error, the architecture behind the limit, and how I fixed it.">
+    <meta name="twitter:description" content="Hermes Agent&#39;s memory store rejected my write at 1,375 characters. Here&#39;s the exact error, the architecture behind the limit, and how I fixed it.">
+    <meta property="og:description" content="Hermes Agent&#39;s memory store rejected my write at 1,375 characters. Here&#39;s the exact error, the architecture behind the limit, and how I fixed it.">
 
 
     <meta name="twitter:url" content="https://blog.nurazhar.com/2026-06-19-hermes-agent-memory-limits.html">
@@ -93,11 +93,14 @@
 
       <h1>
   
-  Why Hermes Agent&#39;s Memory Has a Character Limit (And Why That&#39;s Good)
+  Debugging Hermes Agent&#39;s Memory Character Limit
   
 </h1>
-<div><hr /><h2 id="the-problem">The Problem</h2><p>I was trying to update my user profile in Hermes Agent&apos;s memory today. Simple task — add my career trajectory. The tool kept rejecting the write:</p><pre><code>Replacement would put memory at 1,467/1,375 chars.
-</code></pre><p>Then it failed again. And again. Three retries, same error. The memory tool was stuck in a loop because the user profile store had hit its hard limit of 1,375 characters.</p><h2 id="what&apos;s-actually-happening">What&apos;s Actually Happening</h2><p>Hermes Agent has two memory stores:</p><ul><li><strong>User profile</strong> — who you are (1,375 char limit)</li><li><strong>Agent notes</strong> — your environment, conventions, lessons (2,200 char limit)</li></ul><p>Every entry gets injected into the system prompt on every single turn. That means every character of memory competes with the actual conversation for space in the context window.</p><h2 id="why-the-limit-exists">Why the Limit Exists</h2><p><strong>1. Context window is finite.</strong></p><p>LLMs have a maximum context window — the total number of tokens they can process in one request. If your memory store was unlimited, it could consume a huge chunk of that window before the agent even starts working on your request.</p><p>At ~4 chars per token, the current user profile limit (1,375 chars) costs roughly 344 tokens. The agent notes (2,200 chars) cost ~550 tokens. Combined, that&apos;s ~900 tokens of overhead per turn — before any conversation history or tool output.</p><p><strong>2. Token cost is real.</strong></p><p>Every token injected into the prompt costs money. At scale, an agent making thousands of API calls per day with bloated memory stores would burn through credits fast. The limit forces discipline.</p><p><strong>3. Signal-to-noise ratio.</strong></p><p>Unlimited memory becomes a dumping ground. Most stored facts are irrelevant to any given session. A hard limit forces you to keep only what actually matters — your name, preferences, stable environment facts. Not a log of everything that ever happened.</p><p><strong>4. Performance.</strong></p><p>Larger memory = more tokens to process on every turn = slower responses. Keeping it compact means faster cycles.</p><h2 id="how-i-fixed-it">How I Fixed It</h2><p>The issue was that I had two entries with overlapping career information. The old entry:</p><blockquote><p>7yr IT ops ICA (CyberArk, Entra ID, Carbon Black, Tenable, Guardium)</p></blockquote><p>And a newer entry with the same info plus more detail. Together they exceeded the limit.</p><p>The fix: remove the old entry, write a consolidated one that captures the full trajectory in fewer characters:</p><blockquote><p>Career: IT Support → Cybersecurity Analyst → Compliance/TechFresh → Application Support (DCS, Power Automate/Odoo/WordPress) → now Full Stack Dev (Lithan diploma + lagu-lagu). 7yr total.</p></blockquote><p>Same information, half the characters.</p><h2 id="working-with-the-limit">Working With the Limit</h2><p><strong>Do:</strong></p><ul><li>Write declarative facts, not narratives</li><li>Use session_search to recall past task details instead of memorizing them</li><li>Prune entries that are no longer relevant</li><li>Put reusable procedures in skills, not memory</li></ul><p><strong>Don&apos;t:</strong></p><ul><li>Store task progress, PR numbers, or temporary state</li><li>Duplicate information across entries</li><li>Treat memory as a conversation log</li></ul><h2 id="the-bigger-pattern">The Bigger Pattern</h2><p>This is a general principle in system design: <strong>constraints force better decisions.</strong> An unlimited memory store would be easier to use but worse to operate. The character limit is a feature — it keeps the agent lean and forces you to be intentional about what you remember.</p><p>Same reason BSV has unbounded block size but practical limits emerge from hardware and bandwidth. Constraints aren&apos;t the enemy. They&apos;re the design.</p></div>
+<div><hr /><h2 id="the-error">The Error</h2><p>I was updating my user profile in Hermes Agent&apos;s memory. Simple task — add my career trajectory. The tool rejected it:</p><pre><code>Replacement would put memory at 1,467/1,375 chars.
+Shorten the new content, or &apos;remove&apos; other stale or less important
+entries to make room, then retry.
+</code></pre><p>I shortened the text. Retried. Same error. Again. The tool got stuck in a loop — three identical failures because the user profile store was at capacity and I was adding without removing.</p><hr /><h2 id="the-architecture">The Architecture</h2><p>Hermes Agent has two memory stores:</p><table><thead><tr><th>Store</th><th>Purpose</th><th>Limit</th></tr></thead><tbody><tr><td><code>user</code></td><td>Who you are — name, preferences, background</td><td>1,375 chars</td></tr><tr><td><code>memory</code></td><td>Agent notes — environment, conventions, lessons</td><td>2,200 chars</td></tr></tbody></table><p>Every entry gets injected into the system prompt on every single turn. At ~4 chars per token, the user profile costs roughly <strong>344 tokens</strong> per turn. The agent notes cost ~550. Combined: <strong>~900 tokens of overhead</strong> before any conversation history or tool output enters the prompt.</p><hr /><h2 id="what-went-wrong">What Went Wrong</h2><p>My user profile had two entries with overlapping career information:</p><p><strong>Entry 1</strong> (993 chars):</p><blockquote><p>Singapore, CachyOS. Born 1986 (40), INTJ. 7yr IT ops ICA (CyberArk, Entra ID, Carbon Black, Tenable, Guardium). Unemployed 1yr. Debt $40k SGD. Active: lagu-lagu...</p></blockquote><p><strong>Entry 2</strong> (367 chars):</p><blockquote><p>Considering a career pivot/return to tech workforce after 1yr unemployment. Has 7yr IT ops background (CyberArk, Entra ID, Carbon Black, Tenable, Guardium) at ICA. Currently pursuing Professional Diploma...</p></blockquote><p>Total: 1,360/1,375 chars. Same career details duplicated across both entries. No room for anything new.</p><hr /><h2 id="the-fix">The Fix</h2><p><strong>Step 1:</strong> Remove the old entry (Entry 1).</p><pre><code class="language-bash">memory action=remove target=user old_text=&quot;Singapore, CachyOS. Born 1986...&quot;
+</code></pre><p><strong>Step 2:</strong> Write a consolidated entry:</p><blockquote><p>Singapore, CachyOS. Born 1986 (40), INTJ. Career: IT Support → Cybersecurity Analyst → Compliance/TechFresh → Application Support (DCS, Power Automate/Odoo/WordPress) → now Full Stack Dev (Lithan diploma + lagu-lagu). 7yr total. Unemployed 1yr. Debt $40k SGD. Post-Muslim. Direct, no soft-pedal. Voice via KDE. Anti-bloat.</p></blockquote><p><strong>Result:</strong> 1,318/1,375 chars. Fits. No duplication.</p><hr /><h2 id="why-the-limit-exists">Why the Limit Exists</h2><table><thead><tr><th>Reason</th><th>Detail</th></tr></thead><tbody><tr><td><strong>Context window</strong></td><td>Every memory token competes with conversation tokens</td></tr><tr><td><strong>Token cost</strong></td><td>~900 tokens of overhead per turn, multiplied across thousands of calls</td></tr><tr><td><strong>Signal-to-noise</strong></td><td>Forces you to keep only stable facts, not task logs</td></tr><tr><td><strong>Performance</strong></td><td>Compact memory = faster turns</td></tr></tbody></table><hr /><h2 id="lessons">Lessons</h2><ol start="1"><li><strong>Memory is not a log.</strong> It&apos;s a compact identity document. Facts, not narratives.</li><li><strong>Deduplicate aggressively.</strong> Same info in two entries = wasted space.</li><li><strong>Declarative beats verbose.</strong> &quot;Career: A → B → C&quot; beats three paragraphs.</li><li><strong>Prune stale entries.</strong> The old entry was from before I understood my own trajectory.</li><li><strong>The limit is a feature.</strong> Constraints force better decisions.</li></ol><hr /><h2 id="quick-reference">Quick Reference</h2><table><thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead><tbody><tr><td>&quot;would put memory at X/1,375&quot;</td><td>Store full</td><td>Remove old entries, consolidate</td></tr><tr><td>Same error on retry</td><td>Still over limit</td><td>Shorten more, or remove first</td></tr><tr><td>Tool loop</td><td>Agent keeps trying same write</td><td>Manually remove old entry first</td></tr><tr><td>Can&apos;t add new facts</td><td>Fragmented entries wasting space</td><td>Merge duplicates, cut verbosity</td></tr></tbody></table></div>
 
 <p><i>Published: 2026-06-19</i></p>
 
@@ -106,15 +109,7 @@
   Tagged:
   
   <span class="tag">
-    <a href="tags/token-cost.html">token-cost</a>
-  </span>
-  
-  <span class="tag">
     <a href="tags/hermes-agent.html">hermes-agent</a>
-  </span>
-  
-  <span class="tag">
-    <a href="tags/design-decisions.html">design-decisions</a>
   </span>
   
   <span class="tag">
@@ -127,6 +122,10 @@
   
   <span class="tag">
     <a href="tags/memory.html">memory</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/debugging.html">debugging</a>
   </span>
   
   </i>
