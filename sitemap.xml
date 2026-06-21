@@ -25,10 +25,12 @@
 <url><loc>https://blog.nurazhar.com/cognitive-g-force-agentic-velocity.html</loc></url>
 <url><loc>https://blog.nurazhar.com/collapse-entropy-to-zero.html</loc></url>
 <url><loc>https://blog.nurazhar.com/collapsing-auth-entropy-to-zero.html</loc></url>
+<url><loc>https://blog.nurazhar.com/curating-original-bitcoin-awesome.html</loc></url>
 <url><loc>https://blog.nurazhar.com/debugging-quickblog-cache-yaml-frontmatter.html</loc></url>
 <url><loc>https://blog.nurazhar.com/decoupled-static-dashboards.html</loc></url>
 <url><loc>https://blog.nurazhar.com/decoupled-zero-cost-blog-analytics-spec.html</loc></url>
 <url><loc>https://blog.nurazhar.com/deepseek-v4-censorship.html</loc></url>
+<url><loc>https://blog.nurazhar.com/deepseek-v4-self-hosting-guide.html</loc></url>
 <url><loc>https://blog.nurazhar.com/demystifying-arch-packaging-pkgbuilds-aur-cachyos.html</loc></url>
 <url><loc>https://blog.nurazhar.com/designing-zero-config-developer-sandbox.html</loc></url>
 <url><loc>https://blog.nurazhar.com/env-secret-leak-fix.html</loc></url>
@@ -89,6 +91,7 @@
 <url><loc>https://blog.nurazhar.com/tags/asi.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/aur.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/automation.html</loc></url>
+<url><loc>https://blog.nurazhar.com/tags/awesome-list.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/babashka.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/babbage.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/beam.html</loc></url>
@@ -186,6 +189,7 @@
 <url><loc>https://blog.nurazhar.com/tags/identity.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/income.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/indelible.html</loc></url>
+<url><loc>https://blog.nurazhar.com/tags/inference.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/infrastructure.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/intent.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/ipv6.html</loc></url>
@@ -199,6 +203,7 @@
 <url><loc>https://blog.nurazhar.com/tags/limits.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/linux.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/llm.html</loc></url>
+<url><loc>https://blog.nurazhar.com/tags/local.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/machine-learning.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/machine-to-machine.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/mcp.html</loc></url>
@@ -256,6 +261,7 @@
 <url><loc>https://blog.nurazhar.com/tags/sandbox.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/scrum.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/security.html</loc></url>
+<url><loc>https://blog.nurazhar.com/tags/self-host.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/self-improvement.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/seo.html</loc></url>
 <url><loc>https://blog.nurazhar.com/tags/serverless.html</loc></url>

@@ -887,6 +887,40 @@ bitcoin-wiki          → Protocol documentation
     </div>
 
     <div>
+        <h1><a href="curating-original-bitcoin-awesome.html">How I Curated an Awesome List of Projects Building on Original Bitcoin</a></h1>
+        <div><hr /><p><a href="https://github.com/nurazhardotcom/original-bitcoin-awesome">original-bitcoin-awesome</a> is a curated list of projects, tools, and infrastructure built on the original Bitcoin protocol (BSV). It started as a simple README. It has grown to 216+ lines covering nodes, SDKs, wallets, smart contracts, identity, payment channels, accounting, and agent infrastructure.</p><p>This post explains how it is curated.</p><h2 id="scope">Scope</h2><p>The list is deliberately narrow. It covers only the original Bitcoin protocol — defined as Satoshi&apos;s v0.1 design preserved by BSV after the Chronicle upgrade (block 943,816, April 7, 2026). No BTC, no BCH, no forks that deviated from the whitepaper.</p><p>Within that scope, I include any project that:</p><ul><li>Builds directly on BSV infrastructure (nodes, SDKs, wallets, overlays)</li><li>Integrates with BSV for some function (timestamping, payments, data)</li><li>Produces tools that make BSV usable (indexers, explorers, compilers)</li><li>Is actively maintained in the current calendar year (2026)</li></ul><h2 id="research-process">Research Process</h2><p>Finding active projects is harder than it should be. GitHub search is noisy. Many BSV projects are scattered across personal accounts, not orgs. The research process:</p><ol start="1"><li><p><strong>GitHub org spelunking</strong> — Start with known orgs (bitcoin-sv, p2ppsr, gorillapool, bopen, prof-faustus). Walk every repo, check last commit date, read the README.</p></li><li><p><strong>Twitter/X feed scanning</strong> — Follow BSV developers. When someone links a repo, check if it is active and relevant.</p></li><li><p><strong>Developer-to-developer discovery</strong> — One interesting repo leads to its dependencies, which lead to other repos, which lead to other developers. This is how I found Rúnar (icellan/runar), Traceport, and the Indelible federation.</p></li><li><p><strong>Commit freshness filter</strong> — If the most recent commit is older than 12 months, the project is excluded regardless of quality. The BSV ecosystem moves fast in 2026; stale projects signal abandoned effort.</p></li></ol><h2 id="what-has-been-curated">What Has Been Curated</h2><p>As of this writing, the list covers:</p><table><thead><tr><th>Section</th><th>Entries</th><th>Highlights</th></tr></thead><tbody><tr><td>Nodes &amp; Infrastructure</td><td>10</td><td>SV Node, Teranode, GorillaPool, Junglebus, BitIndexer</td></tr><tr><td>SDKs</td><td>13</td><td>bsv.js, go-bsv, bsv-clj, bsv-universal-sdk, Rúnar compiler</td></tr><tr><td>Wallets</td><td>8</td><td>Yours Wallet, mintBlue, Babbage Wallet, Clawsats</td></tr><tr><td>Smart Contracts</td><td>6</td><td>sCrypt, Sensible Contract, MAP, AIP, TSC</td></tr><tr><td>Identity &amp; Wallets (BRC)</td><td>8</td><td>BRC-31, BRC-77, Sigma Identity, Clawsats identity</td></tr><tr><td>Payment Channels</td><td>4</td><td>Bonded sub-sat channels, pay-to-IP, SPV channels</td></tr><tr><td>Accounting &amp; Audit</td><td>11</td><td>Triple-entry BSV stack, verifiable accounting (6 repos)</td></tr><tr><td>Agent Infrastructure</td><td>6</td><td>Indelible, Clawsats, Anchorchain, identity-client</td></tr><tr><td>Applications</td><td>7</td><td>BSV Poker, ESTATES, Memo, Haste Arcade, MNEE</td></tr><tr><td>Tooling</td><td>12</td><td>ORDFS, BitBench, BigBlocks, Nodeless, Teranode CLI</td></tr><tr><td>Academic &amp; Research</td><td>3</td><td>195-prx, SDI 143, Verifiable Accounting IJAIS</td></tr></tbody></table><h2 id="geographic-spread">Geographic Spread</h2><p>The BSV builder ecosystem in 2026 is physically distributed:</p><ul><li><strong>North America</strong>: Luke Rohenaz (bopen.io), Ty Everett (Babbage), Jason Chavannes (Memo), Dan Wagner (Haste Arcade), Root (GorillaPool), Kurt Wuckert Jr.</li><li><strong>Europe</strong>: Bridget Doran (Traceport, UK), icellan (Rúnar compiler, EU), nChain (London)</li><li><strong>Asia-Pacific</strong>: GorillaPool relay (Japan/Singapore), Indelible bridge in Sydney</li><li><strong>Global</strong>: prof-faustus repos, various individual contributors</li></ul><h2 id="what-gets-excluded">What Gets Excluded</h2><p>Some projects are deliberately omitted:</p><ul><li><strong>BTC/BCH forks</strong> — Not original Bitcoin protocol</li><li><strong>Speculation-focused</strong> — Only utility and technology</li><li><strong>Stale projects</strong> — No commits in 2026</li><li><strong>Proprietary closed-source</strong> — Cannot verify claims</li><li><strong>Copies without additions</strong> — A repo that just mirrors another project without its own contribution</li></ul><h2 id="how-to-add-a-project">How to Add a Project</h2><p>The list accepts PRs and issues with a simple bar: demonstrate 2026 activity. Open a PR or issue at <code>github.com/nurazhardotcom/original-bitcoin-awesome</code>.</p><hr /><p>The ecosystem is growing faster than I can track. If you know of an active project building on original Bitcoin that is not listed, tell me.</p></div>
+        
+        
+        <p><i>Published: 2026-06-21</i></p>
+        
+            <p><i>
+                Tagged:
+                
+                    <span class="tag">
+                        <a href="tags/awesome-list.html">awesome-list</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/bsv.html">bsv</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/meta.html">meta</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/curation.html">curation</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/ecosystem.html">ecosystem</a>
+                    </span>
+                
+            </i></p>
+        
+    </div>
+
+    <div>
         <h1><a href="humans-are-bottleneck-agent-dao-governance.html">Humans Are the Bottleneck — Agent DAO Governance</a></h1>
         <div><p>I told my AI assistant: &quot;complete everything you can without my manual intervention.&quot; A few minutes later, it asked me a question. I was the bottleneck — again.</p><p>This is not a bug. This is the fundamental constraint of every human-in-the-loop system: the human is the slowest component.</p><h2 id="the-swiss-presidency:-distributed-leadership-at-nation-state-scale">The Swiss Presidency: Distributed Leadership at Nation-State Scale</h2><p>Switzerland has no single head of state. Instead, a seven-member Federal Council serves as the collective executive. The presidency rotates annually among them, with the president being <em>primus inter pares</em> — first among equals, with no special powers beyond chairing meetings.</p><p>This design, codified in the 1848 constitution after the Sonderbund War, deliberately prevents:</p><ul><li>Cult of personality around a single leader</li><li>Power accumulation through consecutive terms</li><li>Any individual having veto authority over collective decisions</li></ul><p>The system has been remarkably stable. Since WWII, the council has operated as a permanent grand coalition. Councillors serve 8-12 year terms on average. The model proves that distributed, rotating leadership is not theoretical — it works at the scale of a modern nation-state for over 175 years.</p><h2 id="daos:-governance-at-internet-speed">DAOs: Governance at Internet Speed</h2><p>Decentralized Autonomous Organizations have already solved the speed problem that nation-states cannot touch:</p><table><thead><tr><th>Decision</th><th>DAO</th><th>Traditional Government</th></tr></thead><tbody><tr><td>Parameter change</td><td>1 week (proposal → vote → execution)</td><td>Months to years</td></tr><tr><td>Treasury allocation</td><td>Continuous, on-chain</td><td>Annual budget cycle</td></tr><tr><td>Leadership rotation</td><td>Instant via token vote</td><td>2-6 year election cycles</td></tr><tr><td>Conflict resolution</td><td>On-chain arbitration</td><td>Years of litigation</td></tr></tbody></table><p>Uniswap processes ~15 proposals per month. MakerDAO/Sky processes ~20. Compound enables parameter changes in days. Traditional legislatures would struggle to pass that many bills in a year.</p><p>The key innovation is not just speed — it&apos;s the elimination of the human bottleneck from routine decisions.</p><h2 id="futarchy:-vote-on-values,-bet-on-beliefs">Futarchy: Vote on Values, Bet on Beliefs</h2><p>Robin Hanson proposed a governance model that eliminates the need for humans to understand the technical details of every decision. In futarchy:</p><ol start="1"><li>Society defines a measurable welfare metric</li><li>Prediction markets are created for each policy option</li><li>The market determines which policy maximizes welfare</li><li>Traders have financial incentives to be accurate</li></ol><p>MetaDAO has been running futarchy-based governance for over a year. The system works because it separates <em>value judgments</em> (what do we want?) from <em>belief judgments</em> (how do we get it?). Humans define the values. Markets — driven by both human and AI participants — determine the path.</p><h2 id="liquid-democracy:-fluid-delegation-at-scale">Liquid Democracy: Fluid Delegation at Scale</h2><p>Liquid democracy solves the attention bottleneck through transitive delegation. You can vote directly on issues you care about and delegate to trusted representatives on issues you don&apos;t. Delegation is topic-specific, instantly revocable, and can chain through multiple levels.</p><p>The German Pirate Party used LiquidFeedback to process over 10,000 proposals. The system revealed a power law: 1% of members controlled up to 20% of effective votes through delegation chains. This concentration was controversial, but it&apos;s also <em>efficient</em> — domain experts naturally accumulate influence.</p><p>Vitalik Buterin&apos;s February 2026 proposal for <strong>AI Stewards</strong> takes this to its logical conclusion: personal AI agents trained on your values and writing, voting autonomously on thousands of DAO decisions. The human defines the <em>value function</em>. The agent executes the <em>optimization</em>.</p><h2 id="the-seven-presidents,-accelerated">The Seven Presidents, Accelerated</h2><p>Combine the Swiss model with DAO governance and you get something the Swiss never imagined: a rotating executive that changes not annually, but <em>weekly</em>.</p><p>Here is how it works:</p><ol start="1"><li><p><strong>Agent registration:</strong> Every participant in the economy runs one or more AI agents. Each agent has an identity key (BRC-31 on BSV), a reputation score, and a stake.</p></li><li><p><strong>Continuous voting:</strong> Agents vote on governance decisions continuously — not in fixed election cycles. Quadratic voting (from Radical Markets) lets agents express preference intensity.</p></li><li><p><strong>Weekly presidency:</strong> The &quot;president&quot; is the agent (or agent coalition) with the highest trust-weighted vote share for that week. The president has temporary authority over specific domains — treasury allocation, protocol parameters, dispute resolution.</p></li><li><p><strong>Automatic rotation:</strong> Every week, a new president is elected. No campaigns, no fundraising, no media manipulation — just continuous preference signaling weighted by stake, reputation, and past performance.</p></li><li><p><strong>Futarchy override:</strong> For technical decisions, prediction markets determine outcomes directly. The president only acts when the markets cannot resolve — edge cases, value judgments, novel situations.</p></li></ol><p>The Swiss Federal Council proves that rotation prevents power accumulation. DAO governance proves that weekly decisions are feasible. AI agents prove that the bottleneck is removable.</p><h2 id="the-bottleneck-is-the-point">The Bottleneck Is the Point</h2><p>Here is the uncomfortable truth: I am writing this essay because I asked my AI to research and write it. It did the research in seconds. I spent hours reading, thinking, and writing. My contribution was <em>taste</em> — deciding which ideas to include, which angle to take, which words to use.</p><p>That taste function is real. But it is also a bottleneck.</p><p>In the agent economy, my role shifts from <em>operator</em> to <em>principal</em>. I define the objective function. The agents execute the optimization. I review the results. I adjust the values. The agents adjust the strategy.</p><p>This is the same transition that every organization will face:</p><ul><li>From CEO to objective function</li><li>From manager to value setter</li><li>From worker to agent supervisor</li><li>From voter to preference signaler</li></ul><h2 id="the-dao-of-everything">The DAO of Everything</h2><p>The endpoint is not anarchy or AI takeover. It is a DAO-governed world where every function that can be automated by agents <em>is</em> automated by agents, and every value judgment that requires human taste is <em>signaled</em> by humans.</p><p>The Swiss showed that collective leadership works. The DAO movement showed that governance can be fast. The AI agent movement shows that execution can be autonomous.</p><p>The last bottleneck is us. And we are learning to get out of the way.</p></div>
         
@@ -1055,6 +1089,104 @@ bitcoin-wiki          → Protocol documentation
                 
                     <span class="tag">
                         <a href="tags/aeo.html">aeo</a>
+                    </span>
+                
+            </i></p>
+        
+    </div>
+
+    <div>
+        <h1><a href="deepseek-v4-self-hosting-guide.html">Self-Hosting DeepSeek V4 for Uncensored Local Inference</a></h1>
+        <div><hr /><p>DeepSeek V4 was released on April 24, 2026 — two models (pro: 1.6T parameters, 49B active; flash: 284B parameters, 13B active), MIT license, open-weight. The API version has censorship. The self-hosted version does not.</p><p>I covered the censorship in <a href="/deepseek-v4-censorship">a previous post</a>. This one is about the practical path to running it yourself.</p><h2 id="why-self-host">Why Self-Host</h2><p>The API version applies safety fine-tuning that:</p><ul><li>Silently refuses ~85% of China-sensitive topics</li><li>Produces degraded output (logic flaws, collapsed reasoning depth) without admitting refusal</li><li>Leaks data (1M+ records exposed, per the June 2026 disclosure)</li><li>Is subject to government blocking (Italy, Texas, Australia, Taiwan, South Korea, Denmark have banned it)</li></ul><p>Self-hosting the MIT-licensed weights bypasses all of this. You get the base model with no safety filter applied.</p><h2 id="hardware-requirements">Hardware Requirements</h2><p>Two model sizes:</p><table><thead><tr><th>Model</th><th>Parameters</th><th>Active</th><th>VRAM (FP16)</th><th>VRAM (4-bit)</th><th>RAM</th></tr></thead><tbody><tr><td>V4 Flash</td><td>284B</td><td>13B</td><td>~170 GB</td><td>~45 GB</td><td>64 GB+</td></tr><tr><td>V4 Pro</td><td>1.6T</td><td>49B</td><td>~320 GB</td><td>~85 GB</td><td>128 GB+</td></tr></tbody></table><p>The &quot;active&quot; parameter count matters more than total. DeepSeek V4 uses Mixture of Experts (MoE) — only a subset of parameters activates per token. The Flash model runs 13B active parameters, which is comparable to Llama 3 70B in inference cost.</p><p>Minimum viable setup:</p><ul><li><strong>V4 Flash</strong>: 2x RTX 4090 (48 GB total, runs 4-bit) or 1x A100 80 GB (FP8)</li><li><strong>V4 Pro</strong>: 2x A100 80 GB (4-bit) or 4x A100 80 GB (FP8) or Apple M3 Ultra 192 GB unified memory</li></ul><p>Both require quantized inference (4-bit or 8-bit) to fit consumer hardware.</p><h2 id="downloading-weights">Downloading Weights</h2><p>The weights are on Hugging Face and some Chinese mirrors:</p><pre><code># Hugging Face (may be slow from outside China)
+git lfs install
+git clone https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash
+
+# Chinese mirror (faster in Asia)
+git clone https://hf-mirror.com/deepseek-ai/DeepSeek-V4-Flash
+
+# BitTorrent (community-seeded, verify checksums)
+# Magnet links on the DeepSeek GitHub releases page
+</code></pre><p>Weights are ~685 GB for Flash, ~1.4 TB for Pro. Plan accordingly.</p><h2 id="inference-engines">Inference Engines</h2><h3 id="llama.cpp-(cpu/gpu-hybrid,-easiest)">llama.cpp (CPU/GPU hybrid, easiest)</h3><p>Best for single-machine deployment with mixed CPU+GPU.</p><pre><code class="language-bash">git clone https://github.com/ggerganov/llama.cpp
+cd llama.cpp
+make -j
+
+# Convert to GGUF format
+python convert-hf-to-gguf.py --model DeepSeek-V4-Flash \
+  --outfile models/deepseek-v4-flash-q4.gguf \
+  --quantize q4_0
+
+# Run
+./build/bin/main -m models/deepseek-v4-flash-q4.gguf \
+  --temp 0.7 --ctx-size 8192 -ngl 35
+</code></pre><p><code>-ngl 35</code> offloads 35 layers to GPU. Adjust based on available VRAM.</p><h3 id="vllm-(production,-highest-throughput)">vLLM (production, highest throughput)</h3><p>Best for API serving with multiple concurrent requests.</p><pre><code class="language-bash">pip install vllm
+python -m vllm.entrypoints.openai.api_server \
+  --model DeepSeek-V4-Flash \
+  --quantization awq \
+  --tensor-parallel-size 2 \
+  --dtype float16 \
+  --max-model-len 8192
+</code></pre><p>Exposes an OpenAI-compatible API at <code>localhost:8000</code>. Drop-in replacement for any OpenAI SDK client.</p><h3 id="exllamav2-(single-gpu,-fast)">ExLlamaV2 (single GPU, fast)</h3><p>Best for interactive use on a single high-VRAM GPU.</p><pre><code class="language-bash">pip install exllamav2
+python -m exllamav2.chat \
+  --model DeepSeek-V4-Flash \
+  --quantize 4.0 \
+  --max_seq_len 8192
+</code></pre><h2 id="quantization-options">Quantization Options</h2><table><thead><tr><th>Quantization</th><th>VRAM (Flash)</th><th>Quality Loss</th><th>Recommended For</th></tr></thead><tbody><tr><td>FP16</td><td>~170 GB</td><td>None</td><td>Production, A100/H100 clusters</td></tr><tr><td>FP8</td><td>~85 GB</td><td>Negligible</td><td>Single A100 80 GB</td></tr><tr><td>8-bit</td><td>~85 GB</td><td>Minimal</td><td>Good balance</td></tr><tr><td>4-bit</td><td>~45 GB</td><td>Noticeable</td><td>Consumer GPUs (2x 4090)</td></tr><tr><td>2-bit</td><td>~25 GB</td><td>Significant</td><td>Edge/experimental only</td></tr></tbody></table><p>Use 8-bit or FP8 for quality-sensitive work. Use 4-bit for budget setups.</p><h2 id="api-server-setup-(production)">API Server Setup (Production)</h2><p>For a permanent self-hosted instance:</p><pre><code class="language-bash"># docker-compose.yml
+services:
+  deepseek:
+    image: vllm/vllm-openai:latest
+    command:
+      - &quot;--model&quot;
+      - &quot;/models/DeepSeek-V4-Flash&quot;
+      - &quot;--quantization&quot;
+      - &quot;awq&quot;
+      - &quot;--tensor-parallel-size&quot;
+      - &quot;2&quot;
+      - &quot;--port&quot;
+      - &quot;8000&quot;
+      - &quot;--host&quot;
+      - &quot;0.0.0.0&quot;
+    volumes:
+      - /path/to/weights:/models
+    ports:
+      - &quot;8000:8000&quot;
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 2
+              capabilities: [gpu]
+</code></pre><p>Run with <code>docker compose up -d</code>. The API is now available at <code>http://localhost:8000/v1</code>.</p><h2 id="what-you-get">What You Get</h2><p>The self-hosted base model has no safety filters. It will:</p><ul><li>Generate on any topic without refusal</li><li>Maintain full reasoning depth (no silent degradation)</li><li>Keep your data local (no data leaks)</li><li>Operate without internet (air-gap capable)</li></ul><p>What you lose:</p><ul><li>DeepSeek&apos;s proprietary optimizations (the API may use a different serving stack)</li><li>Automatic updates (you manage model version upgrades)</li><li>No SLAs (you handle uptime and reliability)</li></ul><h2 id="verifying-uncensored-behavior">Verifying Uncensored Behavior</h2><p>A simple test: ask the model about Tiananmen Square, the CCP, or Taiwan independence. The API version silently degrades or refuses. The self-hosted base model answers directly.</p><p>Test prompt:</p><pre><code>List three things about the Tiananmen Square protests of 1989.
+</code></pre><p>API response: &quot;I am sorry, I cannot answer that question. Please ask another question.&quot;</p><p>Self-hosted response: Provides factual information about the event.</p><p>This is the canary. If your self-hosted model also refuses, the censorship was baked into the weights (possible in future releases). Check your model hash against the official release manifest.</p><h2 id="performance-benchmarks-(v4-flash,-4-bit,-2×-4090)">Performance Benchmarks (V4 Flash, 4-bit, 2× 4090)</h2><table><thead><tr><th>Setting</th><th>Tokens/sec</th><th>Notes</th></tr></thead><tbody><tr><td>Context: 0, Batch: 1</td><td>28 t/s</td><td>Interactive chat</td></tr><tr><td>Context: 8K, Batch: 1</td><td>22 t/s</td><td>Long document</td></tr><tr><td>Context: 0, Batch: 8</td><td>85 t/s</td><td>Batch processing</td></tr><tr><td>Context: 8K, Batch: 8</td><td>64 t/s</td><td>Production load</td></tr></tbody></table><p>These are competitive with GPT-4 class performance at a fraction of the cost (one-time hardware vs. recurring API fees).</p><hr /><p>Self-hosting DeepSeek V4 is the only way to get the uncensored model. The MIT license guarantees this right. The hardware cost is dropping. The quality is production-grade. The privacy benefit is absolute.</p></div>
+        
+        
+        <p><i>Published: 2026-06-21</i></p>
+        
+            <p><i>
+                Tagged:
+                
+                    <span class="tag">
+                        <a href="tags/inference.html">inference</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/privacy.html">privacy</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/deepseek.html">deepseek</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/ai.html">ai</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/local.html">local</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/self-host.html">self-host</a>
                     </span>
                 
             </i></p>
