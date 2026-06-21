@@ -3,7 +3,7 @@
   <title>Nur Azhar</title>
   <link href="https://blog.nurazhar.com/atom.xml" rel="self"/>
   <link href="https://blog.nurazhar.com"/>
-  <updated>2026-06-21T07:40:21+00:00</updated>
+  <updated>2026-06-21T07:44:46+00:00</updated>
   <id>https://blog.nurazhar.com</id>
   <author>
     <name>Nur Azhar</name>
@@ -334,17 +334,17 @@ mindmap
       Status&lt;br/&gt;&lt;code&gt;✅ clean&lt;br/&gt;or ⚠️ 2 HIGH&lt;/code&gt;&lt;br/&gt;always visible
 </code></pre><p>A graph view of the same shift:</p><pre><code class="language-mermaid">graph LR
     subgraph Before_World[&quot;BEFORE: policy-not-code&quot;]
-        A1[&quot;📄 PDF policy&lt;br/&gt;(lives in IT shared drive)&quot;]:::before
-        A2[&quot;📊 Spreadsheet checklist&lt;br/&gt;(edited by Compliance team)&quot;]:::before
-        A3[&quot;📂 Codebase&lt;br/&gt;(no compliance linkage)&quot;]:::before
+        A1[&quot;📄 PDF policy&lt;br/&gt;(lives in IT shared drive)&quot;]:::before_state
+        A2[&quot;📊 Spreadsheet checklist&lt;br/&gt;(edited by Compliance team)&quot;]:::before_state
+        A3[&quot;📂 Codebase&lt;br/&gt;(no compliance linkage)&quot;]:::before_state
         A1 -.-&gt;|&quot;manual reconciliation&lt;br/&gt;each quarter&quot;| A2
         A2 -.-&gt;|&quot;hope it matches&quot;| A3
     end
 
     subgraph After_World[&quot;AFTER: code IS the policy&quot;]
-        B1[&quot;📝 CHECKLIST.md&lt;br/&gt;(in repo, versioned)&quot;]:::after
-        B2[&quot;🤖 bb audit&lt;br/&gt;(auto-ticks on scan)&quot;]:::after
-        B3[&quot;📂 Codebase&lt;br/&gt;(same repo)&quot;]:::after
+        B1[&quot;📝 CHECKLIST.md&lt;br/&gt;(in repo, versioned)&quot;]:::after_state
+        B2[&quot;🤖 bb audit&lt;br/&gt;(auto-ticks on scan)&quot;]:::after_state
+        B3[&quot;📂 Codebase&lt;br/&gt;(same repo)&quot;]:::after_state
         B1 --&gt;|&quot;scan verifies&quot;| B2
         B2 --&gt;|&quot;rewrites&quot;| B1
         B2 --&gt;|&quot;scans&quot;| B3
@@ -359,8 +359,8 @@ mindmap
     style B2 fill:#f1f5f9,stroke:#22c55e
     style B3 fill:#f1f5f9,stroke:#22c55e
 
-    classDef before fill:#fff1f2,stroke:#f43f5e,stroke-width:2px,color:#881337
-    classDef after fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d
+    classDef before_state fill:#fff1f2,stroke:#f43f5e,stroke-width:2px,color:#881337
+    classDef after_state fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d
 
 </code></pre><p>The shift is from &quot;documents that describe the policy&quot; to &quot;code that executes the policy.&quot; The PDF never had a chance.</p><hr /><h3 id="compliance-exposure-tiers">Compliance Exposure Tiers</h3><p>When I scanned my own 17 public GitHub repos for PDPA-relevant personal data, they fell into five tiers:</p><pre><code class="language-mermaid">mindmap
   root((17 Public Repos))
