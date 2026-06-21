@@ -2331,8 +2331,8 @@ Phase 4 (2039-2045+): The DAO of Everything            — humans signal taste
     A -.-&gt; X[&quot;Safe NRIC Rule&lt;br/&gt;cease full-NRIC&lt;br/&gt;by 31 Dec 2026&quot;]:::aside
 
     classDef root fill:#1e293b,stroke:#38bdf8,stroke-width:3px,color:#cbd5e1
-    classDef ob fill:#0f172a,stroke:#22d3ee,stroke-width:1px,color:#cbd5e1
-    classDef aside fill:#1e293b,stroke:#f59e0b,stroke-width:2px,color:#cbd5e1,stroke-dasharray: 5 5
+    classDef ob fill:#0f172a,stroke:#0e7490,stroke-width:1px,color:#cbd5e1
+    classDef aside fill:#1e293b,stroke:#b45309,stroke-width:2px,color:#cbd5e1,stroke-dasharray: 5 5
 </code></pre><p>The toolkit&apos;s job is to make each of those 11 obligations a runnable check. Some — the scanner obligations like &quot;no hardcoded secrets&quot; — can be performed by code. Some — the documentation obligations like &quot;publish a Privacy Policy&quot; — must be performed by humans but can be <strong>autoticked</strong> when the human publishes the proof file.</p><p>That bifurcation is the central architectural idea. Anything a scanner can verify gets a <code>&lt;!-- agent:verify-X --&gt;</code> marker in CHECKLIST.md, and <code>bb audit</code> ticks it for you. Anything only humans can verify stays manual. The scanner does the boring work; the human does the judgement work.</p><hr /><h3 id="repository-anatomy">Repository Anatomy</h3><p>The repo lives at <code>nurazhardotcom/pdpa-sg-clj</code>. Here&apos;s how it&apos;s organised:</p><pre><code class="language-mermaid">graph TD
     R[&quot;pdpa-sg-clj/&lt;br/&gt;(MIT, Public, Java 11+/Babashka 1.4+)&quot;]:::repo
 
@@ -2363,8 +2363,8 @@ Phase 4 (2039-2045+): The DAO of Everything            — humans signal taste
     POL --&gt; P8[&quot;RETENTION_SCHEDULE.template.md&quot;]
 
     classDef repo fill:#1e293b,stroke:#38bdf8,stroke-width:3px,color:#cbd5e1
-    classDef folder fill:#0f172a,stroke:#a78bfa,stroke-width:1px,color:#cbd5e1
-    classDef leaf fill:#1e293b,stroke:#22d3ee,stroke-width:1px,color:#cbd5e1
+    classDef folder fill:#0f172a,stroke:#7c3aed,stroke-width:1px,color:#cbd5e1
+    classDef leaf fill:#1e293b,stroke:#0e7490,stroke-width:1px,color:#cbd5e1
 </code></pre><p>The architecture is intentionally flat. Each namespace has one responsibility and a name that matches its noun. A call-graph walks from <code>pdpa.core</code> straight down through <code>pdpa.redact → pdpa.nric</code>, <code>pdpa.scan → pdpa.nric</code>, <code>pdpa.audit → pdpa.scan + pdpa.checklist</code>, and so on.</p><p>The Babashka CLI surface maps one task to one namespace:</p><pre><code class="language-mermaid">graph LR
     USR[&quot;bb task invocation&quot;]:::user
 
@@ -2386,8 +2386,8 @@ Phase 4 (2039-2045+): The DAO of Everything            — humans signal taste
     DPO --&gt; POL_NS[&quot;pdpa.policy&quot;]
     TEST --&gt; CLJ[&quot;requires pdpa.nric-test&lt;br/&gt;pdpa.redact-test&lt;br/&gt;pdpa.checklist-test&lt;br/&gt;pdpa.scan-test&quot;]
 
-    classDef user fill:#fef3c7,stroke:#f59e0b,stroke-width:2px,color:#78350f
-    classDef task fill:#faf5ff,stroke:#a78bfa,stroke-width:2px,color:#4c1d95
+    classDef user fill:#fef3c7,stroke:#b45309,stroke-width:2px,color:#78350f
+    classDef task fill:#faf5ff,stroke:#7c3aed,stroke-width:2px,color:#4c1d95
 </code></pre><p>Every task uses <code>(requiring-resolve &apos;pdpa.x/y)</code> so each invocation loads only the namespace it needs. Startup time on cold <code>bb</code> is sub-second.</p><hr /><h3 id="the-checklist.md-pattern">The CHECKLIST.md Pattern</h3><p>CHECKLIST.md is the heart of the toolkit. It&apos;s a single Markdown file with <code>- [ ]</code> boxes for each obligation. Boxes that the scanner can verify have an HTML comment marker, like <code>&lt;!-- agent:verify-protection --&gt;</code>. The auto-tick logic reads both the file and the scan results in one pass:</p><pre><code class="language-mermaid">sequenceDiagram
     autonumber
     participant User as You / AI Agent
@@ -2460,12 +2460,12 @@ Phase 4 (2039-2045+): The DAO of Everything            — humans signal taste
     Comp1 -- yes --&gt; V[&quot;VALID → redact as&lt;br/&gt;[REDACTED_NRIC]&quot;]:::valid
     Comp1 -- no --&gt; Inv[&quot;INVALID&lt;br/&gt;→ ignore&lt;br/&gt;(hex string guard)&quot;]:::invalid
 
-    style Start fill:#faf5ff,stroke:#a78bfa
+    style Start fill:#faf5ff,stroke:#7c3aed
     style citizenalgo fill:#cffafe,stroke:#0891b2
     style finalgo fill:#cffafe,stroke:#0891b2
-    style Comp1 fill:#fef3c7,stroke:#f59e0b
+    style Comp1 fill:#fef3c7,stroke:#b45309
     style V fill:#dcfce7,stroke:#16a34a
-    style Inv fill:#fff1f2,stroke:#f43f5e
+    style Inv fill:#fff1f2,stroke:#e11d48
 </code></pre><p>Hand-computed reference values used by the test suite:</p><table><thead><tr><th>Input</th><th>Computation</th><th>Output</th></tr></thead><tbody><tr><td><code>S0100000J</code></td><td>sum=1×7=7, (7+4)%11=0 → &quot;JZIHGFEDCBA&quot;[0]</td><td>✓ valid</td></tr><tr><td><code>F0000002K</code></td><td>sum=2×2=4, (4+4)%11=8 → &quot;XWUTRQPNKLM&quot;[8]</td><td>✓ valid</td></tr><tr><td><code>M5000000P</code></td><td>sum=3×1+5×2=13, (13+4)%11=6 → &quot;XWUTRQPNKLM&quot;[6]</td><td>✓ valid</td></tr><tr><td><code>S0000000Z</code></td><td>sum=0, (0+4)%11=4 → &quot;JZIHGFEDCBA&quot;[4]=&apos;G&apos;</td><td>✗ rejected</td></tr><tr><td><code>deadbeef…F</code></td><td>hex — sum is wild, never valid</td><td>✗ rejected</td></tr></tbody></table><p>Why this matters in practice: my BSV transaction-hash-redacting work would have been wrecked by a structural-only regex. Every txid that contains 7 consecutive digits followed by a letter (<code>S/N/T/F/G</code> are common hex letters) would have been redacted as NRIC. The Mod-11 filter reduces that from 1-in-36M to something astronomically lower — only real NRICs pass.</p><hr /><h3 id="the-redaction-pipeline">The Redaction Pipeline</h3><p>The redactor runs four stages in fixed order on any text body:</p><p><code>mermaid</code>mermaid sequenceDiagram autonumber participant Caller as caller code or CLI participant R as pdpa.redact participant N as pdpa.nric participant Out as Output String</p><pre><code>Caller-&gt;&gt;R: redact-text(text)
 activate R
 R-&gt;&gt;N: find-valid-nrics(text)
@@ -2570,14 +2570,14 @@ mindmap
 
     Before_World -.-&gt;|&quot;audit chain&lt;br/&gt;(maybe 1/week)&quot;| After_World
 
-    style A1 fill:#f1f5f9,stroke:#f43f5e
-    style A2 fill:#f1f5f9,stroke:#f43f5e
-    style A3 fill:#f1f5f9,stroke:#f43f5e
-    style B1 fill:#f1f5f9,stroke:#22c55e
-    style B2 fill:#f1f5f9,stroke:#22c55e
-    style B3 fill:#f1f5f9,stroke:#22c55e
+    style A1 fill:#f1f5f9,stroke:#e11d48
+    style A2 fill:#f1f5f9,stroke:#e11d48
+    style A3 fill:#f1f5f9,stroke:#e11d48
+    style B1 fill:#f1f5f9,stroke:#15803d
+    style B2 fill:#f1f5f9,stroke:#15803d
+    style B3 fill:#f1f5f9,stroke:#15803d
 
-    classDef before_state fill:#fff1f2,stroke:#f43f5e,stroke-width:2px,color:#881337
+    classDef before_state fill:#fff1f2,stroke:#e11d48,stroke-width:2px,color:#881337
     classDef after_state fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d
 
 </code></pre><p>The shift is from &quot;documents that describe the policy&quot; to &quot;code that executes the policy.&quot; The PDF never had a chance.</p><hr /><h3 id="compliance-exposure-tiers">Compliance Exposure Tiers</h3><p>When I scanned my own 17 public GitHub repos for PDPA-relevant personal data, they fell into five tiers:</p><pre><code class="language-mermaid">mindmap
