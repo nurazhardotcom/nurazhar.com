@@ -117,6 +117,63 @@
 
       
     <div>
+        <h1><a href="agi-vs-asi-g-is-glue.html">AGI vs. ASI — The Definitions Debate, and Why &quot;G&quot; Stands for Glue</a></h1>
+        <div><hr /><p>Daniel Miessler&apos;s <a href="https://danielmiessler.com/blog/agi-vs-asi-definitions">AGI vs ASI definitions</a> are the most practically useful I&apos;ve seen in 2026. He distills the spectrum into three clear levels:</p><ol start="1"><li><strong>Not as good as a human expert</strong> (where we are now)</li><li><strong>As good as a human expert</strong> (AGI)</li><li><strong>Better than any human expert</strong> (ASI)</li></ol><p>And crucially, he anchors these to <strong>cognitive role</strong> vs <strong>cognitive task</strong>:</p><blockquote><p>&quot;Any real job role involves hundreds or thousands of mini tasks that change constantly. And narrow automation/AI can&apos;t deal with those today.&quot;</p></blockquote><p>This is the right framing. A calculator is ASI at arithmetic but AGI-ase at nothing. An LLM can write a 200-page report in minutes (impressive speed) but cannot <em>decide what report to write</em> or <em>know why it matters</em>.</p><p>But Miessler&apos;s definitions, useful as they are, still assume &quot;General&quot; means something it doesn&apos;t. They assume AGI is a technical milestone we&apos;re approaching, rather than a category error.</p><hr /><h2 id="&quot;g&quot;-is-for-glue">&quot;G&quot; Is for Glue</h2><p>In <a href="/posts/why-agi-wont-happen">Why AGI Won&apos;t Happen</a>, I argued that LLMs are statistical mirrors — they predict tokens based on training patterns, not reason about truth. The &quot;G&quot; in AGI doesn&apos;t stand for &quot;General.&quot; It stands for <strong>Glue</strong> — the process of stitching together statistical fragments into something that <em>looks</em> like general understanding.</p><p>Miessler&apos;s own evidence supports this. He writes:</p><blockquote><p>&quot;We confuse speed with intelligence in many cases, e.g., writing a perfectly cited 200-page report in minutes.&quot;</p></blockquote><p>Speed is not intelligence. But more importantly: <strong>fluency is not understanding</strong>. An LLM generates a perfectly cited report because it has seen millions of perfectly cited reports. It generates citations to patterns, not to sources. The citations look real because &quot;real citation&quot; is a statistical pattern in the training data.</p><p>This is Glue: the illusion of coherence assembled from fragments that were never connected in the model&apos;s &quot;understanding&quot; (because there is no understanding).</p><hr /><h2 id="the-role-vs.-task-trap">The Role vs. Task Trap</h2><p>Miessler&apos;s role-vs-task distinction is useful, but it creates a trap: it implies that AGI is just a matter of <em>scale</em>. That if you keep adding tasks to what a system can do, eventually it accumulates into a role.</p><p>This is wrong. A role is not a large collection of tasks. A role is a <strong>contextual decision-making framework</strong> that:</p><ul><li>Prioritizes among competing tasks based on real-world consequences</li><li>Knows what it doesn&apos;t know and acts accordingly</li><li>Has skin in the game — a professional accountant faces legal liability, a security consultant faces reputational risk</li><li>Adapts to novel situations without retraining</li></ul><p>An LLM does none of these. It cannot. There is no substrate for consequence, liability, or adaptation in a next-token predictor.</p><pre><code class="language-mermaid">graph TD
+    T[&quot;Individual Task&lt;br/&gt;(LLM excels)&quot;] --&gt; R[&quot;Collection of Tasks&quot;]
+    R --&gt; ROLE_WRONG[&quot;Role?&lt;br/&gt;(Miessler&apos;s assumption)&quot;]
+    R --&gt; X[&quot;Missing: context,&lt;br/&gt;consequence, liability&quot;]
+
+    C[&quot;Cognitive Role&quot;] --&gt; D[&quot;Decision-making&quot;]
+    C --&gt; S[&quot;Skin in the game&quot;]
+    C --&gt; A[&quot;Adaptation to novel situations&quot;]
+
+    X -.-&gt;|&quot;G is Glue&quot;| MISSING[&quot;LLM cannot bridge this gap&quot;]
+
+    style T fill:#282,color:#fff
+    style ROLE_WRONG fill:#822,color:#fff
+    style C fill:#228,color:#fff
+    style MISSING fill:#960,color:#fff
+</code></pre><hr /><h2 id="asi:-the-power-question">ASI: The Power Question</h2><p>Miessler defines ASI as output that is &quot;completely creative, novel, and alien feeling&quot; — work you instantly recognize as super-human.</p><p>This definition is poetic but politically naive. It assumes ASI would be recognizable by its <em>output quality</em>. But the history of intelligence definitions (10,000 years of it) tells us otherwise:</p><blockquote><p>Intelligence has never been defined by capability. It has always been defined by power.</p></blockquote><p>The <em>same system</em> that would be called &quot;ASI&quot; if owned by a US defense contractor would be called &quot;a threat&quot; if owned by a peer competitor, &quot;a toy&quot; if owned by an individual, and &quot;impossible&quot; if owned by someone without institutional backing.</p><p>This is not a side issue. It is the central issue. The &quot;G is Glue&quot; argument is not just about technical architecture. It is about who gets to decide what counts as intelligence, and what they gain by that definition.</p><hr /><h2 id="what-miessler-gets-right">What Miessler Gets Right</h2><p>Despite the critique, Miessler&apos;s framework is the best working model I&apos;ve seen for practical conversation. Three things he gets exactly right:</p><ol start="1"><li><strong>Role vs. task</strong> — this is the distinction that cuts through 90% of AGI hype</li><li><strong>Speed vs. intelligence</strong> — most LLM impressiveness is throughput, not insight</li><li><strong>The jump to ASI is qualitative, not quantitative</strong> — ASI would feel <em>alien</em>, not just <em>faster</em></li></ol><p>These are the right axes. The missing axis is <strong>power</strong>: who controls the system, who defines the evaluation criteria, and who benefits from the classification.</p><hr /><h2 id="summary">Summary</h2><ul><li>Miessler&apos;s AGI/ASI definitions are the most practically useful of 2026</li><li>The &quot;G&quot; in AGI stands for Glue, not General — LLMs stitch patterns, they don&apos;t reason</li><li>Role is not a collection of tasks; it requires consequence, liability, and adaptation that LLMs fundamentally lack</li><li>ASI definitions that ignore power structures are incomplete</li><li>The best definitions are the ones that reveal the political economy of intelligence, not just its technical performance</li></ul></div>
+        
+        
+        <p><i>Published: 2026-06-21</i></p>
+        
+            <p><i>
+                Tagged:
+                
+                    <span class="tag">
+                        <a href="tags/epistemology.html">epistemology</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/philosophy.html">philosophy</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/definitions.html">definitions</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/power.html">power</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/agi.html">agi</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/ai.html">ai</a>
+                    </span>
+                
+                    <span class="tag">
+                        <a href="tags/asi.html">asi</a>
+                    </span>
+                
+            </i></p>
+        
+    </div>
+
+    <div>
         <h1><a href="bsv-is-bitcoin-2026.html">BSV is Bitcoin: The 16-Year Restoration of Satoshi&#39;s v0.1 Protocol</a></h1>
         <div><hr /><p>On June 17, 2010, Satoshi Nakamoto wrote a post on BitcoinTalk that would become the most important design constraint in the history of digital money:</p><blockquote><p><em>&quot;The nature of Bitcoin is such that once version 0.1 was released, the core design was set in stone for the rest of its lifetime.&quot;</em></p></blockquote><p>Sixteen years later, in April 2026, that statement became literally true for the first time.</p><p>This post systematically compares every major Bitcoin implementation (BTC, BCH, BSV) against Satoshi&apos;s measurable design criteria — the whitepaper, the v0.1 source code, and his public writings — and demonstrates why only one implementation satisfies all of them.</p><hr /><h2 id="1.-the-whitepaper:-what-satoshi-actually-designed">1. The Whitepaper: What Satoshi Actually Designed</h2><p>Let&apos;s start with the source document. The Bitcoin whitepaper describes a <strong>peer-to-peer electronic cash system</strong>. The key architectural requirements are unambiguous:</p><pre><code class="language-mermaid">graph TD
     P2P[&quot;Peer-to-Peer Electronic Cash 2008&quot;] --&gt; R1[&quot;Low Fees&quot;]
