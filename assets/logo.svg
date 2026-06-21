@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100" width="400" height="100">
+  <defs>
+    <linearGradient id="glow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00ff88"/>
+      <stop offset="50%" stop-color="#00ddff"/>
+      <stop offset="100%" stop-color="#00ff88"/>
+    </linearGradient>
+    <linearGradient id="dim" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#004422"/>
+      <stop offset="100%" stop-color="#002244"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Grid background -->
+  <rect width="400" height="100" fill="#0d1117" rx="8"/>
+  <g stroke="#1a2332" stroke-width="0.5" opacity="0.6">
+    <line x1="0" y1="25" x2="400" y2="25"/><line x1="0" y1="50" x2="400" y2="50"/>
+    <line x1="0" y1="75" x2="400" y2="75"/><line x1="100" y1="0" x2="100" y2="100"/>
+    <line x1="200" y1="0" x2="200" y2="100"/><line x1="300" y1="0" x2="300" y2="100"/>
+  </g>
+
+  <!-- Prompt symbol -->
+  <text x="28" y="55" font-family="monospace" font-size="20" fill="url(#dim)">&gt;</text>
+
+  <!-- nurazhar.com text -->
+  <text x="48" y="55" font-family="'Courier New', monospace" font-size="18" fill="url(#glow)" font-weight="bold" letter-spacing="2">nurazhar.com</text>
+
+  <!-- Blinking cursor -->
+  <text x="290" y="55" font-family="monospace" font-size="18" fill="url(#glow)">
+    <animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite">▊</animate>
+  </text>
+
+  <!-- Subtitle -->
+  <text x="48" y="78" font-family="'Courier New', monospace" font-size="10" fill="#445566" letter-spacing="1">bitcoin · ai agents · protocol engineering</text>
+
+  <!-- Small decorative circuit dots -->
+  <circle cx="360" cy="20" r="2" fill="#00ff88" opacity="0.3"/>
+  <circle cx="370" cy="20" r="2" fill="#00ff88" opacity="0.5"/>
+  <circle cx="380" cy="20" r="2" fill="#00ddff" opacity="0.7"/>
+</svg>
