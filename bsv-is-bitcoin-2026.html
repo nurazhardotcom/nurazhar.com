@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      (function() {
+        try {
+          const savedTheme = localStorage.getItem('theme');
+          const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+    <title>BSV is Bitcoin: The 16-Year Restoration of Satoshi&#39;s v0.1 Protocol — Bitcoin, AI Agents, Protocol Engineering</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="application/atom+xml" rel="alternate" href="atom.xml" title="BSV is Bitcoin: The 16-Year Restoration of Satoshi&#39;s v0.1 Protocol">
+    <link rel="stylesheet" href="style.css">
+    <link rel="sitemap" type="application/xml" href="sitemap.xml">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css">
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      mermaid.initialize({ startOnLoad: false, theme: 'default' });
+      document.addEventListener("DOMContentLoaded", async () => {
+        const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
+        for (const codeBlock of codeBlocks) {
+          const pre = codeBlock.parentElement;
+          const div = document.createElement("div");
+          div.className = "mermaid";
+          div.textContent = codeBlock.textContent;
+          pre.replaceWith(div);
+        }
+        await mermaid.run();
+      });
+    </script>
+
+
+
+    <!-- Social sharing (Facebook, Twitter, LinkedIn, etc.) -->
+    <meta name="title" content="BSV is Bitcoin: The 16-Year Restoration of Satoshi&#39;s v0.1 Protocol">
+    <meta name="twitter:title" content="BSV is Bitcoin: The 16-Year Restoration of Satoshi&#39;s v0.1 Protocol">
+    <meta property="og:title" content="BSV is Bitcoin: The 16-Year Restoration of Satoshi&#39;s v0.1 Protocol">
+    <meta property="og:type" content="article">
+    <meta property="og:locale" content="en_SG">
+    <meta property="og:site_name" content="Nur Azhar's Blog">
+
+    <meta name="description" content="A forensic comparison of Bitcoin SV against Satoshi Nakamoto&#39;s original v0.1 design using measurable criteria: opcodes restored, block size, fee model, transaction digest, and protocol stability.">
+    <meta name="twitter:description" content="A forensic comparison of Bitcoin SV against Satoshi Nakamoto&#39;s original v0.1 design using measurable criteria: opcodes restored, block size, fee model, transaction digest, and protocol stability.">
+    <meta property="og:description" content="A forensic comparison of Bitcoin SV against Satoshi Nakamoto&#39;s original v0.1 design using measurable criteria: opcodes restored, block size, fee model, transaction digest, and protocol stability.">
+
+
+    <meta name="twitter:url" content="https://blog.nurazhar.com/bsv-is-bitcoin-2026.html">
+    <meta property="og:url" content="https://blog.nurazhar.com/bsv-is-bitcoin-2026.html">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image:alt" content="Nur Azhar's Blog - Bitcoin, AI Agents, Protocol Engineering">
+
+
+    <meta name="author" content="Nur Azhar">
+
+
+
+    <!-- JSON-LD Structured Data: WebSite -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Nur Azhar's Blog",
+  "url": "https://blog.nurazhar.com",
+  "description": "My technical blog to document my learnings",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  }
+}
+    </script>
+
+    <!-- JSON-LD Structured Data: BlogPosting -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "BSV is Bitcoin: The 16-Year Restoration of Satoshi&#39;s v0.1 Protocol",
+  "description": "A forensic comparison of Bitcoin SV against Satoshi Nakamoto&#39;s original v0.1 design using measurable criteria: opcodes restored, block size, fee model, transaction digest, and protocol stability.",
+  "datePublished": "2026-06-21",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  },
+  "url": "https://blog.nurazhar.com/bsv-is-bitcoin-2026.html",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://blog.nurazhar.com/bsv-is-bitcoin-2026.html"
+  }
+}
+    </script>
+
+  </head>
+  <body>
+
+    <div class="site-header">
+      <div class="wrapper">
+        <div class="site-nav">
+          <a class="page-link" href="stats.html">Stats</a>
+          <a class="page-link" href="kanban.html">Kanban</a>
+          <a class="page-link" href="archive.html">Archive</a>
+          <a class="page-link" href="tags/index.html">Tags</a>
+          
+	  <a class="page-link" href="atom.xml">
+            Feed
+          </a>
+	  
+	  
+	  <a class="page-link" href="https://nurazhar.com/">About</a>
+	  
+          <button id="theme-toggle" style="background: none; border: none; cursor: pointer; padding: 0 10px; font-size: 1.2rem; vertical-align: middle;" aria-label="Toggle theme">🌙</button>
+        </div>
+        <div style="display: flex; align-items: center;">
+          <div>
+            <h1 class="site-title" style="margin: 0;">
+              <a class="page-link" href="index.html">Nur Azhar</a>
+            </h1>
+            <p style="margin: 2px 0 0 0;">My technical blog to document my learnings</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrapper">
+
+      <h1>
+  
+  BSV is Bitcoin: The 16-Year Restoration of Satoshi&#39;s v0.1 Protocol
+  
+</h1>
+<div><hr /><p>On June 17, 2010, Satoshi Nakamoto wrote a post on BitcoinTalk that would become the most important design constraint in the history of digital money:</p><blockquote><p><em>&quot;The nature of Bitcoin is such that once version 0.1 was released, the core design was set in stone for the rest of its lifetime.&quot;</em></p></blockquote><p>Sixteen years later, in April 2026, that statement became literally true for the first time.</p><p>This post systematically compares every major Bitcoin implementation (BTC, BCH, BSV) against Satoshi&apos;s measurable design criteria — the whitepaper, the v0.1 source code, and his public writings — and demonstrates why only one implementation satisfies all of them.</p><hr /><h2 id="1.-the-whitepaper:-what-satoshi-actually-designed">1. The Whitepaper: What Satoshi Actually Designed</h2><p>Let&apos;s start with the source document. The Bitcoin whitepaper describes a <strong>peer-to-peer electronic cash system</strong>. The key architectural requirements are unambiguous:</p><pre><code class="language-mermaid">graph TD
+    P2P[&quot;Peer-to-Peer Electronic Cash 2008&quot;] --&gt; R1[&quot;Low Fees&quot;]
+    P2P --&gt; R2[&quot;On-Chain Scaling&quot;]
+    P2P --&gt; R3[&quot;SPV Verification&quot;]
+    P2P --&gt; R4[&quot;UTXO State&quot;]
+    P2P --&gt; R5[&quot;PoW Security&quot;]
+
+    R1 --&gt; F1[&quot;BTC ✗&quot;]
+    R1 --&gt; P1[&quot;BSV ✓&quot;]
+
+    R2 --&gt; F2[&quot;BTC ✗&quot;]
+    R2 --&gt; W2[&quot;BCH ~&quot;]
+    R2 --&gt; P2[&quot;BSV ✓&quot;]
+
+    R3 --&gt; F4[&quot;BTC ✗&quot;]
+    R3 --&gt; P3[&quot;BSV ✓&quot;]
+
+    style F1 fill:#822,color:#fff
+    style F2 fill:#822,color:#fff
+    style F4 fill:#822,color:#fff
+    style W2 fill:#960,color:#fff
+    style P1 fill:#174,color:#fff
+    style P2 fill:#174,color:#fff
+    style P3 fill:#174,color:#fff
+</code></pre><h3 id="scaling:-the-most-critical-test">Scaling: The Most Critical Test</h3><p>Satoshi explicitly addressed scaling in multiple forum posts. He intended Bitcoin to compete with Visa on transaction volume, using on-chain capacity that grows with Moore&apos;s Law:</p><blockquote><p><em>&quot;Bitcoin can already scale much larger than [Visa] with existing hardware for a fraction of the cost. It never really hits a scale ceiling.&quot;</em> — Satoshi Nakamoto, BitcoinTalk, 2009</p></blockquote><p>The whitepaper describes a system where miners process blocks, users run SPV clients, and the block size grows as hardware improves. There is <strong>no mention of a block size cap</strong> anywhere in the whitepaper or Satoshi&apos;s v0.1 code.</p><table><thead><tr><th>Criterion</th><th>Whitepaper / Satoshi</th><th>BTC</th><th>BCH</th><th>BSV</th></tr></thead><tbody><tr><td>Block size limit</td><td>None (market-driven)</td><td><strong>1 MB</strong> (SegWit ~4 MB effective)</td><td><strong>32 MB</strong></td><td><strong>No cap</strong> (4 GB blocks on mainnet)</td></tr><tr><td>Transaction fee target</td><td>Sub-cent (microtransactions)</td><td><strong><span class="formula">1–</span>30</strong> during congestion</td><td><strong>~$0.01</strong></td><td><strong>&lt; $0.001</strong></td></tr><tr><td>Throughput target</td><td>Visa-scale</td><td><strong>~7 TPS</strong></td><td><strong>~100 TPS</strong></td><td><strong>2,800+ TPS</strong> (1M+ TPS Teranode)</td></tr><tr><td>Scaling direction</td><td>On-chain (Moore&apos;s Law)</td><td><strong>Off-chain</strong> (Lightning)</td><td>On-chain (capped)</td><td>On-chain (unbounded)</td></tr></tbody></table><hr /><h2 id="2.-the-opcode-restoration:-a-16-year-arc">2. The Opcode Restoration: A 16-Year Arc</h2><p>The most forensic evidence comes from Bitcoin&apos;s scripting language. Satoshi&apos;s v0.1 shipped with a rich set of opcodes designed to support <em>every possible transaction type</em>:</p><blockquote><p><em>&quot;The design supports a tremendous variety of possible transaction types that I designed years ago. Escrow transactions, bonded contracts, third party arbitration, multi-party signature, etc.&quot;</em> — Satoshi Nakamoto, BitcoinTalk, 2010</p></blockquote><p>He achieved this generality through a single insight: <strong>script</strong>.</p><blockquote><p><em>&quot;The solution was script, which generalizes the problem so transacting parties can describe their transaction as a predicate that the node network evaluates.&quot;</em></p></blockquote><h3 id="the-disabling-(july-2010)">The Disabling (July 2010)</h3><p>In July 2010, CVE-2010-5137 exposed a denial-of-service crash bug. The development team panicked and disabled over a dozen opcodes in v0.3.1 — string operations (<code>OP_CAT</code>, <code>OP_SUBSTR</code>), arithmetic (<code>OP_MUL</code>, <code>OP_2MUL</code>), bitwise (<code>OP_AND</code>, <code>OP_OR</code>, <code>OP_XOR</code>, <code>OP_INVERT</code>), and version-aware opcodes (<code>OP_VER</code>, <code>OP_VERIF</code>).</p><p>These opcodes were <strong>never re-enabled in BTC</strong>. For 16 years, BTC&apos;s script has been a crippled subset of what Satoshi designed.</p><h3 id="the-timeline-of-restoration">The Timeline of Restoration</h3><pre><code class="language-mermaid">gantt
+    title Opcode Restoration Timeline (2009–2026)
+    dateFormat  YYYY-MM
+    axisFormat %Y
+
+    section Satoshi Era
+    Full opcode set live (v0.1)           :done, 2009-01, 2010-07
+    Opcodes disabled (v0.3.1 CVE panic)   :crit, 2010-07, 2020-02
+
+    section BTC
+    Opcodes remain disabled               :crit, 2020-02, 2026-06
+
+    section BCH
+    Partial restoration (some opcodes)    :done, 2017-08, 2018-11
+
+    section BSV Genesis (2020)
+    OP_CAT, OP_SPLIT restored             :done, 2020-02, 2020-02
+    OP_AND, OP_OR, OP_XOR restored        :done, 2020-02, 2020-02
+    OP_MUL, OP_DIV, OP_MOD restored       :done, 2020-02, 2020-02
+    OP_LSHIFT, OP_RSHIFT restored         :done, 2020-02, 2020-02
+    OP_INVERT, OP_NUM2BIN restored        :done, 2020-02, 2020-02
+    P2SH removed, block caps removed      :done, 2020-02, 2020-02
+
+    section BSV Chronicle (April 2026)
+    OP_VER restored                        :done, 2026-04, 2026-04
+    OP_VERIF, OP_VERNOTIF restored         :done, 2026-04, 2026-04
+    OP_SUBSTR, OP_LEFT, OP_RIGHT restored  :done, 2026-04, 2026-04
+    OP_2MUL, OP_2DIV restored              :done, 2026-04, 2026-04
+    OP_LSHIFTNUM, OP_RSHIFTNUM added       :done, 2026-04, 2026-04
+    OTDA reinstated                        :done, 2026-04, 2026-04
+    Script numbers 32MB (up from 750KB)    :done, 2026-04, 2026-04
+    Malleability restrictions removed      :done, 2026-04, 2026-04
+</code></pre><h3 id="what-this-means-in-practice">What This Means in Practice</h3><p>A disabled opcode is not a theoretical problem. It is a <strong>protocol-level restriction</strong> on what you can compute inside a Bitcoin transaction. Here is a concrete example of what Genesis and Chronicle unlocked:</p><pre><code class="language-clojure">;; Satoshi&apos;s original OP_CAT — concatenate two stack values
+;; Disabled in v0.3.1 (July 2010). Restored in BSV Genesis (Feb 2020).
+;; Still disabled in BTC and BCH.
+
+;; Before restoration (BTC/BCH): cannot concatenate strings on-chain
+;; Alternative: push pre-concatenated data, trust it wasn&apos;t tampered with
+
+;; After restoration (BSV):
+;; &lt;sig&gt; &lt;pubkey&gt; OP_CAT OP_HASH256 &lt;expected_hash&gt; OP_EQUALVERIFY
+;; Concatenates signature + pubkey, hashes the result, verifies against
+;; an expected value — all inside the script interpreter.
+</code></pre><pre><code class="language-clojure">;; Satoshi&apos;s original OP_SUBSTR — extract a substring
+;; Disabled in v0.3.1. Restored in BSV Chronicle (Apr 2026).
+;; Still disabled in BTC and BCH.
+
+;; Before restoration: entire data must be pushed and processed as-is
+;; After restoration (BSV):
+;; &lt;data&gt; &lt;offset&gt; &lt;length&gt; OP_SUBSTR
+;; Extract only the bytes you need from an on-chain data payload.
+</code></pre><h3 id="opcode-comparison:-btc-vs-bch-vs-bsv">Opcode Comparison: BTC vs BCH vs BSV</h3><table><thead><tr><th>Opcode Category</th><th>Original v0.1</th><th>BTC (2026)</th><th>BCH (2026)</th><th>BSV (2026)</th></tr></thead><tbody><tr><td>String (CAT, SPLIT, SUBSTR, LEFT, RIGHT)</td><td>Full</td><td><strong>0/5</strong></td><td>Partial</td><td><strong>5/5</strong></td></tr><tr><td>Arithmetic (MUL, DIV, MOD, 2MUL, 2DIV)</td><td>Full</td><td><strong>0/5</strong></td><td>Partial</td><td><strong>5/5</strong></td></tr><tr><td>Bitwise (AND, OR, XOR, INVERT)</td><td>Full</td><td><strong>0/4</strong></td><td><strong>0/4</strong></td><td><strong>4/4</strong></td></tr><tr><td>Version (VER, VERIF, VERNOTIF)</td><td>Full</td><td><strong>0/3</strong></td><td><strong>0/3</strong></td><td><strong>3/3</strong></td></tr><tr><td>Shift (LSHIFT, RSHIFT, LSHIFTNUM, RSHIFTNUM)</td><td>Full</td><td><strong>0/4</strong></td><td><strong>0/4</strong></td><td><strong>4/4</strong></td></tr><tr><td>Crypto + Stack (all others)</td><td>Full</td><td>Full</td><td>Full</td><td>Full</td></tr><tr><td><strong>Total Original Opcodes Restored</strong></td><td><strong>21</strong></td><td><strong>0</strong></td><td><strong>~5</strong></td><td><strong>21/21</strong></td></tr></tbody></table><hr /><h2 id="3.-beyond-opcodes:-the-full-protocol-restoration">3. Beyond Opcodes: The Full Protocol Restoration</h2><p>Chronicle (SV Node v1.2.0, activated April 7, 2026 at block 943,816) went far beyond opcodes. It completed the protocol restoration across four dimensions:</p><h3 id="a.-original-transaction-digest-algorithm-(otda)">A. Original Transaction Digest Algorithm (OTDA)</h3><p>Satoshi&apos;s original transaction signing algorithm was replaced by BIP143 in BTC to &quot;fix&quot; transaction malleability. This was a band-aid that changed how signatures commit to transaction data. Chronicle reinstates OTDA as an opt-in via the <code>CHRONICLE [0x20]</code> sighash flag:</p><pre><code class="language-mermaid">graph TD
+    subgraph pre_chronicle [&quot;Pre-Chronicle (BIP143 only)&quot;]
+        TX1[&quot;Transaction Data&quot;] --&gt; HASH1[&quot;BIP143 Hash (witness data included)&quot;]
+        HASH1 --&gt; SIG1[&quot;Signature&quot;]
+    end
+
+    subgraph post_chronicle [&quot;Post-Chronicle (BSV)&quot;]
+        TX2[&quot;Transaction Data&quot;] --&gt; HASH2A[&quot;BIP143 Hash&quot;]
+        TX2 --&gt; HASH2B[&quot;OTDA Hash (original algorithm)&quot;]
+        HASH2A --&gt; SIG2A[&quot;Signature (legacy)&quot;]
+        HASH2B --&gt; SIG2B[&quot;Signature (Chronicle)&quot;]
+    end
+
+    style pre_chronicle fill:#333,color:#fff
+    style post_chronicle fill:#174,color:#fff
+</code></pre><h3 id="b.-script-number-expansion">B. Script Number Expansion</h3><p>Satoshi originally used OpenSSL&apos;s BIGNUM for arbitrary-precision script numbers. BTC restricted this to 4-byte (32-bit) integers, capped at 750 KB total script size. Chronicle expands the limit to <strong>32 MB</strong> — a 42x increase — enabling on-chain cryptographic verification of arbitrarily complex constructions.</p><h3 id="c.-malleability-restrictions-removed">C. Malleability Restrictions Removed</h3><p>For transactions using version &gt; 1, Chronicle removes six malleability-era restrictions:</p><ul><li>Minimal encoding requirement</li><li>Low-S signature requirement</li><li>NULLFAIL / NULLDUMMY</li><li>MINIMALIF</li><li>Clean stack</li><li>Data-only in unlocking scripts</li></ul><p>These restrictions were never part of Satoshi&apos;s design. They were panic-bolted on after the v0.3.1 CVE and never removed — until now.</p><h3 id="d.-protocol-locking">D. Protocol Locking</h3><p>The BSV Association explicitly states:</p><blockquote><p><em>&quot;Chronicle is not about adding complexity to BSV, it is about eliminating it. By removing the artificial limits that were never part of Bitcoin&apos;s original design, we are handing developers and enterprises a protocol they can build on with real confidence.&quot;</em></p></blockquote><p>After Chronicle, the base layer is <strong>locked</strong>. No more protocol changes. The consensus rules now match Satoshi&apos;s v0.1 design. This is the &quot;set in stone&quot; moment.</p><hr /><h2 id="4.-the-spv-model:-what-satoshi-described-vs.-what-exists">4. The SPV Model: What Satoshi Described vs. What Exists</h2><p>The whitepaper dedicates an entire section (Section 8) to Simplified Payment Verification. Satoshi described a world where most users run lightweight SPV clients and only specialist server farms run full nodes:</p><blockquote><p><em>&quot;Eventually, most nodes may be run by specialists with multiple GPU cards... Moore&apos;s Law will keep computer speeds ahead of the number of transactions.&quot;</em></p></blockquote><table><thead><tr><th>Criterion</th><th>Satoshi&apos;s SPV Design</th><th>BTC</th><th>BSV</th></tr></thead><tbody><tr><td>Lightweight verification</td><td>Block headers + Merkle proofs</td><td>Partial (filtered blocks)</td><td><strong>BEEF format, block headers service, SPV wallets</strong></td></tr><tr><td>Fee model for SPV</td><td>Low enough for microtransactions</td><td><strong>Impossible</strong> (<span class="formula">1–</span>30 fees)</td><td><strong>Sub-cent</strong> (viable for micropayments)</td></tr><tr><td>Trust model</td><td>Verify proofs, don&apos;t trust third parties</td><td>Requires full node or trusted third party</td><td><strong>Merkle proofs verifiable locally</strong></td></tr></tbody></table><p>BTC&apos;s fee market makes Satoshi&apos;s SPV model economically unworkable. A <span class="formula">0.10 transaction is uneconomical when fees are </span>5. BSV&apos;s sub-cent fees make SPV viable for payments of any size — from $0.001 microtransactions to enterprise settlements.</p><hr /><h2 id="5.-the-independent-verdict">5. The Independent Verdict</h2><p>In 2021, <strong>MNP</strong> — Canada&apos;s fifth largest accounting firm — published an independent review titled <em>&quot;The Original Bitcoin Protocol: What Is It and Why Does It Matter?&quot;</em> Their methodology:</p><ol start="1"><li>Analyzed Satoshi&apos;s whitepaper, forum posts, emails, and v0.1 source code</li><li>Defined an assessment framework across OpCodes, scripting, and protocol elements</li><li>Compared BTC and BSV implementations against Satoshi&apos;s original vision</li></ol><p>Their conclusion:</p><blockquote><p><em>&quot;After examining BTC and BSV compared to the original vision set forth in the whitepaper, forum posts, emails, and other writings by Satoshi, it is our opinion <strong>BSV is the implementation that currently best represents what Satoshi originally intended</strong>.&quot;</em></p></blockquote><p>This remains the only independent, third-party audit comparing Bitcoin implementations against Satoshi&apos;s original design.</p><hr /><h2 id="6.-the-counterarguments-(and-why-they-fail)">6. The Counterarguments (and Why They Fail)</h2><table><thead><tr><th>Counterargument</th><th>Response</th></tr></thead><tbody><tr><td><em>&quot;BTC has the market cap and brand recognition&quot;</em></td><td>Market capitalization is a social signal, not a technical measure. Satoshi defined Bitcoin by its design, not its price.</td></tr><tr><td><em>&quot;BSV has fewer nodes / is more centralized&quot;</em></td><td>Satoshi explicitly predicted specialist server farms would run nodes. SPV was designed for end users. Node count was never a design constraint.</td></tr><tr><td><em>&quot;BSV forked from BCH, not from v0.1 directly&quot;</em></td><td>Fork lineage is irrelevant. What matters is the resulting protocol rules. Genesis + Chronicle restored the v0.1 design backwards-compatibly.</td></tr><tr><td><em>&quot;The ticker is BTC, not BSV&quot;</em></td><td>The ticker is a namespace. Satoshi did not trademark &quot;Bitcoin.&quot; He published a whitepaper and released code. The implementation that matches both is Bitcoin regardless of ticker.</td></tr><tr><td><em>&quot;BTC is restoring opcodes too (BIP441)&quot;</em></td><td>BIP441 proposes restoring some opcodes inside a new tapleaf version (0xC2) — sandboxed, not in the base protocol. Meanwhile BSV has all opcodes live in the base layer since Chronicle.</td></tr></tbody></table><hr /><h2 id="7.-summary:-the-verdict-is-deterministic">7. Summary: The Verdict Is Deterministic</h2><pre><code class="language-mermaid">graph TD
+    C1[&quot;No block size cap&quot;] --&gt; C1B[&quot;BTC ✗&quot;]
+    C1 --&gt; C1V[&quot;BSV ✓&quot;]
+    C1B --&gt; S
+
+    C2[&quot;Full opcode set&quot;] --&gt; C2B[&quot;BCH ~&quot;]
+    C2 --&gt; C2V[&quot;BSV ✓&quot;]
+    C2B --&gt; S
+
+    C3[&quot;Original Transaction Digest&quot;] --&gt; C3V[&quot;BSV ✓&quot;]
+    C3V --&gt; S
+
+    C4[&quot;Sub-cent fees&quot;] --&gt; C4B[&quot;BCH ~&quot;]
+    C4 --&gt; C4V[&quot;BSV ✓&quot;]
+    C4B --&gt; S
+
+    C5[&quot;On-chain scaling&quot;] --&gt; C5V[&quot;BSV ✓&quot;]
+    C5V --&gt; S
+
+    C6[&quot;Protocol stability&quot;] --&gt; C6V[&quot;BSV ✓&quot;]
+    C6V --&gt; S
+
+    C7[&quot;SPV for light clients&quot;] --&gt; C7V[&quot;BSV ✓&quot;]
+    C7V --&gt; S
+
+    S[&quot;BTC 0/7  BCH 2/7  BSV 7/7&quot;]
+
+    style C1B fill:#822,color:#fff
+    style C2B fill:#960,color:#fff
+    style C4B fill:#960,color:#fff
+    style C1V fill:#174,color:#fff
+    style C2V fill:#174,color:#fff
+    style C3V fill:#174,color:#fff
+    style C4V fill:#174,color:#fff
+    style C5V fill:#174,color:#fff
+    style C6V fill:#174,color:#fff
+    style C7V fill:#174,color:#fff
+    style S fill:#174,color:#fff,font-size:16px
+</code></pre><p>There is no ambiguity. The criteria are measurable. The data is public. The restoration is complete as of April 7, 2026.</p><p><strong>BSV is Bitcoin.</strong></p><hr /><p><em>This post is part of a series on Bitcoin protocol engineering. See also: <a href="/posts/solana-vs-bitcoin-sv-monolithic-l1-scaling-showdown/">Solana vs. Bitcoin SV: Two Approaches to Monolithic L1 Scaling</a> and <a href="/posts/sovereign-clojure-bitcoin-integration/">Clojure &amp; Bitcoin: Building a Sovereign Node &amp; Integration Sandbox</a>.</em></p></div>
+
+<p><i>Published: 2026-06-21</i></p>
+
+<p>
+  <i>
+  Tagged:
+  
+  <span class="tag">
+    <a href="tags/architecture.html">architecture</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/protocol.html">protocol</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/whitepaper.html">whitepaper</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/opcodes.html">opcodes</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/chronicle.html">chronicle</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/bitcoin.html">bitcoin</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/bsv.html">bsv</a>
+  </span>
+  
+  </i>
+</p>
+
+
+
+      
+      <div style="margin-bottom: 20px; float: right;">
+        <a class="page-link" href="archive.html">Archive</a>
+      </div>
+      
+    </div>
+    
+    <footer class="site-footer" style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--code-border); font-size: 0.85rem; color: var(--text-color); opacity: 0.8;">
+      <div class="wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
+            <img alt="Creative Commons License" style="border-width:0; height: 31px;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+          </a>
+        </div>
+        <div>
+          This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" style="color: var(--link-color); text-decoration: underline;">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+        </div>
+        <div style="font-size: 0.75rem; opacity: 0.6;">
+          &copy; 2026 Nur Azhar. Build in public.
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.getElementById('theme-toggle');
+        if (toggleButton) {
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          toggleButton.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+          
+          toggleButton.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            try {
+              localStorage.setItem('theme', next);
+            } catch (e) {
+              console.warn('Storage blocked: theme preference will not persist.');
+            }
+            toggleButton.textContent = next === 'dark' ? '☀️' : '🌙';
+          });
+        }
+      });
+    </script>
+    <script>
+      (function() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+        
+        fetch('https://asia-southeast1-nurazhardotcom.cloudfunctions.net/blog-analytics-api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: window.location.pathname,
+            referrer: document.referrer || null
+          })
+        }).catch(err => console.error('Tracking failed', err));
+      })();
+    </script>
+  </body>
+</html>

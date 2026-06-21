@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      (function() {
+        try {
+          const savedTheme = localStorage.getItem('theme');
+          const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+    <title>AI-First SDLC: Designing for High Velocity and Cognitive Vertigo — Bitcoin, AI Agents, Protocol Engineering</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="application/atom+xml" rel="alternate" href="atom.xml" title="AI-First SDLC: Designing for High Velocity and Cognitive Vertigo">
+    <link rel="stylesheet" href="style.css">
+    <link rel="sitemap" type="application/xml" href="sitemap.xml">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css">
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      mermaid.initialize({ startOnLoad: false, theme: 'default' });
+      document.addEventListener("DOMContentLoaded", async () => {
+        const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
+        for (const codeBlock of codeBlocks) {
+          const pre = codeBlock.parentElement;
+          const div = document.createElement("div");
+          div.className = "mermaid";
+          div.textContent = codeBlock.textContent;
+          pre.replaceWith(div);
+        }
+        await mermaid.run();
+      });
+    </script>
+
+
+
+    <!-- Social sharing (Facebook, Twitter, LinkedIn, etc.) -->
+    <meta name="title" content="AI-First SDLC: Designing for High Velocity and Cognitive Vertigo">
+    <meta name="twitter:title" content="AI-First SDLC: Designing for High Velocity and Cognitive Vertigo">
+    <meta property="og:title" content="AI-First SDLC: Designing for High Velocity and Cognitive Vertigo">
+    <meta property="og:type" content="article">
+    <meta property="og:locale" content="en_SG">
+    <meta property="og:site_name" content="Nur Azhar's Blog">
+
+    <meta name="description" content="An engineering guide to the AI-First Software Development Lifecycle (SDLC). Learn how to structure agent interactions, build validation boundaries, and survive the literal cognitive fatigue of developing at warp speed.">
+    <meta name="twitter:description" content="An engineering guide to the AI-First Software Development Lifecycle (SDLC). Learn how to structure agent interactions, build validation boundaries, and survive the literal cognitive fatigue of developing at warp speed.">
+    <meta property="og:description" content="An engineering guide to the AI-First Software Development Lifecycle (SDLC). Learn how to structure agent interactions, build validation boundaries, and survive the literal cognitive fatigue of developing at warp speed.">
+
+
+    <meta name="twitter:url" content="https://blog.nurazhar.com/ai-first-sdlc-and-cognitive-vertigo.html">
+    <meta property="og:url" content="https://blog.nurazhar.com/ai-first-sdlc-and-cognitive-vertigo.html">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image:alt" content="Nur Azhar's Blog - Bitcoin, AI Agents, Protocol Engineering">
+
+
+    <meta name="author" content="Nur Azhar">
+
+
+
+    <!-- JSON-LD Structured Data: WebSite -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Nur Azhar's Blog",
+  "url": "https://blog.nurazhar.com",
+  "description": "My technical blog to document my learnings",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  }
+}
+    </script>
+
+    <!-- JSON-LD Structured Data: BlogPosting -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "AI-First SDLC: Designing for High Velocity and Cognitive Vertigo",
+  "description": "An engineering guide to the AI-First Software Development Lifecycle (SDLC). Learn how to structure agent interactions, build validation boundaries, and survive the literal cognitive fatigue of developing at warp speed.",
+  "datePublished": "2026-06-14",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  },
+  "url": "https://blog.nurazhar.com/ai-first-sdlc-and-cognitive-vertigo.html",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://blog.nurazhar.com/ai-first-sdlc-and-cognitive-vertigo.html"
+  }
+}
+    </script>
+
+  </head>
+  <body>
+
+    <div class="site-header">
+      <div class="wrapper">
+        <div class="site-nav">
+          <a class="page-link" href="stats.html">Stats</a>
+          <a class="page-link" href="kanban.html">Kanban</a>
+          <a class="page-link" href="archive.html">Archive</a>
+          <a class="page-link" href="tags/index.html">Tags</a>
+          
+	  <a class="page-link" href="atom.xml">
+            Feed
+          </a>
+	  
+	  
+	  <a class="page-link" href="https://nurazhar.com/">About</a>
+	  
+          <button id="theme-toggle" style="background: none; border: none; cursor: pointer; padding: 0 10px; font-size: 1.2rem; vertical-align: middle;" aria-label="Toggle theme">🌙</button>
+        </div>
+        <div style="display: flex; align-items: center;">
+          <div>
+            <h1 class="site-title" style="margin: 0;">
+              <a class="page-link" href="index.html">Nur Azhar</a>
+            </h1>
+            <p style="margin: 2px 0 0 0;">My technical blog to document my learnings</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrapper">
+
+      <h1>
+  
+  AI-First SDLC: Designing for High Velocity and Cognitive Vertigo
+  
+</h1>
+<div><hr /><p>If you use autonomous coding agents for more than a few hours, you will hit a wall.</p><p>It is a silent, exhausting kind of fatigue. You didn’t write a single line of boilerplate, you didn&apos;t fight compiler configurations, and you didn&apos;t search documentation. Yet, your head is throbbing, you feel dizzy, and your mental stamina is completely shot.</p><p>This is <strong>Cognitive Vertigo (or Cognitive G-Force)</strong>. It is caused by the collapse of latency between <em>intent</em> and <em>execution</em>. When you are no longer limited by typing speed, your brain is forced into a continuous loop of high-frequency architecture evaluation, context-switching, and code review.</p><p>To survive a full-time role in this new era without burning out, you must discard the traditional developer workflow and adopt an <strong>AI-First Software Development Lifecycle (SDLC)</strong>.</p><hr /><h2 id="the-paradigm-shift:-think-slow,-build-fast">The Paradigm Shift: Think Slow, Build Fast</h2><p>In the traditional SDLC, developers spend 80% of their energy coding and 20% designing. When coding, your brain operates in a slow, sequential state.</p><p>In an AI-First SDLC, this relationship is inverted:</p><pre><code class="language-mermaid">gantt
+    title Traditional vs. AI-First Developer Lifecycles
+    dateFormat  X
+    axisFormat %s
+    
+    section Traditional SDLC (Active Typing)
+    Design (Slow)          :active, des1, 0, 20
+    Coding &amp; Debugging (Grind)  :active, cod1, 20, 100
+    
+    section AI-First SDLC (Agent Orchestration)
+    Spec &amp; Architecture (80% Brain)  :crit, des2, 0, 80
+    Agent Execution &amp; Tests (20% Verify) :crit, cod2, 80, 100
+</code></pre><p>By separating the <strong>Design Phase</strong> (Think Slow) from the <strong>Execution Phase</strong> (Build Fast), you shield your brain from the constant feedback loops that drain your mental battery.</p><hr /><h2 id="core-pillars-of-the-ai-first-sdlc">Core Pillars of the AI-First SDLC</h2><p>Drawing inspiration from structured frameworks like <strong><a href="https://github.com/SteveGJones/ai-first-sdlc-practices">SteveGJones/ai-first-sdlc-practices</a></strong>, here is the blueprint to structure your day-to-day workflow for maximum stamina:</p><pre><code class="language-mermaid">graph TD
+    A[1. Think Slow: Design &amp; Spec] --&gt;|Define boundaries, schemas, &amp; tests| B[2. The Constitution: Rules of Play]
+    B --&gt;|Hand over blueprint to Agent| C[3. Build Fast: Async Execution]
+    C --&gt;|Zero-Technical-Debt Pipeline| D[4. Verify: Black-Box Validation]
+    D --&gt;|If tests fail| C
+    D --&gt;|If tests pass| E[5. Ship &amp; Cooldown]
+</code></pre><h3 id="1.-the-constitution-(declarative-rules)">1. The Constitution (Declarative Rules)</h3><p>Do not explain your design philosophy to an agent in every chat. Define a permanent configuration file (like a <code>CONSTITUTION.md</code> or <code>.clauderc</code>) in your repository root. This constitution outlines:</p><ul><li>Strict coding style and directory hierarchies.</li><li>Error-handling patterns.</li><li>Mandatory unit test structures.</li><li>Zero-technical-debt boundaries.</li></ul><p>By encoding your architectural standards in a file, the agent reads them as a system constraint. You no longer need to waste energy correcting style errors.</p><h3 id="2.-pipeline-validation-(validate---syntax/--quick/--pre-push)">2. Pipeline Validation (<code>validate --syntax/--quick/--pre-push</code>)</h3><p>Stop reading code line-by-line to verify correctness. This is a primary driver of cognitive fatigue. Instead, implement a multi-stage validation script in your workspace:</p><ul><li><strong><code>validate --syntax</code></strong>: Evaluates basic file structures and imports immediately after generation.</li><li><strong><code>validate --quick</code></strong>: Runs fast unit tests and linter audits before commits are written.</li><li><strong><code>validate --pre-push</code></strong>: Executes the full integration test suite and scans for security anomalies.</li></ul><p>If the validation script passes, trust the implementation. Focus your energy on verifying the boundaries, not inspecting the lines.</p><h3 id="3.-asynchronous-execution-(the-pacing-rule)">3. Asynchronous Execution (The Pacing Rule)</h3><p>Pair-programming with an agent in real-time is a cognitive trap. Instead, delegate asynchronously:</p><ol start="1"><li><strong>Write the Specification:</strong> Explicitly define the goal, the affected files, and the expected unit test changes in a task file (<code>task.md</code> or <code>implementation_plan.md</code>).</li><li><strong>Launch the Agent:</strong> Tell the agent to execute the specification and output its results.</li><li><strong>Step Away:</strong> Physically leave your keyboard. Walk around, drink water, or look out a window. Let the agent compile, write, and run tests in its own sandbox.</li><li><strong>Evaluate the Artifacts:</strong> Return only when the agent has completed the task and updated its walkthrough document.</li></ol><hr /><h2 id="daily-habits-to-collapse-cognitive-fatigue-to-zero">Daily Habits to Collapse Cognitive Fatigue to Zero</h2><p>Bookmark this checklist and use it as your daily operating system:</p><table><thead><tr><th style="text-align:left;">Habit</th><th style="text-align:left;">How to Implement</th><th style="text-align:left;">Why it Saves Your Brain</th></tr></thead><tbody><tr><td style="text-align:left;"><strong>Zero-Cache Brain</strong></td><td style="text-align:left;">Write all active tasks in a physical notepad or <code>task.md</code>. Never hold stack frames in your head.</td><td style="text-align:left;">Frees up working memory.</td></tr><tr><td style="text-align:left;"><strong>Test-Driven Intent</strong></td><td style="text-align:left;">Write the tests or output schemas first. Let the agent code until the tests pass.</td><td style="text-align:left;">Eliminates the need for line-by-line review.</td></tr><tr><td style="text-align:left;"><strong>Paced Breaks</strong></td><td style="text-align:left;">Set a timer to step away from the IDE for 5 minutes after every major agent execution.</td><td style="text-align:left;">Prevents cognitive overheating.</td></tr><tr><td style="text-align:left;"><strong>Interface Design</strong></td><td style="text-align:left;">Spend your time writing HoneySQL configurations, Malli schemas, or API signatures.</td><td style="text-align:left;">Keeps your brain in the &quot;System Architect&quot; tier.</td></tr></tbody></table><hr /><p><em>The speed of development is no longer bound by syntax. It is bound by your mental endurance. Structure your workflow to protect your mind first.</em></p></div>
+
+<p><i>Published: 2026-06-14</i></p>
+
+<p>
+  <i>
+  Tagged:
+  
+  <span class="tag">
+    <a href="tags/architecture.html">architecture</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/automation.html">automation</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/workflow.html">workflow</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/developer-experience.html">developer-experience</a>
+  </span>
+  
+  </i>
+</p>
+
+
+
+      
+      <div style="margin-bottom: 20px; float: right;">
+        <a class="page-link" href="archive.html">Archive</a>
+      </div>
+      
+    </div>
+    
+    <footer class="site-footer" style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--code-border); font-size: 0.85rem; color: var(--text-color); opacity: 0.8;">
+      <div class="wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
+            <img alt="Creative Commons License" style="border-width:0; height: 31px;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+          </a>
+        </div>
+        <div>
+          This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" style="color: var(--link-color); text-decoration: underline;">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+        </div>
+        <div style="font-size: 0.75rem; opacity: 0.6;">
+          &copy; 2026 Nur Azhar. Build in public.
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.getElementById('theme-toggle');
+        if (toggleButton) {
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          toggleButton.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+          
+          toggleButton.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            try {
+              localStorage.setItem('theme', next);
+            } catch (e) {
+              console.warn('Storage blocked: theme preference will not persist.');
+            }
+            toggleButton.textContent = next === 'dark' ? '☀️' : '🌙';
+          });
+        }
+      });
+    </script>
+    <script>
+      (function() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+        
+        fetch('https://asia-southeast1-nurazhardotcom.cloudfunctions.net/blog-analytics-api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: window.location.pathname,
+            referrer: document.referrer || null
+          })
+        }).catch(err => console.error('Tracking failed', err));
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      (function() {
+        try {
+          const savedTheme = localStorage.getItem('theme');
+          const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+    <title>Local vs. Cloud Inference: Keeping Your Laptop Cool and Quiet Under Load — Bitcoin, AI Agents, Protocol Engineering</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="application/atom+xml" rel="alternate" href="atom.xml" title="Local vs. Cloud Inference: Keeping Your Laptop Cool and Quiet Under Load">
+    <link rel="stylesheet" href="style.css">
+    <link rel="sitemap" type="application/xml" href="sitemap.xml">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css">
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      mermaid.initialize({ startOnLoad: false, theme: 'default' });
+      document.addEventListener("DOMContentLoaded", async () => {
+        const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
+        for (const codeBlock of codeBlocks) {
+          const pre = codeBlock.parentElement;
+          const div = document.createElement("div");
+          div.className = "mermaid";
+          div.textContent = codeBlock.textContent;
+          pre.replaceWith(div);
+        }
+        await mermaid.run();
+      });
+    </script>
+
+
+
+    <!-- Social sharing (Facebook, Twitter, LinkedIn, etc.) -->
+    <meta name="title" content="Local vs. Cloud Inference: Keeping Your Laptop Cool and Quiet Under Load">
+    <meta name="twitter:title" content="Local vs. Cloud Inference: Keeping Your Laptop Cool and Quiet Under Load">
+    <meta property="og:title" content="Local vs. Cloud Inference: Keeping Your Laptop Cool and Quiet Under Load">
+    <meta property="og:type" content="article">
+    <meta property="og:locale" content="en_SG">
+    <meta property="og:site_name" content="Nur Azhar's Blog">
+
+    <meta name="description" content="How to diagnose thermal profiles, understand the difference between local vs. cloud AI inference on hardware, and configure Linux power profiles to reduce laptop fan noise during heavy tasks.">
+    <meta name="twitter:description" content="How to diagnose thermal profiles, understand the difference between local vs. cloud AI inference on hardware, and configure Linux power profiles to reduce laptop fan noise during heavy tasks.">
+    <meta property="og:description" content="How to diagnose thermal profiles, understand the difference between local vs. cloud AI inference on hardware, and configure Linux power profiles to reduce laptop fan noise during heavy tasks.">
+
+
+    <meta name="twitter:url" content="https://blog.nurazhar.com/local-vs-cloud-inference-and-thermal-profiles.html">
+    <meta property="og:url" content="https://blog.nurazhar.com/local-vs-cloud-inference-and-thermal-profiles.html">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image:alt" content="Nur Azhar's Blog - Bitcoin, AI Agents, Protocol Engineering">
+
+
+    <meta name="author" content="Nur Azhar">
+
+
+
+    <!-- JSON-LD Structured Data: WebSite -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Nur Azhar's Blog",
+  "url": "https://blog.nurazhar.com",
+  "description": "My technical blog to document my learnings",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  }
+}
+    </script>
+
+    <!-- JSON-LD Structured Data: BlogPosting -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Local vs. Cloud Inference: Keeping Your Laptop Cool and Quiet Under Load",
+  "description": "How to diagnose thermal profiles, understand the difference between local vs. cloud AI inference on hardware, and configure Linux power profiles to reduce laptop fan noise during heavy tasks.",
+  "datePublished": "2026-06-15",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  },
+  "url": "https://blog.nurazhar.com/local-vs-cloud-inference-and-thermal-profiles.html",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://blog.nurazhar.com/local-vs-cloud-inference-and-thermal-profiles.html"
+  }
+}
+    </script>
+
+  </head>
+  <body>
+
+    <div class="site-header">
+      <div class="wrapper">
+        <div class="site-nav">
+          <a class="page-link" href="stats.html">Stats</a>
+          <a class="page-link" href="kanban.html">Kanban</a>
+          <a class="page-link" href="archive.html">Archive</a>
+          <a class="page-link" href="tags/index.html">Tags</a>
+          
+	  <a class="page-link" href="atom.xml">
+            Feed
+          </a>
+	  
+	  
+	  <a class="page-link" href="https://nurazhar.com/">About</a>
+	  
+          <button id="theme-toggle" style="background: none; border: none; cursor: pointer; padding: 0 10px; font-size: 1.2rem; vertical-align: middle;" aria-label="Toggle theme">🌙</button>
+        </div>
+        <div style="display: flex; align-items: center;">
+          <div>
+            <h1 class="site-title" style="margin: 0;">
+              <a class="page-link" href="index.html">Nur Azhar</a>
+            </h1>
+            <p style="margin: 2px 0 0 0;">My technical blog to document my learnings</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrapper">
+
+      <h1>
+  
+  Local vs. Cloud Inference: Keeping Your Laptop Cool and Quiet Under Load
+  
+</h1>
+<div><hr /><p>When using modern, agentic AI coding assistants like Antigravity IDE, it’s common to worry about the resource footprint on your local machine. If your laptop&apos;s fans start spinning loudly while you are attending a live online class (like Microsoft Teams Live) and coding at the same time, it is easy to assume the AI IDE is cooking your hardware.</p><p>Here is a look under the hood at how to diagnose Linux hardware temperatures, why cloud-based AI tools are incredibly resource-efficient for your local machine, and how simple power adjustments can silence a noisy laptop.</p><hr /><h2 id="1.-the-diagnostic-toolbox:-checking-thermals-on-linux">1. The Diagnostic Toolbox: Checking Thermals on Linux</h2><p>When a laptop&apos;s fans spin loudly, the first step is to verify whether the CPU is actually overheating or simply doing its job. You can query your hardware sensors directly from the terminal:</p><pre><code class="language-bash"># Check CPU and hardware temperatures
+sensors
+</code></pre><p>In a recent diagnostic run on an <strong>AMD Ryzen 7 7730U</strong> processor under load, the readings looked like this:</p><ul><li><strong>CPU (Tctl):</strong> <code>+70.6°C</code> (elevated, but well below the typical <code>90°C+</code> thermal throttling thresholds)</li><li><strong>GPU (edge):</strong> <code>+61.0°C</code></li><li><strong>NVMe SSD:</strong> <code>+32.9°C</code> / <code>+38.9°C</code></li><li><strong>Overall CPU Idle:</strong> <code>96%</code></li></ul><p>While <code>70°C</code> is warm enough to trigger aggressive fan curves (resulting in loud noise), the processor was barely sweating.</p><hr /><h2 id="2.-local-vs.-cloud-inference:-the-resource-footprint">2. Local vs. Cloud Inference: The Resource Footprint</h2><p>Many developers assume that coding with advanced AI agents requires local acceleration. However, there is a fundamental difference in how models run:</p><ul><li><strong>Cloud-Based Inference (e.g., Antigravity IDE):</strong> The IDE acts as a lightweight client. When you ask a question or request code generation, your local machine merely sends a text API payload. The heavy-duty deep learning inference happens remotely on high-performance TPUs and GPUs in cloud data centers. Your local CPU and GPU usage remain close to zero.</li><li><strong>Local Inference (e.g., Ollama, Llama.cpp, LM Studio):</strong> If you run models offline on your machine, your CPU, GPU, or NPU will be maxed out to compute the token probabilities. This generates massive amounts of heat and drains battery rapidly.</li></ul><p>Because Antigravity runs entirely in the cloud, you get state-of-the-art reasoning capabilities without adding a single degree of heat to your local hardware.</p><hr /><h2 id="3.-the-real-culprit:-real-time-web-video">3. The Real Culprit: Real-Time Web Video</h2><p>If the AI isn&apos;t heating up the laptop, why were the fans screaming? The culprit was <strong>real-time video conferencing</strong> (Microsoft Teams Live running in the browser).</p><p>Web-based video streams require continuous, real-time video decoding, UI rendering, and network synchronization. Even with modern hardware, this puts a sustained load on the system. When paired with multiple browser instances (like Chrome and Firefox running simultaneously), the thermal output rises quickly.</p><hr /><h2 id="4.-silencing-the-noise:-tuning-linux-power-profiles">4. Silencing the Noise: Tuning Linux Power Profiles</h2><p>If your laptop is loud but you need it to stay quiet (especially during classes or meetings), you can adjust your power profiles.</p><p>Modern Linux distributions running <code>power-profiles-daemon</code> allow you to toggle profiles easily via the GUI or the command line. Toggling your system to <strong>Power Saver</strong> mode limits the CPU&apos;s peak power targets.</p><p>The thermal impact of switching to Power Saver mode is immediate:</p><pre><code class="language-diff">- CPU Temp:  70.6°C (Performance/Balanced Mode)
++ CPU Temp:  56.6°C (Power Saver Mode)  [14°C Drop!]
+- GPU Draw:  18.00 W
++ GPU Draw:   8.00 W  [55% Reduction!]
+</code></pre><p>Because cloud-based IDE tasks are extremely lightweight, <strong>you can remain in Power Saver mode indefinitely without experiencing any lag in your AI completions.</strong> Your local machine stays cool, the fans stay silent, and the cloud handles the heavy lifting.</p></div>
+
+<p><i>Published: 2026-06-15</i></p>
+
+<p>
+  <i>
+  Tagged:
+  
+  <span class="tag">
+    <a href="tags/devops.html">devops</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/linux.html">linux</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/hardware.html">hardware</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/cloud-ai.html">cloud-ai</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/performance.html">performance</a>
+  </span>
+  
+  </i>
+</p>
+
+
+
+      
+      <div style="margin-bottom: 20px; float: right;">
+        <a class="page-link" href="archive.html">Archive</a>
+      </div>
+      
+    </div>
+    
+    <footer class="site-footer" style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--code-border); font-size: 0.85rem; color: var(--text-color); opacity: 0.8;">
+      <div class="wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
+            <img alt="Creative Commons License" style="border-width:0; height: 31px;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+          </a>
+        </div>
+        <div>
+          This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" style="color: var(--link-color); text-decoration: underline;">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+        </div>
+        <div style="font-size: 0.75rem; opacity: 0.6;">
+          &copy; 2026 Nur Azhar. Build in public.
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.getElementById('theme-toggle');
+        if (toggleButton) {
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          toggleButton.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+          
+          toggleButton.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            try {
+              localStorage.setItem('theme', next);
+            } catch (e) {
+              console.warn('Storage blocked: theme preference will not persist.');
+            }
+            toggleButton.textContent = next === 'dark' ? '☀️' : '🌙';
+          });
+        }
+      });
+    </script>
+    <script>
+      (function() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+        
+        fetch('https://asia-southeast1-nurazhardotcom.cloudfunctions.net/blog-analytics-api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: window.location.pathname,
+            referrer: document.referrer || null
+          })
+        }).catch(err => console.error('Tracking failed', err));
+      })();
+    </script>
+  </body>
+</html>

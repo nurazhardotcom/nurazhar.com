@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      (function() {
+        try {
+          const savedTheme = localStorage.getItem('theme');
+          const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+    <title>How I Curated an Awesome List of Projects Building on Original Bitcoin — Bitcoin, AI Agents, Protocol Engineering</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="application/atom+xml" rel="alternate" href="atom.xml" title="How I Curated an Awesome List of Projects Building on Original Bitcoin">
+    <link rel="stylesheet" href="style.css">
+    <link rel="sitemap" type="application/xml" href="sitemap.xml">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css">
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      mermaid.initialize({ startOnLoad: false, theme: 'default' });
+      document.addEventListener("DOMContentLoaded", async () => {
+        const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
+        for (const codeBlock of codeBlocks) {
+          const pre = codeBlock.parentElement;
+          const div = document.createElement("div");
+          div.className = "mermaid";
+          div.textContent = codeBlock.textContent;
+          pre.replaceWith(div);
+        }
+        await mermaid.run();
+      });
+    </script>
+
+
+
+    <!-- Social sharing (Facebook, Twitter, LinkedIn, etc.) -->
+    <meta name="title" content="How I Curated an Awesome List of Projects Building on Original Bitcoin">
+    <meta name="twitter:title" content="How I Curated an Awesome List of Projects Building on Original Bitcoin">
+    <meta property="og:title" content="How I Curated an Awesome List of Projects Building on Original Bitcoin">
+    <meta property="og:type" content="article">
+    <meta property="og:locale" content="en_SG">
+    <meta property="og:site_name" content="Nur Azhar's Blog">
+
+    <meta name="description" content="The process, criteria, and research methodology behind original-bitcoin-awesome — a living directory of 2026-active projects on BSV.">
+    <meta name="twitter:description" content="The process, criteria, and research methodology behind original-bitcoin-awesome — a living directory of 2026-active projects on BSV.">
+    <meta property="og:description" content="The process, criteria, and research methodology behind original-bitcoin-awesome — a living directory of 2026-active projects on BSV.">
+
+
+    <meta name="twitter:url" content="https://blog.nurazhar.com/curating-original-bitcoin-awesome.html">
+    <meta property="og:url" content="https://blog.nurazhar.com/curating-original-bitcoin-awesome.html">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image:alt" content="Nur Azhar's Blog - Bitcoin, AI Agents, Protocol Engineering">
+
+
+    <meta name="author" content="Nur Azhar">
+
+
+
+    <!-- JSON-LD Structured Data: WebSite -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Nur Azhar's Blog",
+  "url": "https://blog.nurazhar.com",
+  "description": "My technical blog to document my learnings",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  }
+}
+    </script>
+
+    <!-- JSON-LD Structured Data: BlogPosting -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "How I Curated an Awesome List of Projects Building on Original Bitcoin",
+  "description": "The process, criteria, and research methodology behind original-bitcoin-awesome — a living directory of 2026-active projects on BSV.",
+  "datePublished": "2026-06-21",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  },
+  "url": "https://blog.nurazhar.com/curating-original-bitcoin-awesome.html",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://blog.nurazhar.com/curating-original-bitcoin-awesome.html"
+  }
+}
+    </script>
+
+  </head>
+  <body>
+
+    <div class="site-header">
+      <div class="wrapper">
+        <div class="site-nav">
+          <a class="page-link" href="stats.html">Stats</a>
+          <a class="page-link" href="kanban.html">Kanban</a>
+          <a class="page-link" href="archive.html">Archive</a>
+          <a class="page-link" href="tags/index.html">Tags</a>
+          
+	  <a class="page-link" href="atom.xml">
+            Feed
+          </a>
+	  
+	  
+	  <a class="page-link" href="https://nurazhar.com/">About</a>
+	  
+          <button id="theme-toggle" style="background: none; border: none; cursor: pointer; padding: 0 10px; font-size: 1.2rem; vertical-align: middle;" aria-label="Toggle theme">🌙</button>
+        </div>
+        <div style="display: flex; align-items: center;">
+          <div>
+            <h1 class="site-title" style="margin: 0;">
+              <a class="page-link" href="index.html">Nur Azhar</a>
+            </h1>
+            <p style="margin: 2px 0 0 0;">My technical blog to document my learnings</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrapper">
+
+      <h1>
+  
+  How I Curated an Awesome List of Projects Building on Original Bitcoin
+  
+</h1>
+<div><hr /><p><a href="https://github.com/nurazhardotcom/original-bitcoin-awesome">original-bitcoin-awesome</a> is a curated list of projects, tools, and infrastructure built on the original Bitcoin protocol (BSV). It started as a simple README. It has grown to 216+ lines covering nodes, SDKs, wallets, smart contracts, identity, payment channels, accounting, and agent infrastructure.</p><p>This post explains how it is curated.</p><h2 id="scope">Scope</h2><p>The list is deliberately narrow. It covers only the original Bitcoin protocol — defined as Satoshi&apos;s v0.1 design preserved by BSV after the Chronicle upgrade (block 943,816, April 7, 2026). No BTC, no BCH, no forks that deviated from the whitepaper.</p><p>Within that scope, I include any project that:</p><ul><li>Builds directly on BSV infrastructure (nodes, SDKs, wallets, overlays)</li><li>Integrates with BSV for some function (timestamping, payments, data)</li><li>Produces tools that make BSV usable (indexers, explorers, compilers)</li><li>Is actively maintained in the current calendar year (2026)</li></ul><h2 id="research-process">Research Process</h2><p>Finding active projects is harder than it should be. GitHub search is noisy. Many BSV projects are scattered across personal accounts, not orgs. The research process:</p><ol start="1"><li><p><strong>GitHub org spelunking</strong> — Start with known orgs (bitcoin-sv, p2ppsr, gorillapool, bopen, prof-faustus). Walk every repo, check last commit date, read the README.</p></li><li><p><strong>Twitter/X feed scanning</strong> — Follow BSV developers. When someone links a repo, check if it is active and relevant.</p></li><li><p><strong>Developer-to-developer discovery</strong> — One interesting repo leads to its dependencies, which lead to other repos, which lead to other developers. This is how I found Rúnar (icellan/runar), Traceport, and the Indelible federation.</p></li><li><p><strong>Commit freshness filter</strong> — If the most recent commit is older than 12 months, the project is excluded regardless of quality. The BSV ecosystem moves fast in 2026; stale projects signal abandoned effort.</p></li></ol><h2 id="what-has-been-curated">What Has Been Curated</h2><p>As of this writing, the list covers:</p><table><thead><tr><th>Section</th><th>Entries</th><th>Highlights</th></tr></thead><tbody><tr><td>Nodes &amp; Infrastructure</td><td>10</td><td>SV Node, Teranode, GorillaPool, Junglebus, BitIndexer</td></tr><tr><td>SDKs</td><td>13</td><td>bsv.js, go-bsv, bsv-clj, bsv-universal-sdk, Rúnar compiler</td></tr><tr><td>Wallets</td><td>8</td><td>Yours Wallet, mintBlue, Babbage Wallet, Clawsats</td></tr><tr><td>Smart Contracts</td><td>6</td><td>sCrypt, Sensible Contract, MAP, AIP, TSC</td></tr><tr><td>Identity &amp; Wallets (BRC)</td><td>8</td><td>BRC-31, BRC-77, Sigma Identity, Clawsats identity</td></tr><tr><td>Payment Channels</td><td>4</td><td>Bonded sub-sat channels, pay-to-IP, SPV channels</td></tr><tr><td>Accounting &amp; Audit</td><td>11</td><td>Triple-entry BSV stack, verifiable accounting (6 repos)</td></tr><tr><td>Agent Infrastructure</td><td>6</td><td>Indelible, Clawsats, Anchorchain, identity-client</td></tr><tr><td>Applications</td><td>7</td><td>BSV Poker, ESTATES, Memo, Haste Arcade, MNEE</td></tr><tr><td>Tooling</td><td>12</td><td>ORDFS, BitBench, BigBlocks, Nodeless, Teranode CLI</td></tr><tr><td>Academic &amp; Research</td><td>3</td><td>195-prx, SDI 143, Verifiable Accounting IJAIS</td></tr></tbody></table><h2 id="geographic-spread">Geographic Spread</h2><p>The BSV builder ecosystem in 2026 is physically distributed:</p><ul><li><strong>North America</strong>: Luke Rohenaz (bopen.io), Ty Everett (Babbage), Jason Chavannes (Memo), Dan Wagner (Haste Arcade), Root (GorillaPool), Kurt Wuckert Jr.</li><li><strong>Europe</strong>: Bridget Doran (Traceport, UK), icellan (Rúnar compiler, EU), nChain (London)</li><li><strong>Asia-Pacific</strong>: GorillaPool relay (Japan/Singapore), Indelible bridge in Sydney</li><li><strong>Global</strong>: prof-faustus repos, various individual contributors</li></ul><h2 id="what-gets-excluded">What Gets Excluded</h2><p>Some projects are deliberately omitted:</p><ul><li><strong>BTC/BCH forks</strong> — Not original Bitcoin protocol</li><li><strong>Speculation-focused</strong> — Only utility and technology</li><li><strong>Stale projects</strong> — No commits in 2026</li><li><strong>Proprietary closed-source</strong> — Cannot verify claims</li><li><strong>Copies without additions</strong> — A repo that just mirrors another project without its own contribution</li></ul><h2 id="how-to-add-a-project">How to Add a Project</h2><p>The list accepts PRs and issues with a simple bar: demonstrate 2026 activity. Open a PR or issue at <code>github.com/nurazhardotcom/original-bitcoin-awesome</code>.</p><hr /><p>The ecosystem is growing faster than I can track. If you know of an active project building on original Bitcoin that is not listed, tell me.</p></div>
+
+<p><i>Published: 2026-06-21</i></p>
+
+<p>
+  <i>
+  Tagged:
+  
+  <span class="tag">
+    <a href="tags/awesome-list.html">awesome-list</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/bsv.html">bsv</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/meta.html">meta</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/curation.html">curation</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/ecosystem.html">ecosystem</a>
+  </span>
+  
+  </i>
+</p>
+
+
+
+      
+      <div style="margin-bottom: 20px; float: right;">
+        <a class="page-link" href="archive.html">Archive</a>
+      </div>
+      
+    </div>
+    
+    <footer class="site-footer" style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--code-border); font-size: 0.85rem; color: var(--text-color); opacity: 0.8;">
+      <div class="wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
+            <img alt="Creative Commons License" style="border-width:0; height: 31px;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+          </a>
+        </div>
+        <div>
+          This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" style="color: var(--link-color); text-decoration: underline;">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+        </div>
+        <div style="font-size: 0.75rem; opacity: 0.6;">
+          &copy; 2026 Nur Azhar. Build in public.
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.getElementById('theme-toggle');
+        if (toggleButton) {
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          toggleButton.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+          
+          toggleButton.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            try {
+              localStorage.setItem('theme', next);
+            } catch (e) {
+              console.warn('Storage blocked: theme preference will not persist.');
+            }
+            toggleButton.textContent = next === 'dark' ? '☀️' : '🌙';
+          });
+        }
+      });
+    </script>
+    <script>
+      (function() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+        
+        fetch('https://asia-southeast1-nurazhardotcom.cloudfunctions.net/blog-analytics-api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: window.location.pathname,
+            referrer: document.referrer || null
+          })
+        }).catch(err => console.error('Tracking failed', err));
+      })();
+    </script>
+  </body>
+</html>

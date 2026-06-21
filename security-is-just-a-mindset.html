@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      (function() {
+        try {
+          const savedTheme = localStorage.getItem('theme');
+          const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+    <title>Security Is Just a Mindset — Bitcoin, AI Agents, Protocol Engineering</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="application/atom+xml" rel="alternate" href="atom.xml" title="Security Is Just a Mindset">
+    <link rel="stylesheet" href="style.css">
+    <link rel="sitemap" type="application/xml" href="sitemap.xml">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css">
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      mermaid.initialize({ startOnLoad: false, theme: 'default' });
+      document.addEventListener("DOMContentLoaded", async () => {
+        const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
+        for (const codeBlock of codeBlocks) {
+          const pre = codeBlock.parentElement;
+          const div = document.createElement("div");
+          div.className = "mermaid";
+          div.textContent = codeBlock.textContent;
+          pre.replaceWith(div);
+        }
+        await mermaid.run();
+      });
+    </script>
+
+
+
+    <!-- Social sharing (Facebook, Twitter, LinkedIn, etc.) -->
+    <meta name="title" content="Security Is Just a Mindset">
+    <meta name="twitter:title" content="Security Is Just a Mindset">
+    <meta property="og:title" content="Security Is Just a Mindset">
+    <meta property="og:type" content="article">
+    <meta property="og:locale" content="en_SG">
+    <meta property="og:site_name" content="Nur Azhar's Blog">
+
+    <meta name="description" content="Security isn&#39;t a tool you learn or a certification you earn. It&#39;s a way of thinking about systems — and it changes everything you build.">
+    <meta name="twitter:description" content="Security isn&#39;t a tool you learn or a certification you earn. It&#39;s a way of thinking about systems — and it changes everything you build.">
+    <meta property="og:description" content="Security isn&#39;t a tool you learn or a certification you earn. It&#39;s a way of thinking about systems — and it changes everything you build.">
+
+
+    <meta name="twitter:url" content="https://blog.nurazhar.com/security-is-just-a-mindset.html">
+    <meta property="og:url" content="https://blog.nurazhar.com/security-is-just-a-mindset.html">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image:alt" content="Nur Azhar's Blog - Bitcoin, AI Agents, Protocol Engineering">
+
+
+    <meta name="author" content="Nur Azhar">
+
+
+
+    <!-- JSON-LD Structured Data: WebSite -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Nur Azhar's Blog",
+  "url": "https://blog.nurazhar.com",
+  "description": "My technical blog to document my learnings",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  }
+}
+    </script>
+
+    <!-- JSON-LD Structured Data: BlogPosting -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Security Is Just a Mindset",
+  "description": "Security isn&#39;t a tool you learn or a certification you earn. It&#39;s a way of thinking about systems — and it changes everything you build.",
+  "datePublished": "2026-06-19",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  },
+  "url": "https://blog.nurazhar.com/security-is-just-a-mindset.html",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://blog.nurazhar.com/security-is-just-a-mindset.html"
+  }
+}
+    </script>
+
+  </head>
+  <body>
+
+    <div class="site-header">
+      <div class="wrapper">
+        <div class="site-nav">
+          <a class="page-link" href="stats.html">Stats</a>
+          <a class="page-link" href="kanban.html">Kanban</a>
+          <a class="page-link" href="archive.html">Archive</a>
+          <a class="page-link" href="tags/index.html">Tags</a>
+          
+	  <a class="page-link" href="atom.xml">
+            Feed
+          </a>
+	  
+	  
+	  <a class="page-link" href="https://nurazhar.com/">About</a>
+	  
+          <button id="theme-toggle" style="background: none; border: none; cursor: pointer; padding: 0 10px; font-size: 1.2rem; vertical-align: middle;" aria-label="Toggle theme">🌙</button>
+        </div>
+        <div style="display: flex; align-items: center;">
+          <div>
+            <h1 class="site-title" style="margin: 0;">
+              <a class="page-link" href="index.html">Nur Azhar</a>
+            </h1>
+            <p style="margin: 2px 0 0 0;">My technical blog to document my learnings</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrapper">
+
+      <h1>
+  
+  Security Is Just a Mindset
+  
+</h1>
+<div><hr /><p>I&apos;ve been in security for 7 years. CyberArk PAM, Carbon Black EDR, Tenable, IBM Guardium, air-gapped SOC operations, experience in restricted environments. I&apos;ve operated some of the most restrictive security infrastructure in Singapore.</p><p>And here&apos;s what I&apos;ve learned:</p><p><strong>Security is not a skill. It&apos;s a mindset.</strong></p><hr /><h2 id="what-people-think-security-is">What People Think Security Is</h2><p>When people hear &quot;security,&quot; they think of tools. Firewalls. Antivulnerability scanners. SIEM dashboards. Certifications like CISSP, CISM, CEH.</p><p>They think security is something you <em>learn.</em> You take a course. You pass an exam. You put three letters after your name. You are now &quot;security.&quot;</p><p>This is wrong.</p><p>Tools change every 2 years. Certifications expire. The firewall you mastered last year is replaced by a cloud-native WAF next year. If your security knowledge is tied to tools, you&apos;re always chasing.</p><hr /><h2 id="what-security-actually-is">What Security Actually Is</h2><p>Security is the habit of asking <strong>&quot;what breaks this?&quot;</strong> before anyone else does.</p><p>It&apos;s looking at a system — any system — and seeing the failure modes. Not because you&apos;re paranoid. Because you&apos;ve seen what happens when nobody asked that question.</p><p>A developer sees a new feature and thinks: <em>&quot;How do I build this?&quot;</em></p><p>A security-minded developer sees the same feature and thinks: <em>&quot;How do I build this so it can&apos;t be abused?&quot;</em></p><p>Same skill. Different lens.</p><hr /><h2 id="the-mindset-in-practice">The Mindset in Practice</h2><p>Here&apos;s what the security mindset looks like in real work:</p><p><strong>When deploying code:</strong></p><ul><li>Developer: &quot;It works on my machine.&quot;</li><li>Security mindset: &quot;What happens when someone sends malformed input? What&apos;s the blast radius if this service is compromised?&quot;</li></ul><p><strong>When designing a database:</strong></p><ul><li>Developer: &quot;I&apos;ll store user data here.&quot;</li><li>Security mindset: &quot;Who has access? What&apos;s the least privilege? Is this encrypted at rest? What happens if this table is leaked?&quot;</li></ul><p><strong>When writing a CI/CD pipeline:</strong></p><ul><li>Developer: &quot;It builds and deploys. Done.&quot;</li><li>Security mindset: &quot;Where are the secrets stored? Is the build environment isolated? Can someone inject code through a dependency?&quot;</li></ul><p><strong>When onboarding a vendor:</strong></p><ul><li>Developer: &quot;Give them access so they can do their job.&quot;</li><li>Security mindset: &quot;What&apos;s the minimum access they need? When does it expire? Is every session recorded?&quot;</li></ul><p>None of this requires a certification. It requires a habit of thought.</p><hr /><h2 id="why-this-matters-for-career-changers">Why This Matters for Career Changers</h2><p>I&apos;m transitioning from security to full-stack development. People ask me: <em>&quot;Aren&apos;t you wasting your security background?&quot;</em></p><p>No. I&apos;m taking the security mindset with me.</p><p>Every application I build now, I build differently. I think about authentication before I think about features. I think about input validation before I think about UI. I think about least privilege before I think about convenience.</p><p>This is not something I learned from a course. It&apos;s something 7 years in a high-security air-gapped SOC burned into my brain.</p><p><strong>The tools I used in security are irrelevant. The thinking is permanent.</strong></p><hr /><h2 id="the-industry-doesn&apos;t-get-it">The Industry Doesn&apos;t Get It</h2><p>The tech industry treats security as a separate discipline. You&apos;re either a &quot;developer&quot; or a &quot;security person.&quot; The two rarely overlap.</p><p>This is why most software is insecure. Developers build without the security mindset. Security people audit after the fact. The two teams speak different languages and blame each other when things break.</p><p>The engineers who understand both — who can build <em>and</em> think about failure modes — are the ones who will define the next generation of software.</p><p>That&apos;s not a job title. That&apos;s a mindset.</p><hr /><h2 id="if-you&apos;re-starting-out">If You&apos;re Starting Out</h2><p>Don&apos;t start with tools. Start with questions.</p><ul><li>What happens when this fails?</li><li>Who should <em>not</em> have access to this?</li><li>What&apos;s the worst-case scenario?</li><li>How would I attack this if I were malicious?</li></ul><p>Ask these questions about everything you build. Every system. Every feature. Every line of code.</p><p>That&apos;s security. Not a certification. Not a tool. Not a job title.</p><p><strong>A mindset.</strong></p><hr /><p><em>This post reflects my personal views based on 7 years of operating security infrastructure in regulated environments. Your experience may differ.</em></p></div>
+
+<p><i>Published: 2026-06-19</i></p>
+
+<p>
+  <i>
+  Tagged:
+  
+  <span class="tag">
+    <a href="tags/devsecops.html">devsecops</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/security.html">security</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/mindset.html">mindset</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/reflection.html">reflection</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/career.html">career</a>
+  </span>
+  
+  </i>
+</p>
+
+
+
+      
+      <div style="margin-bottom: 20px; float: right;">
+        <a class="page-link" href="archive.html">Archive</a>
+      </div>
+      
+    </div>
+    
+    <footer class="site-footer" style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--code-border); font-size: 0.85rem; color: var(--text-color); opacity: 0.8;">
+      <div class="wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
+            <img alt="Creative Commons License" style="border-width:0; height: 31px;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+          </a>
+        </div>
+        <div>
+          This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" style="color: var(--link-color); text-decoration: underline;">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+        </div>
+        <div style="font-size: 0.75rem; opacity: 0.6;">
+          &copy; 2026 Nur Azhar. Build in public.
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.getElementById('theme-toggle');
+        if (toggleButton) {
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          toggleButton.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+          
+          toggleButton.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            try {
+              localStorage.setItem('theme', next);
+            } catch (e) {
+              console.warn('Storage blocked: theme preference will not persist.');
+            }
+            toggleButton.textContent = next === 'dark' ? '☀️' : '🌙';
+          });
+        }
+      });
+    </script>
+    <script>
+      (function() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+        
+        fetch('https://asia-southeast1-nurazhardotcom.cloudfunctions.net/blog-analytics-api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: window.location.pathname,
+            referrer: document.referrer || null
+          })
+        }).catch(err => console.error('Tracking failed', err));
+      })();
+    </script>
+  </body>
+</html>

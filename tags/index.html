@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      (function() {
+        try {
+          const savedTheme = localStorage.getItem('theme');
+          const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+    <title>Nur Azhar - Tags — Bitcoin, AI Agents, Protocol Engineering</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="application/atom+xml" rel="alternate" href="../atom.xml" title="Nur Azhar - Tags">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="sitemap" type="application/xml" href="../sitemap.xml">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css">
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      mermaid.initialize({ startOnLoad: false, theme: 'default' });
+      document.addEventListener("DOMContentLoaded", async () => {
+        const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
+        for (const codeBlock of codeBlocks) {
+          const pre = codeBlock.parentElement;
+          const div = document.createElement("div");
+          div.className = "mermaid";
+          div.textContent = codeBlock.textContent;
+          pre.replaceWith(div);
+        }
+        await mermaid.run();
+      });
+    </script>
+
+
+
+    <!-- Social sharing (Facebook, Twitter, LinkedIn, etc.) -->
+    <meta name="title" content="Nur Azhar - Tags">
+    <meta name="twitter:title" content="Nur Azhar - Tags">
+    <meta property="og:title" content="Nur Azhar - Tags">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_SG">
+    <meta property="og:site_name" content="Nur Azhar's Blog">
+
+    <meta name="description" content="Tags - My technical blog to document my learnings">
+    <meta name="twitter:description" content="Tags - My technical blog to document my learnings">
+    <meta property="og:description" content="Tags - My technical blog to document my learnings">
+
+
+    <meta name="twitter:url" content="https://blog.nurazhar.com/tags/index.html">
+    <meta property="og:url" content="https://blog.nurazhar.com/tags/index.html">
+
+
+    <meta name="twitter:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="og:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image:alt" content="">
+
+
+    <meta name="author" content="Nur Azhar">
+
+
+
+    <!-- JSON-LD Structured Data: WebSite -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Nur Azhar's Blog",
+  "url": "https://blog.nurazhar.com",
+  "description": "My technical blog to document my learnings",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  }
+}
+    </script>
+
+  </head>
+  <body>
+
+    <div class="site-header">
+      <div class="wrapper">
+        <div class="site-nav">
+          <a class="page-link" href="../stats.html">Stats</a>
+          <a class="page-link" href="../kanban.html">Kanban</a>
+          <a class="page-link" href="../archive.html">Archive</a>
+          <a class="page-link" href="../tags/index.html">Tags</a>
+          
+	  <a class="page-link" href="../atom.xml">
+            Feed
+          </a>
+	  
+	  
+	  <a class="page-link" href="https://nurazhar.com/">About</a>
+	  
+          <button id="theme-toggle" style="background: none; border: none; cursor: pointer; padding: 0 10px; font-size: 1.2rem; vertical-align: middle;" aria-label="Toggle theme">🌙</button>
+        </div>
+        <div style="display: flex; align-items: center;">
+          <div>
+            <h1 class="site-title" style="margin: 0;">
+              <a class="page-link" href="../index.html">Nur Azhar</a>
+            </h1>
+            <p style="margin: 2px 0 0 0;">My technical blog to document my learnings</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrapper">
+
+      <div style="width: 600px">
+    <h1>Tags</h1>
+    <ul class="index">
+        
+            <li><span><a href="ai.html">ai</a> - 25 posts</span></li>
+        
+            <li><span><a href="architecture.html">architecture</a> - 23 posts</span></li>
+        
+            <li><span><a href="clojure.html">clojure</a> - 20 posts</span></li>
+        
+            <li><span><a href="bitcoin.html">bitcoin</a> - 18 posts</span></li>
+        
+            <li><span><a href="security.html">security</a> - 16 posts</span></li>
+        
+            <li><span><a href="automation.html">automation</a> - 15 posts</span></li>
+        
+            <li><span><a href="bsv.html">bsv</a> - 15 posts</span></li>
+        
+            <li><span><a href="llm.html">llm</a> - 12 posts</span></li>
+        
+            <li><span><a href="devops.html">devops</a> - 10 posts</span></li>
+        
+            <li><span><a href="linux.html">linux</a> - 10 posts</span></li>
+        
+            <li><span><a href="babashka.html">babashka</a> - 10 posts</span></li>
+        
+            <li><span><a href="systems.html">systems</a> - 10 posts</span></li>
+        
+            <li><span><a href="agents.html">agents</a> - 8 posts</span></li>
+        
+            <li><span><a href="philosophy.html">philosophy</a> - 6 posts</span></li>
+        
+            <li><span><a href="cachyos.html">cachyos</a> - 6 posts</span></li>
+        
+            <li><span><a href="ai-agents.html">ai-agents</a> - 6 posts</span></li>
+        
+            <li><span><a href="developer-experience.html">developer-experience</a> - 6 posts</span></li>
+        
+            <li><span><a href="governance.html">governance</a> - 6 posts</span></li>
+        
+            <li><span><a href="epistemology.html">epistemology</a> - 5 posts</span></li>
+        
+            <li><span><a href="workflow.html">workflow</a> - 5 posts</span></li>
+        
+            <li><span><a href="database.html">database</a> - 5 posts</span></li>
+        
+            <li><span><a href="mermaid.html">mermaid</a> - 5 posts</span></li>
+        
+            <li><span><a href="github.html">github</a> - 4 posts</span></li>
+        
+            <li><span><a href="web.html">web</a> - 4 posts</span></li>
+        
+            <li><span><a href="postgres.html">postgres</a> - 4 posts</span></li>
+        
+            <li><span><a href="blockchain.html">blockchain</a> - 4 posts</span></li>
+        
+            <li><span><a href="open-source.html">open-source</a> - 4 posts</span></li>
+        
+            <li><span><a href="memory.html">memory</a> - 4 posts</span></li>
+        
+            <li><span><a href="serverless.html">serverless</a> - 4 posts</span></li>
+        
+            <li><span><a href="dao.html">dao</a> - 4 posts</span></li>
+        
+            <li><span><a href="machine-to-machine.html">machine-to-machine</a> - 3 posts</span></li>
+        
+            <li><span><a href="brc105.html">brc105</a> - 3 posts</span></li>
+        
+            <li><span><a href="devsecops.html">devsecops</a> - 3 posts</span></li>
+        
+            <li><span><a href="simplicity.html">simplicity</a> - 3 posts</span></li>
+        
+            <li><span><a href="swiss-model.html">swiss-model</a> - 3 posts</span></li>
+        
+            <li><span><a href="privacy.html">privacy</a> - 3 posts</span></li>
+        
+            <li><span><a href="diagrams.html">diagrams</a> - 3 posts</span></li>
+        
+            <li><span><a href="power.html">power</a> - 3 posts</span></li>
+        
+            <li><span><a href="agi.html">agi</a> - 3 posts</span></li>
+        
+            <li><span><a href="reflection.html">reflection</a> - 3 posts</span></li>
+        
+            <li><span><a href="meta.html">meta</a> - 3 posts</span></li>
+        
+            <li><span><a href="infrastructure.html">infrastructure</a> - 3 posts</span></li>
+        
+            <li><span><a href="cleanup.html">cleanup</a> - 2 posts</span></li>
+        
+            <li><span><a href="protocol.html">protocol</a> - 2 posts</span></li>
+        
+            <li><span><a href="data-poisoning.html">data-poisoning</a> - 2 posts</span></li>
+        
+            <li><span><a href="hermes.html">hermes</a> - 2 posts</span></li>
+        
+            <li><span><a href="futarchy.html">futarchy</a> - 2 posts</span></li>
+        
+            <li><span><a href="civilization.html">civilization</a> - 2 posts</span></li>
+        
+            <li><span><a href="django.html">django</a> - 2 posts</span></li>
+        
+            <li><span><a href="opensource.html">opensource</a> - 2 posts</span></li>
+        
+            <li><span><a href="teranode.html">teranode</a> - 2 posts</span></li>
+        
+            <li><span><a href="op_return.html">op_return</a> - 2 posts</span></li>
+        
+            <li><span><a href="whitepaper.html">whitepaper</a> - 2 posts</span></li>
+        
+            <li><span><a href="deepseek.html">deepseek</a> - 2 posts</span></li>
+        
+            <li><span><a href="ipv6.html">ipv6</a> - 2 posts</span></li>
+        
+            <li><span><a href="economics.html">economics</a> - 2 posts</span></li>
+        
+            <li><span><a href="minimalism.html">minimalism</a> - 2 posts</span></li>
+        
+            <li><span><a href="productivity.html">productivity</a> - 2 posts</span></li>
+        
+            <li><span><a href="licensing.html">licensing</a> - 2 posts</span></li>
+        
+            <li><span><a href="web-development.html">web-development</a> - 2 posts</span></li>
+        
+            <li><span><a href="networking.html">networking</a> - 2 posts</span></li>
+        
+            <li><span><a href="git.html">git</a> - 2 posts</span></li>
+        
+            <li><span><a href="indelible.html">indelible</a> - 2 posts</span></li>
+        
+            <li><span><a href="traceport.html">traceport</a> - 2 posts</span></li>
+        
+            <li><span><a href="career-ops.html">career-ops</a> - 2 posts</span></li>
+        
+            <li><span><a href="optimization.html">optimization</a> - 2 posts</span></li>
+        
+            <li><span><a href="debugging.html">debugging</a> - 2 posts</span></li>
+        
+            <li><span><a href="career.html">career</a> - 2 posts</span></li>
+        
+            <li><span><a href="runar.html">runar</a> - 2 posts</span></li>
+        
+            <li><span><a href="singapore.html">singapore</a> - 2 posts</span></li>
+        
+            <li><span><a href="performance.html">performance</a> - 2 posts</span></li>
+        
+            <li><span><a href="react.html">react</a> - 2 posts</span></li>
+        
+            <li><span><a href="mistakes.html">mistakes</a> - 2 posts</span></li>
+        
+            <li><span><a href="overlay.html">overlay</a> - 2 posts</span></li>
+        
+            <li><span><a href="cognition.html">cognition</a> - 2 posts</span></li>
+        
+            <li><span><a href="archlinux.html">archlinux</a> - 2 posts</span></li>
+        
+            <li><span><a href="curation.html">curation</a> - 2 posts</span></li>
+        
+            <li><span><a href="ecosystem.html">ecosystem</a> - 2 posts</span></li>
+        
+            <li><span><a href="technology.html">technology</a> - 1 post</span></li>
+        
+            <li><span><a href="agile.html">agile</a> - 1 post</span></li>
+        
+            <li><span><a href="quadratic-voting.html">quadratic-voting</a> - 1 post</span></li>
+        
+            <li><span><a href="kernel.html">kernel</a> - 1 post</span></li>
+        
+            <li><span><a href="solana.html">solana</a> - 1 post</span></li>
+        
+            <li><span><a href="desktop.html">desktop</a> - 1 post</span></li>
+        
+            <li><span><a href="bridget-doran.html">bridget-doran</a> - 1 post</span></li>
+        
+            <li><span><a href="vapt.html">vapt</a> - 1 post</span></li>
+        
+            <li><span><a href="sycophancy.html">sycophancy</a> - 1 post</span></li>
+        
+            <li><span><a href="safety.html">safety</a> - 1 post</span></li>
+        
+            <li><span><a href="quickblog.html">quickblog</a> - 1 post</span></li>
+        
+            <li><span><a href="ux.html">ux</a> - 1 post</span></li>
+        
+            <li><span><a href="censorship.html">censorship</a> - 1 post</span></li>
+        
+            <li><span><a href="coordination.html">coordination</a> - 1 post</span></li>
+        
+            <li><span><a href="clojerl.html">clojerl</a> - 1 post</span></li>
+        
+            <li><span><a href="sysadmin.html">sysadmin</a> - 1 post</span></li>
+        
+            <li><span><a href="gemini.html">gemini</a> - 1 post</span></li>
+        
+            <li><span><a href="limine.html">limine</a> - 1 post</span></li>
+        
+            <li><span><a href="google.html">google</a> - 1 post</span></li>
+        
+            <li><span><a href="rewrite.html">rewrite</a> - 1 post</span></li>
+        
+            <li><span><a href="definitions.html">definitions</a> - 1 post</span></li>
+        
+            <li><span><a href="bopen.html">bopen</a> - 1 post</span></li>
+        
+            <li><span><a href="gnome.html">gnome</a> - 1 post</span></li>
+        
+            <li><span><a href="beam.html">beam</a> - 1 post</span></li>
+        
+            <li><span><a href="fix.html">fix</a> - 1 post</span></li>
+        
+            <li><span><a href="pdpa.html">pdpa</a> - 1 post</span></li>
+        
+            <li><span><a href="wallet.html">wallet</a> - 1 post</span></li>
+        
+            <li><span><a href="education.html">education</a> - 1 post</span></li>
+        
+            <li><span><a href="mirrors.html">mirrors</a> - 1 post</span></li>
+        
+            <li><span><a href="learning.html">learning</a> - 1 post</span></li>
+        
+            <li><span><a href="tools.html">tools</a> - 1 post</span></li>
+        
+            <li><span><a href="inference.html">inference</a> - 1 post</span></li>
+        
+            <li><span><a href="geopolitics.html">geopolitics</a> - 1 post</span></li>
+        
+            <li><span><a href="btrfs.html">btrfs</a> - 1 post</span></li>
+        
+            <li><span><a href="overlays.html">overlays</a> - 1 post</span></li>
+        
+            <li><span><a href="limitations.html">limitations</a> - 1 post</span></li>
+        
+            <li><span><a href="pdf.html">pdf</a> - 1 post</span></li>
+        
+            <li><span><a href="htmx.html">htmx</a> - 1 post</span></li>
+        
+            <li><span><a href="income.html">income</a> - 1 post</span></li>
+        
+            <li><span><a href="rust.html">rust</a> - 1 post</span></li>
+        
+            <li><span><a href="timeline.html">timeline</a> - 1 post</span></li>
+        
+            <li><span><a href="smartshop.html">smartshop</a> - 1 post</span></li>
+        
+            <li><span><a href="tooling.html">tooling</a> - 1 post</span></li>
+        
+            <li><span><a href="structured-data.html">structured-data</a> - 1 post</span></li>
+        
+            <li><span><a href="e-commerce.html">e-commerce</a> - 1 post</span></li>
+        
+            <li><span><a href="hermes-agent.html">hermes-agent</a> - 1 post</span></li>
+        
+            <li><span><a href="vite.html">vite</a> - 1 post</span></li>
+        
+            <li><span><a href="design.html">design</a> - 1 post</span></li>
+        
+            <li><span><a href="machine-learning.html">machine-learning</a> - 1 post</span></li>
+        
+            <li><span><a href="utxo.html">utxo</a> - 1 post</span></li>
+        
+            <li><span><a href="devtools.html">devtools</a> - 1 post</span></li>
+        
+            <li><span><a href="opcodes.html">opcodes</a> - 1 post</span></li>
+        
+            <li><span><a href="arch-linux.html">arch-linux</a> - 1 post</span></li>
+        
+            <li><span><a href="css.html">css</a> - 1 post</span></li>
+        
+            <li><span><a href="sqlite.html">sqlite</a> - 1 post</span></li>
+        
+            <li><span><a href="windows-11.html">windows-11</a> - 1 post</span></li>
+        
+            <li><span><a href="mindset.html">mindset</a> - 1 post</span></li>
+        
+            <li><span><a href="babbage.html">babbage</a> - 1 post</span></li>
+        
+            <li><span><a href="yaml.html">yaml</a> - 1 post</span></li>
+        
+            <li><span><a href="guide.html">guide</a> - 1 post</span></li>
+        
+            <li><span><a href="meta-tags.html">meta-tags</a> - 1 post</span></li>
+        
+            <li><span><a href="reliability.html">reliability</a> - 1 post</span></li>
+        
+            <li><span><a href="bootloader.html">bootloader</a> - 1 post</span></li>
+        
+            <li><span><a href="prof-faustus.html">prof-faustus</a> - 1 post</span></li>
+        
+            <li><span><a href="epistemics.html">epistemics</a> - 1 post</span></li>
+        
+            <li><span><a href="rest.html">rest</a> - 1 post</span></li>
+        
+            <li><span><a href="defi.html">defi</a> - 1 post</span></li>
+        
+            <li><span><a href="escrow.html">escrow</a> - 1 post</span></li>
+        
+            <li><span><a href="context-window.html">context-window</a> - 1 post</span></li>
+        
+            <li><span><a href="seo.html">seo</a> - 1 post</span></li>
+        
+            <li><span><a href="hardware.html">hardware</a> - 1 post</span></li>
+        
+            <li><span><a href="packaging.html">packaging</a> - 1 post</span></li>
+        
+            <li><span><a href="compilers.html">compilers</a> - 1 post</span></li>
+        
+            <li><span><a href="orchestration.html">orchestration</a> - 1 post</span></li>
+        
+            <li><span><a href="dev-velocity.html">dev-velocity</a> - 1 post</span></li>
+        
+            <li><span><a href="troubleshooting.html">troubleshooting</a> - 1 post</span></li>
+        
+            <li><span><a href="multi-agent-system.html">multi-agent-system</a> - 1 post</span></li>
+        
+            <li><span><a href="kde.html">kde</a> - 1 post</span></li>
+        
+            <li><span><a href="triple-entry.html">triple-entry</a> - 1 post</span></li>
+        
+            <li><span><a href="cljfx.html">cljfx</a> - 1 post</span></li>
+        
+            <li><span><a href="business.html">business</a> - 1 post</span></li>
+        
+            <li><span><a href="frustration.html">frustration</a> - 1 post</span></li>
+        
+            <li><span><a href="geo.html">geo</a> - 1 post</span></li>
+        
+            <li><span><a href="frontend.html">frontend</a> - 1 post</span></li>
+        
+            <li><span><a href="functional-programming.html">functional-programming</a> - 1 post</span></li>
+        
+            <li><span><a href="accounting.html">accounting</a> - 1 post</span></li>
+        
+            <li><span><a href="diagnostics.html">diagnostics</a> - 1 post</span></li>
+        
+            <li><span><a href="president-dao.html">president-dao</a> - 1 post</span></li>
+        
+            <li><span><a href="awesome-list.html">awesome-list</a> - 1 post</span></li>
+        
+            <li><span><a href="chronicle.html">chronicle</a> - 1 post</span></li>
+        
+            <li><span><a href="solo-founder.html">solo-founder</a> - 1 post</span></li>
+        
+            <li><span><a href="cli.html">cli</a> - 1 post</span></li>
+        
+            <li><span><a href="cognitive-load.html">cognitive-load</a> - 1 post</span></li>
+        
+            <li><span><a href="identity.html">identity</a> - 1 post</span></li>
+        
+            <li><span><a href="gcp.html">gcp</a> - 1 post</span></li>
+        
+            <li><span><a href="json-ld.html">json-ld</a> - 1 post</span></li>
+        
+            <li><span><a href="build.html">build</a> - 1 post</span></li>
+        
+            <li><span><a href="data-engineering.html">data-engineering</a> - 1 post</span></li>
+        
+            <li><span><a href="white-collar.html">white-collar</a> - 1 post</span></li>
+        
+            <li><span><a href="entropy.html">entropy</a> - 1 post</span></li>
+        
+            <li><span><a href="project-management.html">project-management</a> - 1 post</span></li>
+        
+            <li><span><a href="bip39.html">bip39</a> - 1 post</span></li>
+        
+            <li><span><a href="craig-wright.html">craig-wright</a> - 1 post</span></li>
+        
+            <li><span><a href="sitemap.html">sitemap</a> - 1 post</span></li>
+        
+            <li><span><a href="tool-calling.html">tool-calling</a> - 1 post</span></li>
+        
+            <li><span><a href="prediction-markets.html">prediction-markets</a> - 1 post</span></li>
+        
+            <li><span><a href="policy.html">policy</a> - 1 post</span></li>
+        
+            <li><span><a href="compliance-as-code.html">compliance-as-code</a> - 1 post</span></li>
+        
+            <li><span><a href="hyperliquid.html">hyperliquid</a> - 1 post</span></li>
+        
+            <li><span><a href="opensuse.html">opensuse</a> - 1 post</span></li>
+        
+            <li><span><a href="repl.html">repl</a> - 1 post</span></li>
+        
+            <li><span><a href="cloud-ai.html">cloud-ai</a> - 1 post</span></li>
+        
+            <li><span><a href="intent.html">intent</a> - 1 post</span></li>
+        
+            <li><span><a href="typography.html">typography</a> - 1 post</span></li>
+        
+            <li><span><a href="docker.html">docker</a> - 1 post</span></li>
+        
+            <li><span><a href="scrum.html">scrum</a> - 1 post</span></li>
+        
+            <li><span><a href="red-teaming.html">red-teaming</a> - 1 post</span></li>
+        
+            <li><span><a href="agentic-ide.html">agentic-ide</a> - 1 post</span></li>
+        
+            <li><span><a href="spacex.html">spacex</a> - 1 post</span></li>
+        
+            <li><span><a href="engine.html">engine</a> - 1 post</span></li>
+        
+            <li><span><a href="testnet.html">testnet</a> - 1 post</span></li>
+        
+            <li><span><a href="contribution.html">contribution</a> - 1 post</span></li>
+        
+            <li><span><a href="agent-bond.html">agent-bond</a> - 1 post</span></li>
+        
+            <li><span><a href="aur.html">aur</a> - 1 post</span></li>
+        
+            <li><span><a href="electrum.html">electrum</a> - 1 post</span></li>
+        
+            <li><span><a href="arch.html">arch</a> - 1 post</span></li>
+        
+            <li><span><a href="syntax.html">syntax</a> - 1 post</span></li>
+        
+            <li><span><a href="mcp.html">mcp</a> - 1 post</span></li>
+        
+            <li><span><a href="consciousness.html">consciousness</a> - 1 post</span></li>
+        
+            <li><span><a href="desktop-gui.html">desktop-gui</a> - 1 post</span></li>
+        
+            <li><span><a href="local.html">local</a> - 1 post</span></li>
+        
+            <li><span><a href="southeast-asia.html">southeast-asia</a> - 1 post</span></li>
+        
+            <li><span><a href="sandbox.html">sandbox</a> - 1 post</span></li>
+        
+            <li><span><a href="javascript.html">javascript</a> - 1 post</span></li>
+        
+            <li><span><a href="hyperscale.html">hyperscale</a> - 1 post</span></li>
+        
+            <li><span><a href="fork.html">fork</a> - 1 post</span></li>
+        
+            <li><span><a href="sre.html">sre</a> - 1 post</span></li>
+        
+            <li><span><a href="longevity.html">longevity</a> - 1 post</span></li>
+        
+            <li><span><a href="python.html">python</a> - 1 post</span></li>
+        
+            <li><span><a href="self-host.html">self-host</a> - 1 post</span></li>
+        
+            <li><span><a href="limits.html">limits</a> - 1 post</span></li>
+        
+            <li><span><a href="finance.html">finance</a> - 1 post</span></li>
+        
+            <li><span><a href="starlink.html">starlink</a> - 1 post</span></li>
+        
+            <li><span><a href="asi.html">asi</a> - 1 post</span></li>
+        
+            <li><span><a href="cga.html">cga</a> - 1 post</span></li>
+        
+            <li><span><a href="composability.html">composability</a> - 1 post</span></li>
+        
+            <li><span><a href="blogging.html">blogging</a> - 1 post</span></li>
+        
+            <li><span><a href="openrouter.html">openrouter</a> - 1 post</span></li>
+        
+            <li><span><a href="flatpak.html">flatpak</a> - 1 post</span></li>
+        
+            <li><span><a href="systemd.html">systemd</a> - 1 post</span></li>
+        
+            <li><span><a href="etl.html">etl</a> - 1 post</span></li>
+        
+            <li><span><a href="organization.html">organization</a> - 1 post</span></li>
+        
+            <li><span><a href="lev.html">lev</a> - 1 post</span></li>
+        
+            <li><span><a href="self-improvement.html">self-improvement</a> - 1 post</span></li>
+        
+            <li><span><a href="pgp.html">pgp</a> - 1 post</span></li>
+        
+            <li><span><a href="engineering.html">engineering</a> - 1 post</span></li>
+        
+            <li><span><a href="nodejs.html">nodejs</a> - 1 post</span></li>
+        
+            <li><span><a href="ai-safety.html">ai-safety</a> - 1 post</span></li>
+        
+            <li><span><a href="developers.html">developers</a> - 1 post</span></li>
+        
+            <li><span><a href="fish.html">fish</a> - 1 post</span></li>
+        
+            <li><span><a href="parsing.html">parsing</a> - 1 post</span></li>
+        
+            <li><span><a href="aeo.html">aeo</a> - 1 post</span></li>
+        
+            <li><span><a href="portfolio.html">portfolio</a> - 1 post</span></li>
+        
+            <li><span><a href="packages.html">packages</a> - 1 post</span></li>
+        
+    </ul>
+</div>
+
+
+      
+    </div>
+    
+    <footer class="site-footer" style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--code-border); font-size: 0.85rem; color: var(--text-color); opacity: 0.8;">
+      <div class="wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
+            <img alt="Creative Commons License" style="border-width:0; height: 31px;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+          </a>
+        </div>
+        <div>
+          This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" style="color: var(--link-color); text-decoration: underline;">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+        </div>
+        <div style="font-size: 0.75rem; opacity: 0.6;">
+          &copy; 2026 Nur Azhar. Build in public.
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.getElementById('theme-toggle');
+        if (toggleButton) {
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          toggleButton.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+          
+          toggleButton.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            try {
+              localStorage.setItem('theme', next);
+            } catch (e) {
+              console.warn('Storage blocked: theme preference will not persist.');
+            }
+            toggleButton.textContent = next === 'dark' ? '☀️' : '🌙';
+          });
+        }
+      });
+    </script>
+    <script>
+      (function() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+        
+        fetch('https://asia-southeast1-nurazhardotcom.cloudfunctions.net/blog-analytics-api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: window.location.pathname,
+            referrer: document.referrer || null
+          })
+        }).catch(err => console.error('Tracking failed', err));
+      })();
+    </script>
+  </body>
+</html>

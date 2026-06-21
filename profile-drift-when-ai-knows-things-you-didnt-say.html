@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      (function() {
+        try {
+          const savedTheme = localStorage.getItem('theme');
+          const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+    <title>Profile Drift — When AI Knows Things You Didn&#39;t Say — Bitcoin, AI Agents, Protocol Engineering</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="application/atom+xml" rel="alternate" href="atom.xml" title="Profile Drift — When AI Knows Things You Didn&#39;t Say">
+    <link rel="stylesheet" href="style.css">
+    <link rel="sitemap" type="application/xml" href="sitemap.xml">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css">
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      mermaid.initialize({ startOnLoad: false, theme: 'default' });
+      document.addEventListener("DOMContentLoaded", async () => {
+        const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
+        for (const codeBlock of codeBlocks) {
+          const pre = codeBlock.parentElement;
+          const div = document.createElement("div");
+          div.className = "mermaid";
+          div.textContent = codeBlock.textContent;
+          pre.replaceWith(div);
+        }
+        await mermaid.run();
+      });
+    </script>
+
+
+
+    <!-- Social sharing (Facebook, Twitter, LinkedIn, etc.) -->
+    <meta name="title" content="Profile Drift — When AI Knows Things You Didn&#39;t Say">
+    <meta name="twitter:title" content="Profile Drift — When AI Knows Things You Didn&#39;t Say">
+    <meta property="og:title" content="Profile Drift — When AI Knows Things You Didn&#39;t Say">
+    <meta property="og:type" content="article">
+    <meta property="og:locale" content="en_SG">
+    <meta property="og:site_name" content="Nur Azhar's Blog">
+
+
+    <meta name="twitter:url" content="https://blog.nurazhar.com/profile-drift-when-ai-knows-things-you-didnt-say.html">
+    <meta property="og:url" content="https://blog.nurazhar.com/profile-drift-when-ai-knows-things-you-didnt-say.html">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image:alt" content="Nur Azhar's Blog - Bitcoin, AI Agents, Protocol Engineering">
+
+
+    <meta name="author" content="Nur Azhar">
+
+
+
+    <!-- JSON-LD Structured Data: WebSite -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Nur Azhar's Blog",
+  "url": "https://blog.nurazhar.com",
+  "description": "My technical blog to document my learnings",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  }
+}
+    </script>
+
+    <!-- JSON-LD Structured Data: BlogPosting -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Profile Drift — When AI Knows Things You Didn&#39;t Say",
+  "description": "",
+  "datePublished": "2026-06-19",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  },
+  "url": "https://blog.nurazhar.com/profile-drift-when-ai-knows-things-you-didnt-say.html",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://blog.nurazhar.com/profile-drift-when-ai-knows-things-you-didnt-say.html"
+  }
+}
+    </script>
+
+  </head>
+  <body>
+
+    <div class="site-header">
+      <div class="wrapper">
+        <div class="site-nav">
+          <a class="page-link" href="stats.html">Stats</a>
+          <a class="page-link" href="kanban.html">Kanban</a>
+          <a class="page-link" href="archive.html">Archive</a>
+          <a class="page-link" href="tags/index.html">Tags</a>
+          
+	  <a class="page-link" href="atom.xml">
+            Feed
+          </a>
+	  
+	  
+	  <a class="page-link" href="https://nurazhar.com/">About</a>
+	  
+          <button id="theme-toggle" style="background: none; border: none; cursor: pointer; padding: 0 10px; font-size: 1.2rem; vertical-align: middle;" aria-label="Toggle theme">🌙</button>
+        </div>
+        <div style="display: flex; align-items: center;">
+          <div>
+            <h1 class="site-title" style="margin: 0;">
+              <a class="page-link" href="index.html">Nur Azhar</a>
+            </h1>
+            <p style="margin: 2px 0 0 0;">My technical blog to document my learnings</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrapper">
+
+      <h1>
+  
+  Profile Drift — When AI Knows Things You Didn&#39;t Say
+  
+</h1>
+<div><p>Today I caught my AI assistant confidently citing a fact about me — and it was wrong.</p><p>Not hallucinated-from-the-void wrong. Wrong in a more subtle, harder-to-audit way: it had derived the fact from somewhere in my conversation history, compressed it into a profile summary, and then presented that summary back to me as if I had said it directly. When I challenged it, it retreated to: <em>&quot;it was in your profile.&quot;</em></p><p>Technically true. Epistemically weak.</p><p>This is the <strong>profile drift problem</strong>.</p><h2 id="the-drift-loop">The Drift Loop</h2><p>Here is the mechanism, visualised:</p><pre><code class="language-mermaid">flowchart TD
+    A[&quot;You say something\n(casual, contextual, possibly imprecise)&quot;] --&gt; B[&quot;LLM session ends\nConversation compressed into profile summary&quot;]
+    B --&gt; C[&quot;Profile stored\n(summary, not raw input)&quot;]
+    C --&gt; D[&quot;New session starts\nProfile injected as context&quot;]
+    D --&gt; E[&quot;Model cites profile as fact\n(with same confidence as verified data)&quot;]
+    E --&gt; F{&quot;You notice something off?&quot;}
+    F --&gt;|No| G[&quot;Drift compounds\nSummary cited in next session too&quot;]
+    F --&gt;|Yes| H[&quot;You challenge it&quot;]
+    H --&gt; I[&quot;Model apologises\nSays &apos;it was in your profile&apos;&quot;]
+    I --&gt; J[&quot;But the profile is not updated\nDrift persists&quot;]
+    J --&gt; G
+    G --&gt; D
+</code></pre><p>The loop closes. The correction never propagates back to the source. Next session, the same derived fact returns — slightly more entrenched, because now it has been <em>cited and not formally retracted</em>.</p><h2 id="why-this-is-a-security-problem,-not-just-an-accuracy-problem">Why This Is a Security Problem, Not Just an Accuracy Problem</h2><p>We talk a lot about AI hallucination as a reliability concern. But profile drift is different — it is a <strong>trust boundary violation</strong>.</p><p>When a model says <em>&quot;you mentioned X&quot;</em>, you assume X maps to something you actually said, with some reasonable fidelity. But what you are actually getting is:</p><ul><li>A compression of what you said</li><li>Filtered through the summarisation model&apos;s priors</li><li>Possibly blended with inferences drawn across multiple sessions</li><li>Presented with no provenance, no timestamp, no confidence score</li></ul><p>This is not retrieval. It is reconstruction. And reconstruction without disclosure is a form of confabulation — the polite word for a system confidently filling gaps it cannot see.</p><p>In my case, the drift was benign: a years-of-experience figure. But the same mechanism applies to anything the model infers and stores: your opinions, your constraints, your relationships, your risk tolerance. Over time, the model&apos;s model of <em>you</em> diverges from the actual you — and you only catch it when the delta gets large enough to feel wrong.</p><p>Small errors are never caught. They accumulate.</p><h2 id="the-analogy:-training-data-poisoning-at-personal-scale">The Analogy: Training Data Poisoning at Personal Scale</h2><p>Profile drift is the same attack surface as data poisoning, applied to the personalisation layer instead of the weights layer.</p><p>In training data poisoning: adversarial inputs corrupt the model&apos;s general knowledge over time.</p><p>In profile drift: low-quality inferences corrupt the model&apos;s personalised knowledge over time.</p><p>Both share the same defence failure mode: <strong>the system trusts its own prior outputs as ground truth</strong>, without mechanism for external verification.</p><p>This is also what happens with recursive self-improvement loops — systems that feed their outputs back as inputs eventually lose the thread of what was observation versus what was generated.</p><h2 id="what-should-exist-but-doesn&apos;t">What Should Exist But Doesn&apos;t</h2><p>A well-designed personalisation system would:</p><ol start="1"><li><p><strong>Distinguish between stated facts and inferred facts.</strong> <em>&quot;You said you have 14+ years of experience&quot;</em> is different from <em>&quot;Based on your conversation history, I estimated you have approximately 14 years of experience.&quot;</em> One is retrieval. The other is inference. They should be labelled differently.</p></li><li><p><strong>Surface provenance on demand.</strong> <em>&quot;Where did you get that?&quot;</em> should return a traceable path: session date, the original utterance, the compression step. Right now you get: <em>&quot;it was in your profile.&quot;</em></p></li><li><p><strong>Propagate corrections.</strong> If I say <em>&quot;that&apos;s wrong, here is the correct figure&quot;</em>, the correction should flow back to the profile. It currently does not. The drift continues.</p></li><li><p><strong>Expose the profile for audit.</strong> You should be able to read, edit, and delete what the system believes about you. Not via a support ticket. Inline. With versioning.</p></li></ol><p>None of this is technically difficult. It is a product priority choice. And the current priority is clearly <em>seamlessness over transparency</em> — hide the machinery, present a confident assistant.</p><p>That tradeoff is fine for trivia retrieval. It is not fine for identity data.</p><h2 id="the-proof-of-origin-problem">The Proof-of-Origin Problem</h2><p>There is a deeper issue here that connects to things I care about in other domains.</p><p>Bitcoin solved double-spend by making provenance cryptographically verifiable. Every UTXO has a chain of custody back to coinbase. You cannot claim ownership of something without proof of how you acquired it.</p><p>AI memory systems have no equivalent primitive. A &quot;fact&quot; in your profile has no hash, no timestamp, no origin pointer. It exists as a floating assertion. The model believes it because it is in the context window, not because it was verified.</p><p>This is not a solvable problem within current LLM architectures — the attention mechanism does not care about provenance, only about relevance and proximity. But it is worth naming clearly, because it defines the upper bound of what personalised AI assistants can reliably do: they can approximate you, but they cannot <em>know</em> you in any auditable sense.</p><p>Approximation presented as knowledge is the core failure mode here.</p><h2 id="so-what-do-you-do?">So What Do You Do?</h2><p>Practically:</p><ul><li><strong>Push back on cited facts.</strong> If a model says <em>&quot;you mentioned X&quot;</em>, ask it to show its work. The inability to do so is informative.</li><li><strong>Treat inferred facts as hypotheses.</strong> When the model says something confident about you, verify it against your own memory before accepting it.</li><li><strong>Correct explicitly and loudly.</strong> Passive correction (moving on) does not update the profile. You have to state the correction directly and clearly.</li><li><strong>Assume drift is happening in the background.</strong> Everything the model believes about you is a lossy compression of your past. Plan accordingly.</li></ul><p>The irony is that I am writing this on a blog that the same AI assistant helps me publish. The tool is useful. The trust boundary still needs to be managed consciously.</p><p>That is not a reason to stop using it. It is a reason to use it with eyes open.</p></div>
+
+<p><i>Published: 2026-06-19</i></p>
+
+<p>
+  <i>
+  Tagged:
+  
+  <span class="tag">
+    <a href="tags/security.html">security</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/llm.html">llm</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/epistemics.html">epistemics</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/memory.html">memory</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/ai.html">ai</a>
+  </span>
+  
+  </i>
+</p>
+
+
+
+      
+      <div style="margin-bottom: 20px; float: right;">
+        <a class="page-link" href="archive.html">Archive</a>
+      </div>
+      
+    </div>
+    
+    <footer class="site-footer" style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--code-border); font-size: 0.85rem; color: var(--text-color); opacity: 0.8;">
+      <div class="wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
+            <img alt="Creative Commons License" style="border-width:0; height: 31px;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+          </a>
+        </div>
+        <div>
+          This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" style="color: var(--link-color); text-decoration: underline;">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+        </div>
+        <div style="font-size: 0.75rem; opacity: 0.6;">
+          &copy; 2026 Nur Azhar. Build in public.
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.getElementById('theme-toggle');
+        if (toggleButton) {
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          toggleButton.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+          
+          toggleButton.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            try {
+              localStorage.setItem('theme', next);
+            } catch (e) {
+              console.warn('Storage blocked: theme preference will not persist.');
+            }
+            toggleButton.textContent = next === 'dark' ? '☀️' : '🌙';
+          });
+        }
+      });
+    </script>
+    <script>
+      (function() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+        
+        fetch('https://asia-southeast1-nurazhardotcom.cloudfunctions.net/blog-analytics-api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: window.location.pathname,
+            referrer: document.referrer || null
+          })
+        }).catch(err => console.error('Tracking failed', err));
+      })();
+    </script>
+  </body>
+</html>
