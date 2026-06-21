@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      (function() {
+        try {
+          const savedTheme = localStorage.getItem('theme');
+          const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+    <title>The Software Janitor: Why the Industry Needs Fewer Builders and More Cleaners — Bitcoin, AI Agents, Protocol Engineering</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="application/atom+xml" rel="alternate" href="atom.xml" title="The Software Janitor: Why the Industry Needs Fewer Builders and More Cleaners">
+    <link rel="stylesheet" href="style.css">
+    <link rel="sitemap" type="application/xml" href="sitemap.xml">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css">
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      mermaid.initialize({ startOnLoad: false, theme: 'default' });
+      document.addEventListener("DOMContentLoaded", async () => {
+        const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
+        for (const codeBlock of codeBlocks) {
+          const pre = codeBlock.parentElement;
+          const div = document.createElement("div");
+          div.className = "mermaid";
+          div.textContent = codeBlock.textContent;
+          pre.replaceWith(div);
+        }
+        await mermaid.run();
+      });
+    </script>
+
+
+
+    <!-- Social sharing (Facebook, Twitter, LinkedIn, etc.) -->
+    <meta name="title" content="The Software Janitor: Why the Industry Needs Fewer Builders and More Cleaners">
+    <meta name="twitter:title" content="The Software Janitor: Why the Industry Needs Fewer Builders and More Cleaners">
+    <meta property="og:title" content="The Software Janitor: Why the Industry Needs Fewer Builders and More Cleaners">
+    <meta property="og:type" content="article">
+    <meta property="og:locale" content="en_SG">
+    <meta property="og:site_name" content="Nur Azhar's Blog">
+
+    <meta name="description" content="Why the tech industry&#39;s obsession with &quot;building&quot; is creating a crisis of bloatware, and why the &quot;Software Janitor&quot; is secretly the most high-value engineering role in 2026.">
+    <meta name="twitter:description" content="Why the tech industry&#39;s obsession with &quot;building&quot; is creating a crisis of bloatware, and why the &quot;Software Janitor&quot; is secretly the most high-value engineering role in 2026.">
+    <meta property="og:description" content="Why the tech industry&#39;s obsession with &quot;building&quot; is creating a crisis of bloatware, and why the &quot;Software Janitor&quot; is secretly the most high-value engineering role in 2026.">
+
+
+    <meta name="twitter:url" content="https://blog.nurazhar.com/the-software-janitor-industry-needs-cleaners.html">
+    <meta property="og:url" content="https://blog.nurazhar.com/the-software-janitor-industry-needs-cleaners.html">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image:alt" content="Nur Azhar's Blog - Bitcoin, AI Agents, Protocol Engineering">
+
+
+    <meta name="author" content="Nur Azhar">
+
+
+
+    <!-- JSON-LD Structured Data: WebSite -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Nur Azhar's Blog",
+  "url": "https://blog.nurazhar.com",
+  "description": "My technical blog to document my learnings",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  }
+}
+    </script>
+
+    <!-- JSON-LD Structured Data: BlogPosting -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "The Software Janitor: Why the Industry Needs Fewer Builders and More Cleaners",
+  "description": "Why the tech industry&#39;s obsession with &quot;building&quot; is creating a crisis of bloatware, and why the &quot;Software Janitor&quot; is secretly the most high-value engineering role in 2026.",
+  "datePublished": "2026-06-14",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  },
+  "url": "https://blog.nurazhar.com/the-software-janitor-industry-needs-cleaners.html",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://blog.nurazhar.com/the-software-janitor-industry-needs-cleaners.html"
+  }
+}
+    </script>
+
+  </head>
+  <body>
+
+    <div class="site-header">
+      <div class="wrapper">
+        <div class="site-nav">
+          <a class="page-link" href="stats.html">Stats</a>
+          <a class="page-link" href="kanban.html">Kanban</a>
+          <a class="page-link" href="archive.html">Archive</a>
+          <a class="page-link" href="tags/index.html">Tags</a>
+          
+	  <a class="page-link" href="atom.xml">
+            Feed
+          </a>
+	  
+	  
+	  <a class="page-link" href="https://nurazhar.com/">About</a>
+	  
+          <button id="theme-toggle" style="background: none; border: none; cursor: pointer; padding: 0 10px; font-size: 1.2rem; vertical-align: middle;" aria-label="Toggle theme">🌙</button>
+        </div>
+        <div style="display: flex; align-items: center;">
+          <div>
+            <h1 class="site-title" style="margin: 0;">
+              <a class="page-link" href="index.html">Nur Azhar</a>
+            </h1>
+            <p style="margin: 2px 0 0 0;">My technical blog to document my learnings</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrapper">
+
+      <h1>
+  
+  The Software Janitor: Why the Industry Needs Fewer Builders and More Cleaners
+  
+</h1>
+<div><hr /><p>In the technology sector, we are obsessed with the myth of the <strong>&quot;Builder.&quot;</strong></p><p>Job descriptions ask for &quot;makers,&quot; &quot;architects,&quot; and &quot;visionaries.&quot; Companies interview candidates by asking them to spin up new features, write new services, and integrate new frameworks. The industry rewards the act of creation above all else.</p><p>The result of this single-minded obsession? <strong>A massive crisis of digital bloatware.</strong></p><p>Every year, modern software gets slower, heavier, and more fragile. Simple chat clients eat gigabytes of RAM. Basic websites download megabytes of unnecessary JavaScript. Systems are held together by layers of duct tape, undocumented dependencies, and redundant microservices.</p><p>In a world drowning in technical debt, we don&apos;t need more developers who compile generic templates to build <em>new</em> features.</p><p>We need <strong>Software Janitors.</strong></p><hr /><h2 id="what-is-a-software-janitor?">🧹 What is a Software Janitor?</h2><p>A Software Janitor is an engineer who looks at a system and derives satisfaction not from <em>adding</em> code, but from <strong>deleting</strong> it, <strong>optimizing</strong> it, and <strong>cleaning</strong> it up.</p><p>While a builder is busy spinning up a new microservice to handle a simple task, a Software Janitor is:</p><ul><li><strong>Deleting obsolete packages</strong> to reduce the security attack surface (supply chain auditing).</li><li><strong>Refactoring spaghetti code</strong> into simple, readable, and maintainable functions.</li><li><strong>Cleaning up CI/CD pipelines</strong> so they run in 2 minutes instead of 45 minutes.</li><li><strong>Optimizing compilers and flags</strong> (like compiling for <code>x86-64-v3/v4</code> or using Link Time Optimization) to squeeze double the speed out of existing hardware.</li><li><strong>Normalizing database tables</strong> and index structures to resolve write bottlenecks.</li></ul><p>A Software Janitor values <strong>minimalism, execution speed, and mechanical sympathy</strong> with the underlying operating system.</p><hr /><h2 id="the-economics-of-cleaning">🪙 The Economics of Cleaning</h2><p>For a long time, companies treated cleaning as an afterthought. But in 2026, the economics of software development have shifted:</p><ol start="1"><li><strong>The Cloud Bill Crisis</strong>: Running bloated, unoptimized code on millions of servers is incredibly expensive. A performance janitor who optimizes database queries and compiler flags can cut a company&apos;s AWS or GCP hosting bill by 30% to 50% in a week.</li><li><strong>Developer Velocity</strong>: If a developer has to wait 15 minutes for a build to run or navigate through a bloated codebase of dead code, their output drops. Cleaners remove this friction, instantly unlocking the productivity of the entire engineering team.</li><li><strong>Supply Chain Attacks</strong>: With the rise of automated dependency exploits (malicious packages in npm, PyPI, and the AUR), having a minimal dependency tree is a security superpower. Fewer dependencies mean a smaller attack surface.</li></ol><hr /><h2 id="how-to-brand-the-&quot;janitor&quot;-mindset-on-a-resume">💼 How to Brand the &quot;Janitor&quot; Mindset on a Resume</h2><p>If you are a natural &quot;Software Janitor&quot; who hates bloatware and loves clean, fast, minimal systems, you shouldn&apos;t hide it. You should frame it as your greatest strength.</p><p>In the corporate world, &quot;Software Janitor&quot; translates to highly valued, top-paying specializations:</p><ul><li><strong>Site Reliability Engineer (SRE)</strong>: <em>&quot;I keep systems stable, isolated, and resilient by stripping out complexity and configuring deterministic automated boundaries.&quot;</em></li><li><strong>Platform/DevOps Engineer</strong>: <em>&quot;I optimize the developer experience by cleaning up build environments, resolving dependency drift, and designing lightweight, fast-starting runtimes.&quot;</em></li><li><strong>Performance / Systems Architect</strong>: <em>&quot;I rewrite slow components in native, memory-efficient languages (Rust/Go/C++), configure compiler targets for hardware optimizations, and normalize data models.&quot;</em></li></ul><h2 id="the-final-sweep">🏁 The Final Sweep</h2><p>We have enough developers building bloated, slow applications. The next decade belongs to the engineers who know how to sweep away the garbage, automate the mundane, and make systems run fast, safe, and clean.</p><p>So wear the &quot;Software Janitor&quot; badge with pride. Deleting 1,000 lines of redundant code is infinitely more valuable than writing 1,000 lines of new bloatware.</p><hr /><p><em>Related: <a href="./resilient-pdf-rendering-playwright-fallback.md">Resilient PDF Generation</a></em></p></div>
+
+<p><i>Published: 2026-06-14</i></p>
+
+<p>
+  <i>
+  Tagged:
+  
+  <span class="tag">
+    <a href="tags/simplicity.html">simplicity</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/reflection.html">reflection</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/career-ops.html">career-ops</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/systems.html">systems</a>
+  </span>
+  
+  </i>
+</p>
+
+
+
+      
+      <div style="margin-bottom: 20px; float: right;">
+        <a class="page-link" href="archive.html">Archive</a>
+      </div>
+      
+    </div>
+    
+    <footer class="site-footer" style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--code-border); font-size: 0.85rem; color: var(--text-color); opacity: 0.8;">
+      <div class="wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
+            <img alt="Creative Commons License" style="border-width:0; height: 31px;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+          </a>
+        </div>
+        <div>
+          This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" style="color: var(--link-color); text-decoration: underline;">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+        </div>
+        <div style="font-size: 0.75rem; opacity: 0.6;">
+          &copy; 2026 Nur Azhar. Build in public.
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.getElementById('theme-toggle');
+        if (toggleButton) {
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          toggleButton.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+          
+          toggleButton.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            try {
+              localStorage.setItem('theme', next);
+            } catch (e) {
+              console.warn('Storage blocked: theme preference will not persist.');
+            }
+            toggleButton.textContent = next === 'dark' ? '☀️' : '🌙';
+          });
+        }
+      });
+    </script>
+    <script>
+      (function() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+        
+        fetch('https://asia-southeast1-nurazhardotcom.cloudfunctions.net/blog-analytics-api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: window.location.pathname,
+            referrer: document.referrer || null
+          })
+        }).catch(err => console.error('Tracking failed', err));
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      (function() {
+        try {
+          const savedTheme = localStorage.getItem('theme');
+          const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+    <title>Designing a Zero-Configuration, Zero-Admin Developer Sandbox for Career-Switchers — Bitcoin, AI Agents, Protocol Engineering</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="application/atom+xml" rel="alternate" href="atom.xml" title="Designing a Zero-Configuration, Zero-Admin Developer Sandbox for Career-Switchers">
+    <link rel="stylesheet" href="style.css">
+    <link rel="sitemap" type="application/xml" href="sitemap.xml">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css">
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      mermaid.initialize({ startOnLoad: false, theme: 'default' });
+      document.addEventListener("DOMContentLoaded", async () => {
+        const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
+        for (const codeBlock of codeBlocks) {
+          const pre = codeBlock.parentElement;
+          const div = document.createElement("div");
+          div.className = "mermaid";
+          div.textContent = codeBlock.textContent;
+          pre.replaceWith(div);
+        }
+        await mermaid.run();
+      });
+    </script>
+
+
+
+    <!-- Social sharing (Facebook, Twitter, LinkedIn, etc.) -->
+    <meta name="title" content="Designing a Zero-Configuration, Zero-Admin Developer Sandbox for Career-Switchers">
+    <meta name="twitter:title" content="Designing a Zero-Configuration, Zero-Admin Developer Sandbox for Career-Switchers">
+    <meta property="og:title" content="Designing a Zero-Configuration, Zero-Admin Developer Sandbox for Career-Switchers">
+    <meta property="og:type" content="article">
+    <meta property="og:locale" content="en_SG">
+    <meta property="og:site_name" content="Nur Azhar's Blog">
+
+    <meta name="description" content="How to build a zero-configuration, zero-administrator local development environment running Django and React on Windows 11 to help adult tech-learners bypass environment installation friction.">
+    <meta name="twitter:description" content="How to build a zero-configuration, zero-administrator local development environment running Django and React on Windows 11 to help adult tech-learners bypass environment installation friction.">
+    <meta property="og:description" content="How to build a zero-configuration, zero-administrator local development environment running Django and React on Windows 11 to help adult tech-learners bypass environment installation friction.">
+
+
+    <meta name="twitter:url" content="https://blog.nurazhar.com/designing-zero-config-developer-sandbox.html">
+    <meta property="og:url" content="https://blog.nurazhar.com/designing-zero-config-developer-sandbox.html">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image:alt" content="Nur Azhar's Blog - Bitcoin, AI Agents, Protocol Engineering">
+
+
+    <meta name="author" content="Nur Azhar">
+
+
+
+    <!-- JSON-LD Structured Data: WebSite -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Nur Azhar's Blog",
+  "url": "https://blog.nurazhar.com",
+  "description": "My technical blog to document my learnings",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  }
+}
+    </script>
+
+    <!-- JSON-LD Structured Data: BlogPosting -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Designing a Zero-Configuration, Zero-Admin Developer Sandbox for Career-Switchers",
+  "description": "How to build a zero-configuration, zero-administrator local development environment running Django and React on Windows 11 to help adult tech-learners bypass environment installation friction.",
+  "datePublished": "2026-06-15",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  },
+  "url": "https://blog.nurazhar.com/designing-zero-config-developer-sandbox.html",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://blog.nurazhar.com/designing-zero-config-developer-sandbox.html"
+  }
+}
+    </script>
+
+  </head>
+  <body>
+
+    <div class="site-header">
+      <div class="wrapper">
+        <div class="site-nav">
+          <a class="page-link" href="stats.html">Stats</a>
+          <a class="page-link" href="kanban.html">Kanban</a>
+          <a class="page-link" href="archive.html">Archive</a>
+          <a class="page-link" href="tags/index.html">Tags</a>
+          
+	  <a class="page-link" href="atom.xml">
+            Feed
+          </a>
+	  
+	  
+	  <a class="page-link" href="https://nurazhar.com/">About</a>
+	  
+          <button id="theme-toggle" style="background: none; border: none; cursor: pointer; padding: 0 10px; font-size: 1.2rem; vertical-align: middle;" aria-label="Toggle theme">🌙</button>
+        </div>
+        <div style="display: flex; align-items: center;">
+          <div>
+            <h1 class="site-title" style="margin: 0;">
+              <a class="page-link" href="index.html">Nur Azhar</a>
+            </h1>
+            <p style="margin: 2px 0 0 0;">My technical blog to document my learnings</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrapper">
+
+      <h1>
+  
+  Designing a Zero-Configuration, Zero-Admin Developer Sandbox for Career-Switchers
+  
+</h1>
+<div><hr /><p>Starting a transition into technology in your 40s is incredibly courageous, but it is also extremely daunting. On day one of a full-stack engineering program, students who have never opened a terminal are hit with a wall of installation requirements: Python, Node.js, virtual environments, environment variables, path configurations, and local server processes.</p><p>If a student gets stuck on an environment installation error, their confidence can be crushed before they even write their first line of code.</p><p>To solve this for my classmates at <strong>Lithan Academy</strong>, I built <strong><a href="https://github.com/nurazhardotcom/lithan-dev-sandbox">lithan-dev-sandbox</a></strong>—a zero-configuration, zero-administrator local development workspace that bootstraps a full React + Django environment natively on Windows 11 in a single click.</p><p>Here is a breakdown of the design philosophy, security model, and automation architecture of the sandbox.</p><hr /><h2 id="how-the-sandbox-works">🗺️ How the Sandbox Works</h2><p>The developer sandbox breaks down the learning lifecycle into three distinct, low-friction phases:</p><pre><code class="language-mermaid">graph TD
+    classDef setup fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000;
+    classDef daily fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px,color:#000;
+    classDef ai fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000;
+
+    subgraph Phase1[&quot;🛠️ 1. One-Time Setup&quot;]
+        A1[&quot;Right-click &apos;setup.ps1&apos;&quot;]:::setup --&gt; A2[&quot;Select &apos;Run with PowerShell&apos;&quot;]:::setup
+        A2 --&gt; A3[&quot;Microsoft winget installs Git, Python, Node, &amp; Babashka&quot;]:::setup
+        A3 --&gt; A4[&quot;Virtual environment (.venv) &amp; dependencies configured&quot;]:::setup
+        A4 --&gt; A5[&quot;🎉 Ready! (No commands typed by student)&quot;]:::setup
+    end
+
+    subgraph Phase2[&quot;⚛️ 2. Daily Practice &amp; Coding&quot;]
+        B1[&quot;Double-click &apos;run.bat&apos;&quot;]:::daily --&gt; B2[&quot;Babashka runner checks for upstream git updates&quot;]:::daily
+        B2 --&gt; B3[&quot;Babashka runs &apos;run.clj&apos; script&quot;]:::daily
+        B3 --&gt; B4[&quot;Django Server starts (Port 8000)&quot;]:::daily
+        B3 --&gt; B5[&quot;Vite + React Server starts (Port 5173)&quot;]:::daily
+        B4 &amp; B5 --&gt; B6[&quot;Open Web Browser to: http://localhost:5173&quot;]:::daily
+    end
+
+    subgraph Phase3[&quot;🤖 3. Getting Help from Claude AI&quot;]
+        C1[&quot;Write code inside VS Code (Python or HTML/JS)&quot;]:::ai --&gt; C2[&quot;Double-click &apos;generate-ai-context.bat&apos;&quot;]:::ai
+        C2 --&gt; C3[&quot;Script packages all your code into &apos;ai_context.txt&apos;&quot;]:::ai
+        C3 --&gt; C4[&quot;Drag &amp; drop file into Claude in browser&quot;]:::ai
+        C4 --&gt; C5[&quot;💬 Claude reads workspace and acts as an expert tutor&quot;]:::ai
+    end
+</code></pre><hr /><h2 id="the-devsecops-security-model">🔒 The DevSecOps Security Model</h2><p>In many corporate or academic settings, students are blocked by security software, Group Policies, or lack of local Administrator privileges on their laptops. We designed this environment to bypass these limitations securely using a <strong>Zero-Administrator Privilege Model</strong>:</p><h3 id="1.-user-space-isolation">1. User-Space Isolation</h3><p>All tools—including Python, Node.js, Git, and Babashka—are installed strictly within the current user&apos;s local directories:</p><pre><code>%USERPROFILE%\AppData\Local\Programs\
+</code></pre><p>The installation script calls installers with user-level flags (e.g., passing <code>--scope user</code> where applicable). Because the script does not write to protected system directories (like <code>C:\Program Files</code> or <code>C:\Windows</code>) or write to the system registry hive, it <strong>never triggers a User Account Control (UAC) prompt</strong> or requires an Administrator password.</p><h3 id="2.-winget-package-delivery">2. Winget Package Delivery</h3><p>To ensure that all downloaded binaries are authentic, untampered, and safe from antivirus flagging, we rely on Microsoft&apos;s native <strong><code>winget</code> (Windows Package Manager)</strong>. <code>winget</code> resolves packages directly from cryptographically signed, official vendor servers (Python.org, Nodejs.org, Git-SCM) and performs automatic SHA-256 integrity checks.</p><h3 id="3.-local-loopback-isolation">3. Local Loopback Isolation</h3><p>When starting the Django server (<code>manage.py runserver</code>) and the Vite frontend dev server, they bind strictly to the local loopback interface:</p><pre><code>127.0.0.1 (localhost)
+</code></pre><p>They do not listen on <code>0.0.0.0</code>. This ensures that even when connected to public university Wi-Fi networks, the student&apos;s development environment is entirely isolated and unexposed to port scanning or external access.</p><hr /><h2 id="scripting-the-automations:-babashka-&amp;-powershell">🚀 Scripting the Automations: Babashka &amp; PowerShell</h2><p>Rather than writing brittle shell/batch scripts or introducing a complex task runner, the sandbox uses <strong>PowerShell</strong> for the initial bootstrapping and <strong>Babashka (Clojure)</strong> for daily scripting.</p><h3 id="why-babashka?">Why Babashka?</h3><p>Babashka provides a fast, native Clojure scripting environment. It is compiled to a single binary with GraalVM, allowing us to execute Clojure scripts instantly without JVM overhead.</p><p>The <code>run.clj</code> automation handles two critical tasks:</p><ol start="1"><li><strong>Safe Syncing:</strong> It pulls template updates from the upstream repository. Before running a pull, it stashes any local work (<code>git stash</code>), updates the codebase, and restores the student&apos;s changes (<code>git stash pop</code>), ensuring homework is never overwritten or lost.</li><li><strong>Process Orchestration:</strong> It spawns the Django server and React server concurrently and manages their lifecycles, automatically shutting down both processes cleanly when the runner is closed.</li></ol><h3 id="the-ai-helper:-closing-the-feedback-loop">The AI Helper: Closing the Feedback Loop</h3><p>To bridge the gap between classroom teaching and home study, we added an AI context bundler (<code>generate-ai-context.py</code>). When double-clicked, it scans the repository, filters out large build artifacts (like <code>node_modules</code> and <code>.venv</code>), and aggregates the codebase into a single <code>ai_context.txt</code> file.</p><p>Students can simply drag this file into Claude or ChatGPT. By supplying the exact workspace context, the AI behaves like a precise, personalized tutor without guessing or requiring the student to copy-paste multiple files manually.</p><hr /><h2 id="visualizing-success">🌟 Visualizing Success</h2><p>By removing the environmental roadblocks, students can focus 100% of their energy on learning syntax, understanding relational databases, designing APIs, and building interfaces.</p><p>Supporting adult learners is about more than giving them tutorials; it is about building <strong>resilient, frictionless developer tooling</strong> that respects their time and energy.</p><p>If you are a student, educator, or mentor looking to see how the system is put together, you can inspect the code directly on GitHub:</p><p>👉 <strong><a href="https://github.com/nurazhardotcom/lithan-dev-sandbox">github.com/nurazhardotcom/lithan-dev-sandbox</a></strong></p></div>
+
+<p><i>Published: 2026-06-15</i></p>
+
+<p>
+  <i>
+  Tagged:
+  
+  <span class="tag">
+    <a href="tags/devops.html">devops</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/django.html">django</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/education.html">education</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/security.html">security</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/clojure.html">clojure</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/windows-11.html">windows-11</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/babashka.html">babashka</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/react.html">react</a>
+  </span>
+  
+  </i>
+</p>
+
+
+
+      
+      <div style="margin-bottom: 20px; float: right;">
+        <a class="page-link" href="archive.html">Archive</a>
+      </div>
+      
+    </div>
+    
+    <footer class="site-footer" style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--code-border); font-size: 0.85rem; color: var(--text-color); opacity: 0.8;">
+      <div class="wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
+            <img alt="Creative Commons License" style="border-width:0; height: 31px;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+          </a>
+        </div>
+        <div>
+          This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" style="color: var(--link-color); text-decoration: underline;">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+        </div>
+        <div style="font-size: 0.75rem; opacity: 0.6;">
+          &copy; 2026 Nur Azhar. Build in public.
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.getElementById('theme-toggle');
+        if (toggleButton) {
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          toggleButton.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+          
+          toggleButton.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            try {
+              localStorage.setItem('theme', next);
+            } catch (e) {
+              console.warn('Storage blocked: theme preference will not persist.');
+            }
+            toggleButton.textContent = next === 'dark' ? '☀️' : '🌙';
+          });
+        }
+      });
+    </script>
+    <script>
+      (function() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+        
+        fetch('https://asia-southeast1-nurazhardotcom.cloudfunctions.net/blog-analytics-api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: window.location.pathname,
+            referrer: document.referrer || null
+          })
+        }).catch(err => console.error('Tracking failed', err));
+      })();
+    </script>
+  </body>
+</html>

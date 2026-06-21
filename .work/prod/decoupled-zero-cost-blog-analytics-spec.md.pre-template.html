@@ -1,0 +1,153 @@
+<div><hr /><p>This document outlines the complete technical specification, schema design, and serverless code for the isolated web tracking system used on this blog.</p><p>To ensure maximum security and database boundary isolation, this system is <strong>completely decoupled</strong> from my other backend services and payment engines.</p><hr /><h2 id="system-architecture">🗺️ System Architecture</h2><p>The blog remains 100% static on GitHub Pages. It communicates with a dedicated, isolated Cloud Function that stores data in a separate Neon database.</p><pre><code class="language-mermaid">graph TD
+    subgraph &quot;Blog Project (Static Site)&quot;
+        Blog[blog.nurazhar.com &lt;br/&gt; GitHub Pages]
+        Stats[Stats Dashboard &lt;br/&gt; /stats.html]
+    end
+
+    subgraph &quot;GCP Serverless (Isolated API)&quot;
+        CF[GCP Cloud Function &lt;br/&gt; blog-analytics-api]
+    end
+
+    subgraph &quot;Neon Postgres (Isolated Storage)&quot;
+        DB[(Postgres DB &lt;br/&gt; blog_analytics)]
+    end
+
+    %% Flow
+    Blog -- POST /track --&gt; CF
+    CF -- Writes views --&gt; DB
+    Stats -- GET /stats --&gt; CF
+    CF -- Queries stats --&gt; DB
+
+    style Blog fill:#f9f,stroke:#333,stroke-width:2px
+    style CF fill:#bbf,stroke:#333,stroke-width:2px
+    style DB fill:#bfb,stroke:#333,stroke-width:2px
+</code></pre><hr /><h2 id="1.-database-schema-(neon-postgres)">1. Database Schema (Neon Postgres)</h2><p>We use a dedicated database instance (<code>blog_analytics</code>) with separate credentials.</p><pre><code class="language-sql">CREATE TABLE IF NOT EXISTS page_views (
+    id SERIAL PRIMARY KEY,
+    page_path VARCHAR(255) NOT NULL,
+    referrer VARCHAR(512),
+    country VARCHAR(10) DEFAULT &apos;Unknown&apos;,
+    user_agent VARCHAR(512),
+    viewed_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Index page_path and viewed_at for fast dashboard queries
+CREATE INDEX IF NOT EXISTS idx_page_views_path ON page_views(page_path);
+CREATE INDEX IF NOT EXISTS idx_page_views_date ON page_views(viewed_at);
+</code></pre><hr /><h2 id="2.-backend-(gcp-cloud-function)">2. Backend (GCP Cloud Function)</h2><p>The serverless API router exposes two main routes:</p><ol start="1"><li><code>POST /track</code>: Receives page details from the reader&apos;s browser. It extracts the client&apos;s country using standard Cloud Function headers (<code>X-Appengine-Country</code> or Google&apos;s geolocation headers) and saves the page view.</li><li><code>GET /stats</code>: Aggregates views by page, country, and date. To prevent public access, we protect it with a simple query parameter passcode.</li></ol><h3 id="package.json"><code>package.json</code></h3><pre><code class="language-json">{
+  &quot;name&quot;: &quot;blog-analytics-api&quot;,
+  &quot;version&quot;: &quot;1.0.0&quot;,
+  &quot;description&quot;: &quot;Isolated analytics tracking endpoint for blog.nurazhar.com&quot;,
+  &quot;main&quot;: &quot;index.js&quot;,
+  &quot;dependencies&quot;: {
+    &quot;pg&quot;: &quot;^8.11.0&quot;
+  }
+}
+</code></pre><h3 id="index.js"><code>index.js</code></h3><pre><code class="language-javascript">const { Pool } = require(&apos;pg&apos;);
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
+});
+
+exports.api = async (req, res) =&gt; {
+  const origin = req.headers.origin || &apos;*&apos;;
+  res.set(&apos;Access-Control-Allow-Origin&apos;, origin);
+  res.set(&apos;Access-Control-Allow-Methods&apos;, &apos;GET, POST, OPTIONS&apos;);
+  res.set(&apos;Access-Control-Allow-Headers&apos;, &apos;Content-Type, Authorization&apos;);
+
+  if (req.method === &apos;OPTIONS&apos;) {
+    return res.status(204).send(&apos;&apos;);
+  }
+
+  const path = req.path;
+
+  try {
+    // 1. Post Track Endpoint
+    if (path === &apos;/track&apos; &amp;&amp; req.method === &apos;POST&apos;) {
+      const { path: pagePath, referrer } = req.body;
+      const country = req.headers[&apos;x-appengine-country&apos;] || req.headers[&apos;x-client-geo-country&apos;] || &apos;Unknown&apos;;
+      const userAgent = req.headers[&apos;user-agent&apos;] || &apos;Unknown&apos;;
+
+      if (!pagePath) {
+        return res.status(400).json({ error: &apos;pagePath is required&apos; });
+      }
+
+      await pool.query(
+        `INSERT INTO page_views (page_path, referrer, country, user_agent)
+         VALUES ($1, $2, $3, $4)`,
+        [pagePath, referrer || null, country, userAgent]
+      );
+
+      return res.status(200).json({ status: &apos;ok&apos; });
+    }
+
+    // 2. Fetch Stats Endpoint
+    if (path === &apos;/stats&apos; &amp;&amp; req.method === &apos;GET&apos;) {
+      const code = req.query.code;
+      if (!code || code !== process.env.STATS_PASSCODE) {
+        return res.status(401).json({ error: &apos;Unauthorized&apos; });
+      }
+
+      const client = await pool.connect();
+      try {
+        const topPages = await client.query(
+          `SELECT page_path, COUNT(*) as views 
+           FROM page_views 
+           GROUP BY page_path 
+           ORDER BY views DESC LIMIT 50`
+        );
+
+        const topCountries = await client.query(
+          `SELECT country, COUNT(*) as views 
+           FROM page_views 
+           GROUP BY country 
+           ORDER BY views DESC LIMIT 20`
+        );
+
+        const viewHistory = await client.query(
+          `SELECT DATE(viewed_at) as date, COUNT(*) as views 
+           FROM page_views 
+           GROUP BY DATE(viewed_at) 
+           ORDER BY date DESC LIMIT 30`
+        );
+
+        const recentReferrers = await client.query(
+          `SELECT referrer, COUNT(*) as views 
+           FROM page_views 
+           WHERE referrer IS NOT NULL AND referrer != &apos;&apos;
+           GROUP BY referrer 
+           ORDER BY views DESC LIMIT 20`
+        );
+
+        return res.status(200).json({
+          pages: topPages.rows,
+          countries: topCountries.rows,
+          history: viewHistory.rows,
+          referrers: recentReferrers.rows
+        });
+      } finally {
+        client.release();
+      }
+    }
+
+    res.status(404).send(&apos;Not Found&apos;);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: &apos;Internal Server Error&apos; });
+  }
+};
+</code></pre><hr /><h2 id="3.-frontend-integration">3. Frontend Integration</h2><p>We inject this asynchronous tracking script right before the closing <code>&lt;/body&gt;</code> tag on our base templates:</p><pre><code class="language-html">&lt;script&gt;
+  (function() {
+    if (window.location.hostname === &apos;localhost&apos;) return;
+    
+    fetch(&apos;https://asia-southeast1-YOUR_GCP_PROJECT.cloudfunctions.net/blog-analytics-api/track&apos;, {
+      method: &apos;POST&apos;,
+      headers: { &apos;Content-Type&apos;: &apos;application/json&apos; },
+      body: JSON.stringify({
+        path: window.location.pathname,
+        referrer: document.referrer || null
+      })
+    }).catch(err =&gt; console.error(&apos;Tracking failed&apos;, err));
+  })();
+&lt;/script&gt;
+</code></pre></div>

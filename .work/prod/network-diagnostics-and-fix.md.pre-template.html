@@ -1,0 +1,50 @@
+<div><hr /><p>When Chrome reports &quot;connection dropped&quot; on sites like <strong>x.com</strong> or <strong>github.com</strong>, the instinct is to blame the browser. In practice, the problem is almost always a <strong>network‑level issue</strong> that Chrome is simply surfacing. This post documents a real debugging session on a CachyOS (Arch‑based) laptop and the systematic approach to isolate the root cause.</p><hr /><h2 id="diagnostic-flow">🗺️ Diagnostic Flow</h2><p>Before diving into commands, here&apos;s the decision tree we followed:</p><pre><code class="language-mermaid">flowchart TD
+    A[&quot;🌐 Chrome reports connection drop&quot;] --&gt; B{&quot;DNS resolves&lt;br/&gt;the hostname?&quot;}
+    B --&gt;|&quot;No&quot;| B1[&quot;Fix DNS config&lt;br/&gt;(switch to 8.8.8.8)&quot;]
+    B1 --&gt; C
+    B --&gt;|&quot;Yes&quot;| C[&quot;🏓 Ping the host&quot;]
+    C --&gt;|&quot;Replies OK&quot;| C1[&quot;Problem is above L3&lt;br/&gt;(TLS, proxy, browser)&quot;]
+    C --&gt;|&quot;100% packet loss&quot;| D[&quot;🔍 Traceroute&quot;]
+    D --&gt;|&quot;Stops at local&lt;br/&gt;gateway&quot;| E[&quot;Check router /&lt;br/&gt;firewall / iptables&quot;]
+    D --&gt;|&quot;Stops at ISP&lt;br/&gt;edge&quot;| F[&quot;Contact ISP&quot;]
+    D --&gt;|&quot;Reaches destination&lt;br/&gt;but no reply&quot;| G[&quot;Host may be&lt;br/&gt;blocking ICMP&quot;]
+    E --&gt;|&quot;Rule found&quot;| H[&quot;Remove / adjust&lt;br/&gt;firewall rule&quot;]
+    E --&gt;|&quot;No rule&quot;| I[&quot;Try a different&lt;br/&gt;network (hotspot)&quot;]
+    H --&gt; J[&quot;✅ Retest — ping succeeds&quot;]
+    F --&gt; J
+    I --&gt;|&quot;Works on hotspot&quot;| F
+    I --&gt;|&quot;Still fails&quot;| K[&quot;Check for OS-level&lt;br/&gt;proxy / VPN&quot;]
+    G --&gt; L[&quot;Test with curl&lt;br/&gt;or openssl s_client&quot;]
+    L --&gt; J
+    K --&gt; J
+    J --&gt; M[&quot;🎉 Chrome works again&quot;]
+</code></pre><hr /><h2 id="1.-verify-dns-configuration">1. Verify DNS Configuration</h2><p>The first step is confirming which DNS servers the system actually uses.</p><pre><code class="language-bash">cat /etc/resolv.conf
+</code></pre><p>On a systemd‑based distro (like CachyOS), this typically shows:</p><pre><code>nameserver 127.0.0.53
+</code></pre><p>That&apos;s the <strong>systemd‑resolved stub</strong> — it forwards queries upstream. To see the real upstream servers:</p><pre><code class="language-bash">systemd-resolve --status | grep &quot;DNS Servers&quot;
+</code></pre><p>Our output:</p><pre><code>DNS Servers: 8.8.8.8#dns.google 8.8.4.4#dns.google
+Fallback DNS Servers: 9.9.9.9#dns.quad9.net
+</code></pre><p><strong>Verdict:</strong> Google Public DNS is the primary resolver. DNS is working correctly — both hostnames resolved to valid IPs.</p><hr /><h2 id="2.-ping-test">2. Ping Test</h2><pre><code class="language-bash">ping -c 5 x.com
+# PING x.com (162.159.140.229) — 5 packets transmitted, 0 received, 100% packet loss
+
+ping -c 5 github.com
+# PING github.com (20.205.243.166) — 5 packets transmitted, 0 received, 100% packet loss
+</code></pre><p><strong>Verdict:</strong> Both hosts are unreachable at the network layer. Since DNS resolved successfully, the problem is <strong>not</strong> DNS — it&apos;s somewhere in the packet path between our machine and the destination.</p><hr /><h2 id="3.-traceroute-—-where-do-packets-stop?">3. Traceroute — Where Do Packets Stop?</h2><pre><code class="language-bash">traceroute -n x.com
+traceroute -n github.com
+</code></pre><p>A typical output when the problem is local:</p><pre><code>1  192.168.8.1    1.2 ms   ← your router
+2  * * *                   ← packets never reach the ISP
+3  * * *
+</code></pre><p>If the trace stops at your gateway (hop 1 or 2), the issue is <strong>local</strong> — firewall, NAT misconfiguration, or router problem.</p><blockquote><p><strong>Note:</strong> On CachyOS, <code>traceroute</code> may not be installed by default. Install it with <code>paru -S traceroute</code> or use the pre‑installed <code>tracepath -n x.com</code> as an alternative.</p></blockquote><hr /><h2 id="4.-firewall-/-iptables-inspection">4. Firewall / iptables Inspection</h2><pre><code class="language-bash">sudo iptables -L -v -n | grep -E &quot;OUTPUT|REJECT|DROP&quot;
+</code></pre><p>Look for rules that <code>DROP</code> or <code>REJECT</code> outbound traffic to the destination IPs (<code>162.159.140.229</code>, <code>20.205.243.166</code>) or to ports 80/443.</p><hr /><h2 id="5.-test-from-another-network">5. Test From Another Network</h2><p>The simplest isolation test: tether a phone hotspot and retry:</p><pre><code class="language-bash">ping -c 3 x.com
+ping -c 3 github.com
+</code></pre><p>If it works on the hotspot, the problem is <strong>specific to your current LAN or ISP</strong>.</p><hr /><h2 id="6.-common-fixes">6. Common Fixes</h2><table><thead><tr><th>Root Cause</th><th>Fix</th></tr></thead><tbody><tr><td><strong>Router / modem glitch</strong></td><td>Power‑cycle: unplug → wait 30s → plug back in</td></tr><tr><td><strong>Local firewall rule</strong></td><td>Remove or adjust the offending <code>iptables</code> / <code>nftables</code> rule</td></tr><tr><td><strong>ISP blocking</strong></td><td>Contact ISP with traceroute evidence</td></tr><tr><td><strong>VPN / proxy interference</strong></td><td>Disconnect VPN, disable proxy, retest</td></tr><tr><td><strong>Stale DNS cache</strong></td><td><code>sudo systemd-resolve --flush-caches</code></td></tr></tbody></table><hr /><h2 id="key-takeaway">Key Takeaway</h2><p>Network connectivity problems often masquerade as browser bugs. By systematically checking <strong>DNS → ping → traceroute → firewall</strong> you can pinpoint the failure layer in minutes and either fix it locally or hand concrete evidence to your ISP.</p><pre><code class="language-mermaid">graph LR
+    A[&quot;Layer 7&lt;br/&gt;Chrome&quot;] --&gt; B[&quot;Layer 4&lt;br/&gt;TCP/TLS&quot;]
+    B --&gt; C[&quot;Layer 3&lt;br/&gt;IP / ICMP&quot;]
+    C --&gt; D[&quot;Layer 2&lt;br/&gt;Ethernet / Wi-Fi&quot;]
+    D --&gt; E[&quot;Layer 1&lt;br/&gt;Physical&quot;]
+
+    style A fill:#ff6b6b,stroke:#333,color:#fff
+    style B fill:#ffa94d,stroke:#333
+    style C fill:#51cf66,stroke:#333
+    style D fill:#339af0,stroke:#333,color:#fff
+    style E fill:#845ef7,stroke:#333,color:#fff
+</code></pre><p>In our case the failure was at <strong>Layer 3</strong> (ICMP packets never reached the destination), which means Chrome&apos;s &quot;connection dropped&quot; error was just the messenger — not the cause.</p><hr /><p><em>Related: <a href="./cachyos-rate-mirrors-timer-fix.md">CachyOS Mirror Timer Fix</a></em></p></div>
