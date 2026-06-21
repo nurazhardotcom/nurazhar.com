@@ -1,0 +1,94 @@
+<div><hr /><h2 id="the-24-hours-that-broke-my-github">The 24 Hours That Broke My GitHub</h2><p>Yesterday, I made a decision that cost me an entire day of visibility on GitHub. This is the detailed breakdown of what happened, why it happened, and the technical mechanics behind it — with Mermaid diagrams so you can see exactly what went wrong.</p><hr /><h2 id="act-i:-the-bad-advice">Act I: The Bad Advice</h2><p>I was doing a &quot;GitHub audit&quot; for job hunting. The goal: make my GitHub profile look clean for Singapore cybersecurity hiring managers.</p><p>An AI assistant (yes, I got bad advice from another AI — the irony is not lost on me) gave me this table:</p><table><thead><tr><th>Repository</th><th>Called It</th><th>Actual Status</th></tr></thead><tbody><tr><td><code>bitcoin</code></td><td>&quot;Fork, no contribution&quot;</td><td><strong>Not a fork</strong> — standalone repo</td></tr><tr><td><code>bitcoin-wiki</code></td><td>&quot;Academic, irrelevant&quot;</td><td><strong>Not a fork</strong> — standalone repo</td></tr><tr><td><code>frontend</code></td><td>&quot;Fork, abandoned&quot;</td><td><strong>Not a fork</strong> — standalone repo</td></tr><tr><td><code>hermes-agent</code></td><td>&quot;Fork, not your code&quot;</td><td><strong>Not a fork</strong> — standalone repo</td></tr><tr><td><code>headhunter-agent</code></td><td>&quot;Fork, AI agent&quot;</td><td><strong>Not a fork</strong> — standalone repo</td></tr></tbody></table><p><strong>Every single one was labeled &quot;fork.&quot; Not one was actually a fork.</strong></p><p>The advice: make all 12 private. &quot;Clean signal: 3–5 relevant projects.&quot; &quot;Noise: forks, tutorials, abandoned experiments.&quot;</p><p>I said yes.</p><hr /><h2 id="act-ii:-the-execution">Act II: The Execution</h2><pre><code class="language-bash">for r in bitcoin bitcoin-wiki frontend hermes-agent headhunter-agent; do
+  gh repo edit nurazhardotcom/$r --visibility private \
+    --accept-visibility-change-consequences
+done
+</code></pre><p>One by one, 12 repos went dark.</p><hr /><h2 id="act-iii:-the-reversal">Act III: The Reversal</h2><p>This morning, I realized the advice was wrong. I ran:</p><pre><code class="language-bash">for r in bitcoin bitcoin-wiki frontend hermes-agent headhunter-agent; do
+  gh repo edit nurazhardotcom/$r --visibility public \
+    --accept-visibility-change-consequences
+done
+</code></pre><p>All 21 repos are now public again. But the story doesn&apos;t end there.</p><hr /><h2 id="the-technical-deep-dive">The Technical Deep Dive</h2><h3 id="what-gh-repo-edit---visibility-actually-does">What <code>gh repo edit --visibility</code> Actually Does</h3><pre><code class="language-mermaid">flowchart TD
+    A[Repo: PUBLIC] --&gt;|gh repo edit --visibility private| B[Repo: PRIVATE]
+    B --&gt;|gh repo edit --visibility public| C[Repo: PUBLIC]
+
+    A --&gt; D[Fork Network: Connected to parent]
+    B -.-&gt;|GitHub severs fork relationship| E[Fork Network: DISCONNECTED]
+    C -.-&gt;|Does NOT auto-reconnect| F[Fork Network: Still DISCONNECTED]
+
+    style E fill:#ff6b6b,stroke:#c92a2a,color:#fff
+    style F fill:#ff6b6b,stroke:#c92a2a,color:#fff
+</code></pre><h3 id="the-fork-network-problem">The Fork Network Problem</h3><p>Here&apos;s the critical thing: <strong>if a repo IS a real fork</strong>, flipping it private severs the parent-child relationship in GitHub&apos;s fork network. Flipping it back to public does NOT restore that connection.</p><pre><code class="language-mermaid">flowchart LR
+    subgraph BEFORE
+        P1[Parent Repo&lt;br/&gt;upstream/project] --&gt; F1[Your Fork&lt;br/&gt;nurazhardotcom/project&lt;br/&gt;🟢 PUBLIC]
+        F1 --&gt; D1[Downstream Forks&lt;br/&gt;other-user/project]
+    end
+
+    subgraph AFTER_FLIP_PRIVATE
+        P2[Parent Repo&lt;br/&gt;upstream/project] -.-&gt;|SEVERED| F2[Your Repo&lt;br/&gt;nurazhardotcom/project&lt;br/&gt;🔴 PRIVATE]
+        F2 -.-&gt;|SEVERED| D2[Downstream Forks&lt;br/&gt;other-user/project]
+    end
+
+    subgraph AFTER_FLIP_PUBLIC
+        P3[Parent Repo&lt;br/&gt;upstream/project] -.-&gt;|NOT RESTORED| F3[Your Repo&lt;br/&gt;nurazhardotcom/project&lt;br/&gt;🟢 PUBLIC&lt;br/&gt;but orphaned]
+        F3 -.-&gt;|NOT RESTORED| D3[Downstream Forks&lt;br/&gt;other-user/project]
+    end
+
+    style F2 fill:#ff6b6b,stroke:#c92a2a,color:#fff
+    style F3 fill:#ffa94d,stroke:#e8590c,color:#fff
+</code></pre><h3 id="but-mine-weren&apos;t-forks!">But Mine Weren&apos;t Forks!</h3><p>Here&apos;s the twist: <strong>my repos were never forks to begin with.</strong></p><pre><code class="language-mermaid">flowchart TD
+    subgraph What_I_Thought
+        A[21 repos] --&gt; B[12 FORKS → make private]
+        A --&gt; C[9 ORIGINAL → keep public]
+    end
+
+    subgraph What_Was_Actual
+        X[21 repos] --&gt; Y[0 FORKS]
+        X --&gt; Z[21 STANDALONE REPOS]
+    end
+
+    style B fill:#ff6b6b,stroke:#c92a2a,color:#fff
+    style Y fill:#51cf66,stroke:#2b8a3e,color:#fff
+</code></pre><p>I verified this via GitHub&apos;s own API:</p><pre><code class="language-bash">gh api repos/nurazhardotcom/bitcoin --jq &apos;{fork: .fork, parent: .parent.full_name}&apos;
+# {&quot;fork&quot;: false, &quot;parent&quot;: null}
+</code></pre><p>Every single repo returned <code>fork: false</code>. The &quot;fork network&quot; problem was irrelevant because there was no fork network to begin with.</p><hr /><h2 id="the-timeline">The Timeline</h2><pre><code class="language-mermaid">gantt
+    title GitHub Visibility Disaster — 24 Hour Timeline
+    dateFormat HH:mm
+    axisFormat %H:%M
+
+    section June 18
+    Bad AI advice received       :done, a1, 14:00, 1h
+    Visibility flip to private   :active, a2, after a1, 30m
+    Repos hidden from public     :crit, a3, after a2, 12h
+
+    section June 19
+    User realizes advice was wrong :done, b1, 08:00, 30m
+    Visibility flip to public      :active, b2, after b1, 30m
+    All 21 repos restored          :crit, b3, after b2, 1h
+    This blog post written         :b4, after b3, 1h
+</code></pre><hr /><h2 id="what-i-learned">What I Learned</h2><h3 id="1.-verify-before-you-act">1. Verify Before You Act</h3><p>One <code>gh api</code> call would have prevented this:</p><pre><code class="language-bash">gh api repos/nurazhardotcom/$repo --jq &apos;.fork&apos;
+</code></pre><p>I didn&apos;t run it. I took the AI&apos;s word for it. That was the root cause.</p><h3 id="2.-public-repos-don&apos;t-hurt-your-resume">2. Public Repos Don&apos;t Hurt Your Resume</h3><p>The advice said &quot;21 public repos = noise.&quot; That&apos;s not how hiring works. Hiring managers look at:</p><ul><li><strong>What you built</strong> (not how many repos)</li><li><strong>Code quality</strong> (not repo count)</li><li><strong>Relevant projects</strong> (not whether you have irrelevant ones)</li></ul><p>Having 21 repos with 4 pinned is not &quot;noise.&quot; It&apos;s a portfolio.</p><h3 id="3.---accept-visibility-change-consequences-is-a-warning,-not-a-formality">3. <code>--accept-visibility-change-consequences</code> Is a Warning, Not a Formality</h3><p>GitHub makes you add this flag for a reason. It&apos;s not just &quot;I accept.&quot; It&apos;s &quot;I understand this might break things.&quot; I clicked through without reading.</p><h3 id="4.-visibility-changes-are-(mostly)-reversible-—-but-not-free">4. Visibility Changes Are (Mostly) Reversible — But Not Free</h3><pre><code class="language-mermaid">flowchart LR
+    direction LR
+    PUB[🟢 Public] --&gt;|&quot;--visibility private&quot;| PRIV[🔴 Private]
+    PRIV --&gt;|&quot;--visibility public&quot;| PUB2[🟢 Public]
+
+    PUB -.-&gt;|Fork network: connected| NET[Fork Graph]
+    PRIV -.-&gt;|Fork network: SEVERED| NET2[Fork Graph Broken]
+    PUB2 -.-&gt;|Fork network: NOT restored| NET2
+
+    style NET2 fill:#ff6b6b,stroke:#c92a2a,color:#fff
+</code></pre><p>For standalone repos (like mine), the flip is fully reversible — no permanent damage. But for real forks, the fork network break is <strong>permanent</strong> even after flipping back.</p><h3 id="5.-ai-advice-is-not-gospel">5. AI Advice Is Not Gospel</h3><p>I got this advice from another AI tool. It was confident, detailed, and <strong>factually wrong</strong>. The lesson: always verify factual claims before acting on them, especially when the action is hard to undo.</p><hr /><h2 id="the-current-state">The Current State</h2><p>All 21 repos are <strong>PUBLIC</strong> and staying that way:</p><pre><code class="language-bash">$ gh repo list nurazhardotcom --limit 25 --json name,visibility --jq &apos;.[] | &quot;\(.visibility)\t\(.name)&quot;&apos;
+
+PUBLIC  blog.nurazhar.com
+PUBLIC  hermes-agent
+PUBLIC  sol-de-tracker
+PUBLIC  nurazhardotcom
+PUBLIC  lagu-lagu
+PUBLIC  frontend
+PUBLIC  bsv-clj
+PUBLIC  aur-audit
+PUBLIC  bitcoin-wiki
+PUBLIC  headhunter-agent
+PUBLIC  bitcoin
+PUBLIC  lithan_smartshop
+PUBLIC  lithan_assignments
+PUBLIC  lithan-dev-sandbox
+</code></pre><hr /><h2 id="key-takeaway">Key Takeaway</h2><blockquote><p><strong>Never change repo visibility based on unverified advice.</strong></p><p>One API call. Five seconds. Would have saved 24 hours.</p></blockquote><hr /><p><em>Written at 2:00 AM because I couldn&apos;t sleep thinking about this. The Mermaid diagrams render on GitHub natively — if you&apos;re reading this in a viewer that doesn&apos;t support Mermaid, the source is in the <a href="https://github.com/nurazhardotcom/blog.nurazhar.com">blog repo</a>.</em></p></div>

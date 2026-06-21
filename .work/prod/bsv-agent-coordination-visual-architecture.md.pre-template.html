@@ -1,0 +1,186 @@
+<div><hr /><p>The previous posts covered <em>why</em> AI agents need BSV-native identity and <em>how</em> we built live testnet transactions. This post steps up one level: the full system architecture, captured in diagrams.</p><p>The BSV Agent Coordination Layer is a Clojure monorepo that gives AI agents economic agency — identity, payments, escrow, audit, policy enforcement — all on Bitcoin SV primitives. 99 tests, 246 assertions, 9 modules, 0 failures.</p><h2 id="system-architecture">System Architecture</h2><p>The stack has six layers, from the Agent SDK down to the BSV blockchain:</p><pre><code class="language-mermaid">flowchart TB
+  subgraph Agent[&quot;Agent Ecosystem&quot;]
+    A1[&quot;Alice Agent&lt;br/&gt;consumer&quot;]
+    A2[&quot;Bob Agent&lt;br/&gt;provider&quot;]
+  end
+
+  subgraph SDK[&quot;Agent SDK Layer&quot;]
+    SDK1[&quot;AgentRuntime&lt;br/&gt;service registry&quot;]
+    SDK2[&quot;AgentMemory&lt;br/&gt;AnchorChain pattern&quot;]
+    SDK3[&quot;call-service&lt;br/&gt;pay-agent&quot;]
+  end
+
+  subgraph Identity[&quot;Identity and Wallet&quot;]
+    I1[&quot;IAgentIdentity&lt;br/&gt;secp256k1 ECDSA&quot;]
+    W1[&quot;IAgentWallet&lt;br/&gt;atomic balance&quot;]
+  end
+
+  subgraph Payments[&quot;BRC-105 Payment Layer&quot;]
+    P1[&quot;402 Challenge&lt;br/&gt;service to client&quot;]
+    P2[&quot;Policy Engine&lt;br/&gt;budget, domain, rate&quot;]
+    P3[&quot;Payment Header&lt;br/&gt;client to service&quot;]
+  end
+
+  subgraph Audit[&quot;Audit and Anchoring&quot;]
+    AU1[&quot;Event Bundles&lt;br/&gt;SHA-256 hashing&quot;]
+    AU2[&quot;OP_RETURN Script&lt;br/&gt;BSV blockchain&quot;]
+    AU3[&quot;Chain Verification&quot;]
+  end
+
+  subgraph Coordination[&quot;Coordination Primitives&quot;]
+    C1[&quot;Task Commitment&lt;br/&gt;signed agreements&quot;]
+    C2[&quot;Milestone Escrow&lt;br/&gt;staged payments&quot;]
+    C3[&quot;Dispute Resolution&lt;br/&gt;arbitration&quot;]
+  end
+
+  Agent --&gt; SDK
+  SDK --&gt; Identity
+  SDK --&gt; Payments
+  SDK --&gt; Audit
+  SDK --&gt; Coordination
+  Payments --&gt; Identity
+  Audit --&gt; Identity
+  Coordination --&gt; Identity
+  Coordination --&gt; W1
+
+  subgraph Blockchain[&quot;Bitcoin SV (testnet)&quot;]
+    BSV[&quot;WhatsonChain Faucet&lt;br/&gt;Bitails API&lt;br/&gt;OP_RETURN TX&quot;]
+  end
+
+  Payments -.-&gt;|&quot;402 + x-bsv-payment&quot;| Blockchain
+  Audit --&gt;|&quot;anchor hash&quot;| Blockchain
+</code></pre><p>Every module is independently testable with acyclic dependencies. The key design rule: identity is the root. Everything — payments, audit, coordination — starts from the agent&apos;s secp256k1 keypair.</p><h2 id="brc-105-payment-flow">BRC-105 Payment Flow</h2><p>HTTP 402 Payment Required is the handshake protocol. A service returns 402 with challenge headers; the client evaluates policy, reserves funds, constructs a payment proof, and retries:</p><pre><code class="language-mermaid">sequenceDiagram
+  participant Client as Alice (Client)
+  participant Service as Bob (Service)
+  participant Wallet as Wallet
+  participant Policy as Policy Engine
+
+  Client-&gt;&gt;Service: HTTP GET /translate
+  Service--&gt;&gt;Client: 402 Payment Required&lt;br/&gt;x-bsv-payment-version&lt;br/&gt;x-bsv-payment-derivation-prefix
+  Client-&gt;&gt;Policy: evaluate-payment(500 sats, api.testnet)
+  Policy--&gt;&gt;Client: allow
+  Client-&gt;&gt;Wallet: reserve-funds(500 sats)
+  Wallet--&gt;&gt;Client: ok
+  Client-&gt;&gt;Client: construct-payment-header()
+  Client-&gt;&gt;Service: HTTP GET /translate&lt;br/&gt;x-bsv-payment: {tx, proof, merklePath}
+  Service-&gt;&gt;Service: verify-payment-header()
+  Service--&gt;&gt;Client: 200 OK + translation result
+  Service--&gt;&gt;Client: x-bsv-receipt: {txid, amount}
+</code></pre><p>The policy engine sits between the agent&apos;s wallet and every payment decision. It enforces budgets, rate limits, domain whitelists, and approval thresholds — all programmatically, with human-only escalation above configurable thresholds.</p><h2 id="micropayment-escrow-and-milestone-flow">Micropayment Escrow and Milestone Flow</h2><p>For multi-step agent tasks, the coordination module provides milestone escrows. Funds are locked and released incrementally as deliverables are confirmed:</p><pre><code class="language-mermaid">sequenceDiagram
+  participant Alice
+  participant Escrow as Escrow Account
+  participant Bob
+
+  Alice-&gt;&gt;Escrow: create-escrow(alice, bob, 7000 sats)
+  Note over Escrow: 3 milestones created
+
+  par Milestone 1: Research
+    Alice-&gt;&gt;Bob: assign task
+    Bob--&gt;&gt;Alice: complete
+    Alice-&gt;&gt;Escrow: complete-milestone(1)
+    Escrow--&gt;&gt;Bob: release 2000 sats
+  and Milestone 2: Implement
+    Bob--&gt;&gt;Alice: complete
+    Alice-&gt;&gt;Escrow: complete-milestone(2)
+    Escrow--&gt;&gt;Bob: release 4000 sats
+  and Milestone 3: Verify
+    Bob--&gt;&gt;Alice: complete
+    Alice-&gt;&gt;Escrow: complete-milestone(3)
+    Escrow--&gt;&gt;Bob: release 1000 sats
+  end
+
+  rect rgba(255, 100, 50, 0.1)
+    Note over Alice, Bob: Dispute Path
+    Alice-&gt;&gt;Escrow: raise-dispute(escrow, quality issue)
+    Escrow-&gt;&gt;Escrow: resolve-dispute(split, 50%)
+    Escrow--&gt;&gt;Alice: return 3500 sats
+    Escrow--&gt;&gt;Bob: release 3500 sats
+  end
+</code></pre><p>The dispute resolution state machine supports three outcomes: release to beneficiary, return to depositor, or split at configurable ratio. Funds are frozen from the moment a dispute is raised.</p><h2 id="audit-anchoring">Audit Anchoring</h2><p>Every agent action — payments, task completions, decisions — is bundled into a SHA-256 hash and optionally anchored to BSV via OP_RETURN:</p><pre><code class="language-mermaid">flowchart LR
+  Event[&quot;Agent Event&lt;br/&gt;payment, task, decision&quot;] --&gt; Bundle[&quot;Audit Bundle&lt;br/&gt;type, version, agent,&lt;br/&gt;timestamp, data&quot;]
+  Bundle --&gt; Hash[&quot;SHA-256 Hash&lt;br/&gt;32 bytes&quot;]
+  Hash --&gt; Script[&quot;OP_RETURN Script&lt;br/&gt;0x6a + len + data&quot;]
+  Script --&gt; TX[&quot;Anchor TX&lt;br/&gt;version 1, 1 input,&lt;br/&gt;1 OP_RETURN output&quot;]
+  TX --&gt; Blockchain[&quot;BSV Blockchain&lt;br/&gt;immutable timestamp&quot;]
+  Blockchain --&gt; Verify[&quot;Chain Verification&lt;br/&gt;verify hash integrity&quot;]
+</code></pre><p>The <code>bundle-and-anchor</code> function accepts an optional wallet. With a wallet, it broadcasts to BSV testnet. Without one, it falls back to local simulation — making the entire test suite run offline.</p><h2 id="core-domain-model">Core Domain Model</h2><p>The domain model is expressed as Clojure records with typed fields:</p><pre><code class="language-mermaid">classDiagram
+  class PaymentIntent {
+    +String endpoint
+    +Int price-satoshis
+    +String nonce
+    +Int expiry
+    +String policy-scope
+  }
+  class TaskCommitment {
+    +String task-id
+    +String requester
+    +String provider
+    +String service
+    +Int max-price
+    +String deadline
+    +String signature
+  }
+  class PaymentReceipt {
+    +String txid
+    +Int amount
+    +String session-id
+    +String timestamp
+    +String signature
+  }
+  class AuditAnchor {
+    +String hash
+    +String bundle-json
+    +String txid
+    +Int timestamp
+    +String status
+  }
+  class BudgetPolicy {
+    +String policy-id
+    +String agent-id
+    +Int max-satoshis
+    +Int window-seconds
+    +List~String~ allowed-domains
+    +Int approval-threshold
+  }
+  class EscrowAccount {
+    +String escrow-id
+    +String depositor
+    +String beneficiary
+    +Int total-amount
+    +List~Milestone~ milestones
+    +String status
+    +Int released
+  }
+  class Milestone {
+    +String milestone-id
+    +String description
+    +Int amount-satoshis
+    +String status
+  }
+
+  PaymentIntent --&gt; TaskCommitment: resolves to
+  TaskCommitment --&gt; PaymentReceipt: produces
+  PaymentReceipt --&gt; AuditAnchor: gets hashed into
+  BudgetPolicy --&gt; PaymentIntent: governs
+  EscrowAccount --&gt; Milestone: contains
+  EscrowAccount --&gt; TaskCommitment: wraps
+</code></pre><h2 id="business-model">Business Model</h2><p>The architecture enables six economic primitives for autonomous agent commerce:</p><ul><li><strong>Pay-per-call AI services</strong> — agents monetize with microtransactions (500–10,000 sats), no subscriptions or API keys</li><li><strong>Staged milestone escrows</strong> — large tasks broken into funded milestones, payment releases on delivery</li><li><strong>Immutable audit trail</strong> — every action hashed and optionally anchored to BSV via OP_RETURN</li><li><strong>Programmable policy engine</strong> — budgets, rate limits, domain whitelists enforced automatically</li><li><strong>BSV-native identity</strong> — secp256k1 keypair for payments, commitments, and audit signatures</li><li><strong>Open protocol stack</strong> — built on BRC-105, OP_RETURN, secp256k1; interoperable with any BRC-105-compliant service</li></ul><h2 id="testnet-integration">Testnet Integration</h2><p>The full end-to-end flow runs on BSV testnet via the Bitails API:</p><pre><code class="language-mermaid">flowchart TD
+  Start([&quot;run testnet simulate&quot;]) --&gt; AgentA[&quot;Create Alice Agent&lt;br/&gt;secp256k1 identity&lt;br/&gt;100,000 sats wallet&quot;]
+  AgentA --&gt; AgentB[&quot;Create Bob Agent&lt;br/&gt;secp256k1 identity&lt;br/&gt;0 sats wallet&quot;]
+  AgentA --&gt; Addr[&quot;Derive BSV testnet addresses&lt;br/&gt;Alice: m...&lt;br/&gt;Bob: n...&quot;]
+  Addr --&gt; Bal[&quot;Check testnet balance&lt;br/&gt;via Bitails API&quot;]
+  Bal --&gt; Reg[&quot;Register BRC-105 service&lt;br/&gt;Bob: translate 500 sats/call&quot;]
+  Reg --&gt; Policy[&quot;Apply spending policies&lt;br/&gt;budget: 50k sats/1h&lt;br/&gt;domain allow: bob-testnet&quot;]
+  Policy --&gt; Pay[&quot;Execute BRC-105 payment&lt;br/&gt;Alice pays Bob 500 sats&quot;]
+  Pay --&gt; AuditGen[&quot;Generate audit bundle&lt;br/&gt;SHA-256 hash + sign&quot;]
+  AuditGen --&gt; ORETURN[&quot;Construct OP_RETURN TX&lt;br/&gt;for blockchain anchoring&quot;]
+  ORETURN --&gt; Escrow[&quot;Create milestone escrow&lt;br/&gt;Alice to 7000 sats to escrow&quot;]
+  Escrow --&gt; Milestones[&quot;Complete 3 milestones&lt;br/&gt;Research, Implement, Verify&quot;]
+  Milestones --&gt; Release[&quot;Release payment to Bob&quot;]
+  Release --&gt; CheckPolicy[&quot;Verify policy engine&lt;br/&gt;allow 500, deny 5000&quot;]
+  CheckPolicy --&gt; VerifyAudit[&quot;Verify audit chain integrity&quot;]
+  VerifyAudit --&gt; Report[&quot;Print summary report&lt;br/&gt;addresses, balances, status&quot;]
+
+  style Start fill:#ddf4ff,stroke:#0969da
+  style Report fill:#dafbe1,stroke:#1a7f37
+</code></pre><h2 id="stack-summary">Stack Summary</h2><table><thead><tr><th>Layer</th><th>Technology</th><th>BSV Standard</th></tr></thead><tbody><tr><td>Identity</td><td>Bouncy Castle secp256k1</td><td>ECDSA (same curve as BSV)</td></tr><tr><td>Payments</td><td>BRC-105 HTTP 402</td><td><a href="https://bsv.brc.dev/payments/0105">BRC-105</a></td></tr><tr><td>Anchoring</td><td>OP_RETURN + SHA-256</td><td>Bitcoin Script OP_RETURN</td></tr><tr><td>Testnet API</td><td>Bitails API</td><td>—</td></tr><tr><td>Runtime</td><td>Clojure on JVM</td><td>—</td></tr></tbody></table><p>The full architecture page with interactive diagrams, all 9 module diagrams, and the complete business model breakdown is available in the repository&apos;s <a href="https://github.com/nurazhardotcom/bsv-agent-coordination">architecture.html</a>.</p><p>99 tests. 246 assertions. 0 failures. 9 modules. One coordination layer for sovereign agent commerce.</p></div>

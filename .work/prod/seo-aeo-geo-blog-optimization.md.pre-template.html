@@ -1,0 +1,80 @@
+<div><hr /><p>SEO is dead. Long live SEO.</p><p>The old model — keyword density, backlinks, meta keyword tags — has been replaced by three overlapping optimization targets:</p><ol start="1"><li><strong>SEO</strong> — Search Engine Optimization (Google, Bing, DuckDuckGo). Traditional ranking signals, still relevant.</li><li><strong>AEO</strong> — Answer Engine Optimization (Google AI Overviews, Perplexity, Bing Copilot). Structured data that machines extract to answer questions directly.</li><li><strong>GEO</strong> — Generative Engine Optimization (ChatGPT, Claude, Gemini). Content that LLMs cite in generated answers.</li></ol><p>All three share one requirement: <strong>machine-readable semantic markup</strong>. A beautiful page with perfect prose but no structured data is invisible to all three.</p><p>This post documents how I turned a minimal <code>quickblog</code> static site into a machine-readable knowledge graph with about 50 lines of template changes and a sitemap generator.</p><hr /><h2 id="1.-the-starting-point">1. The Starting Point</h2><p>The blog runs on <a href="https://github.com/borkdude/quickblog">quickblog</a> — a Clojure/Babashka static site generator. The template system uses Selmer (Django/Jinja2-like syntax). Before optimization, the <code>&lt;head&gt;</code> looked like this:</p><pre><code class="language-html">&lt;title&gt;Nur Azhar&amp;#39;s&lt;/title&gt;
+&lt;meta charset=&quot;utf-8&quot;/&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+&lt;meta name=&quot;title&quot; content=&quot;Nur Azhar&amp;#39;s&quot;&gt;
+&lt;meta property=&quot;og:title&quot; content=&quot;Nur Azhar&amp;#39;s&quot;&gt;
+&lt;meta property=&quot;og:type&quot; content=&quot;website&quot;&gt;
+&lt;meta name=&quot;description&quot; content=&quot;Blog in an era of artificial intelligence&quot;&gt;
+&lt;meta property=&quot;og:description&quot; content=&quot;Blog in an era of artificial intelligence&quot;&gt;
+&lt;meta name=&quot;twitter:card&quot; content=&quot;summary&quot;&gt;
+</code></pre><p>Problems:</p><ul><li>Title was just &quot;Nur Azhar&apos;s&quot; — no keywords, no context</li><li>Description was vague — &quot;Blog in an era of artificial intelligence&quot;</li><li>No JSON-LD structured data at all</li><li>No sitemap.xml</li><li>No Open Graph image</li><li>No author meta tag</li><li>OG type was always &quot;website&quot; even on post pages</li><li>No locale or site name declared</li></ul><hr /><h2 id="2.-json-ld-structured-data-(aeo/geo)">2. JSON-LD Structured Data (AEO/GEO)</h2><p>This is the most important change. JSON-LD (JavaScript Object Notation for Linked Data) tells machines what your page <em>is</em>, not just what it <em>says</em>.</p><h3 id="website-schema-(every-page)">WebSite Schema (every page)</h3><p>Added to <code>templates/base.html</code> in the <code>&lt;head&gt;</code>:</p><pre><code class="language-html">&lt;script type=&quot;application/ld+json&quot;&gt;
+{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;WebSite&quot;,
+  &quot;name&quot;: &quot;Nur Azhar&apos;s Blog&quot;,
+  &quot;url&quot;: &quot;https://blog.nurazhar.com&quot;,
+  &quot;description&quot;: &quot;{{blog-description}}&quot;,
+  &quot;author&quot;: {
+    &quot;@type&quot;: &quot;Person&quot;,
+    &quot;name&quot;: &quot;Nur Azhar&quot;
+  }
+}
+&lt;/script&gt;
+</code></pre><p>This tells search engines and LLMs: &quot;This is a blog. It&apos;s about [description]. Written by Nur Azhar.&quot; Every page gets this — it costs nothing and establishes authorship and topic.</p><h3 id="blogposting-schema-(post-pages-only)">BlogPosting Schema (post pages only)</h3><pre><code class="language-html">{% if date %}
+&lt;script type=&quot;application/ld+json&quot;&gt;
+{
+  &quot;@context&quot;: &quot;https://schema.org&quot;,
+  &quot;@type&quot;: &quot;BlogPosting&quot;,
+  &quot;headline&quot;: &quot;{{title}}&quot;,
+  &quot;description&quot;: &quot;{{sharing.description}}&quot;,
+  &quot;datePublished&quot;: &quot;{{date}}&quot;,
+  &quot;author&quot;: {
+    &quot;@type&quot;: &quot;Person&quot;,
+    &quot;name&quot;: &quot;Nur Azhar&quot;
+  },
+  &quot;url&quot;: &quot;{{sharing.url}}&quot;,
+  &quot;mainEntityOfPage&quot;: {
+    &quot;@type&quot;: &quot;WebPage&quot;,
+    &quot;@id&quot;: &quot;{{sharing.url}}&quot;
+  }
+}
+&lt;/script&gt;
+{% endif %}
+</code></pre><p>The <code>{% if date %}</code> conditional ensures this only renders on post pages (the <code>date</code> variable is only bound in post context). This tells machines: &quot;This specific page is a blog post. It was published on this date. It has this headline. It covers this topic.&quot;</p><p><strong>Why this matters for AEO/GEO:</strong></p><ul><li>Google AI Overviews explicitly uses schema.org markup to surface content in answers</li><li>Perplexity&apos;s <code>pro</code> search mode prioritizes pages with structured data</li><li>ChatGPT&apos;s web browsing mode extracts JSON-LD for citation</li><li>Claude&apos;s webpage reading parses schema markup for context</li></ul><hr /><h2 id="3.-title-tags-with-context-(seo)">3. Title Tags with Context (SEO)</h2><p>The original title tag was just &quot;Nur Azhar&apos;s&quot; — useless for search. I changed it to include a descriptive tagline suffix:</p><pre><code class="language-html">&lt;title&gt;{{title}} — Bitcoin, AI Agents, Protocol Engineering&lt;/title&gt;
+</code></pre><p>On the index page this renders as:</p><pre><code>Nur Azhar&apos;s — Bitcoin, AI Agents, Protocol Engineering
+</code></pre><p>On a post page:</p><pre><code>BSV is Bitcoin: The 16-Year Restoration — Bitcoin, AI Agents, Protocol Engineering
+</code></pre><p>The pattern: <strong>specific content first, site context second</strong>. This is the recommendation from Google&apos;s SEO documentation and it helps both search engines and social previews.</p><hr /><h2 id="4.-per-page-og-type-(seo/aeo)">4. Per-Page OG Type (SEO/AEO)</h2><p>The <code>og:type</code> was hardcoded to <code>website</code>. Changed to be context-aware:</p><pre><code class="language-html">&lt;meta property=&quot;og:type&quot; content=&quot;{% if date %}article{% else %}website{% endif %}&quot;&gt;
+</code></pre><p>Post pages now correctly declare themselves as <code>article</code> type, which affects how social platforms and AI crawlers interpret the content.</p><hr /><h2 id="5.-og-locale-and-site-name">5. OG Locale and Site Name</h2><pre><code class="language-html">&lt;meta property=&quot;og:locale&quot; content=&quot;en_SG&quot;&gt;
+&lt;meta property=&quot;og:site_name&quot; content=&quot;Nur Azhar&apos;s Blog&quot;&gt;
+</code></pre><p><code>og:locale</code> tells platforms the language and regional variant. <code>og:site_name</code> establishes brand context when individual pages are shared in isolation.</p><hr /><h2 id="6.-author-meta-tag">6. Author Meta Tag</h2><pre><code class="language-html">{% if sharing.author %}
+    &lt;meta name=&quot;author&quot; content=&quot;{{sharing.author}}&quot;&gt;
+{% else %}
+    &lt;meta name=&quot;author&quot; content=&quot;Nur Azhar&quot;&gt;
+{% endif %}
+</code></pre><p>Quickblog supports per-post <code>Twitter-Handle</code> frontmatter for guest authors. The fallback is the blog owner&apos;s name. Author attribution improves expertise signals (E-E-A-T in Google&apos;s rating guidelines).</p><hr /><h2 id="7.-sitemap.xml-generation">7. Sitemap.xml Generation</h2><p>Quickblog doesn&apos;t generate a sitemap natively. I added one in the post-render hook in <code>bb.edn</code>:</p><pre><code class="language-clojure">(let [collect-html (fn [dir prefix]
+                     (let [f (java.io.File. dir)]
+                       (when (.isDirectory f)
+                         (-&gt;&gt; (.listFiles f)
+                              (filter (fn [x] (.isFile x)))
+                              (map (fn [x] (.getName x)))
+                              (filter (fn [x] (.endsWith x &quot;.html&quot;)))
+                              (map (fn [x] (str &quot;&lt;url&gt;&lt;loc&gt;&quot; blog-root prefix x &quot;&lt;/loc&gt;&lt;/url&gt;&quot;)))))))
+      html-files (concat
+                   (collect-html &quot;public&quot; &quot;/&quot;)
+                   (collect-html &quot;public/tags&quot; &quot;/tags/&quot;))
+      sitemap (str &quot;&lt;?xml version=\&quot;1.0\&quot; encoding=\&quot;UTF-8\&quot;?&gt;\n&quot;
+                   &quot;&lt;urlset xmlns=\&quot;http://www.sitemaps.org/schemas/sitemap/0.9\&quot;&gt;\n&quot;
+                   &quot;&lt;url&gt;&lt;loc&gt;&quot; blog-root &quot;/&lt;/loc&gt;&lt;/url&gt;\n&quot;
+                   &quot;&lt;url&gt;&lt;loc&gt;&quot; blog-root &quot;/archive.html&lt;/loc&gt;&lt;/url&gt;\n&quot;
+                   (-&gt;&gt; html-files
+                        (remove (fn [s] (or (.contains s &quot;/index.html&quot;)
+                                             (.contains s &quot;/stats.html&quot;)
+                                             (.contains s &quot;/kanban.html&quot;))))
+                        (sort)
+                        (clojure.string/join &quot;\n&quot;))
+                   &quot;\n&lt;/urlset&gt;&quot;)]
+  (spit &quot;public/sitemap.xml&quot; sitemap))
+</code></pre><p>This scans the rendered <code>public/</code> directory for all HTML files (including tag pages), excludes system pages (stats, kanban, duplicate index), and generates a valid XML sitemap. Google Search Console uses this to discover all pages.</p><p>The <code>collect-html</code> function is generic — it takes a directory and a URL prefix, making it easy to add more subdirectories in the future.</p><hr /><h2 id="8.-sitemap-link-in-html">8. Sitemap Link in HTML</h2><p>Added to the <code>&lt;head&gt;</code> so crawlers can find it:</p><pre><code class="language-html">&lt;link rel=&quot;sitemap&quot; type=&quot;application/xml&quot; href=&quot;{{relative-path | safe}}sitemap.xml&quot;&gt;
+</code></pre><p>This is a hint for web crawlers and is referenced in the sitemaps.org protocol.</p><hr /><h2 id="9.-blog-description-rewrite">9. Blog Description Rewrite</h2><p>From the vague &quot;Blog in an era of artificial intelligence&quot; to something searchable and specific:</p><pre><code class="language-clojure">:blog-description &quot;Bitcoin protocol engineering, AI agents, decentralized infrastructure, overlay networks, and the Internet of Agents. Engineering on BSV.&quot;
+</code></pre><p>This description appears in:</p><ul><li>The <code>&lt;meta name=&quot;description&quot;&gt;</code> tag on the index page</li><li>The WebSite JSON-LD schema</li><li>The site header subtitle</li><li>Social sharing previews</li></ul><p>Keywords should describe what the blog <em>actually covers</em>, not make aspirational claims.</p><hr /><h2 id="10.-handling-custom-pages-(stats,-kanban)">10. Handling Custom Pages (Stats, Kanban)</h2><p>The blog has two standalone pages (<code>stats.html</code> and <code>kanban.html</code>) that are generated through a custom rendering path rather than quickblog&apos;s template engine. These pages use <code>clean-template</code> — a function that strips Selmer template tags and replaces leftover variables.</p><p>The BlogPosting JSON-LD would leak into these pages because the <code>{% if date %}</code> conditional is stripped by the clean-template regex. Solution: explicitly strip the entire BlogPosting block:</p><pre><code class="language-clojure">(clojure.string/replace (re-pattern &quot;(?s)&lt;!-- JSON-LD Structured Data: BlogPosting --&gt;.*?&lt;/script&gt;&quot;) &quot;&quot;)
+</code></pre><p>The <code>(?s)</code> flag enables dotall mode so <code>.</code> matches newlines, and <code>.*?</code> is non-greedy to stop at the first <code>&lt;/script&gt;</code>. The clean-template function runs on both stats and kanban pages, so this block is stripped from both.</p><hr /><h2 id="11.-the-full-checklist">11. The Full Checklist</h2><p>Here is every change made, in priority order for maximum impact:</p><table><thead><tr><th>Change</th><th>Impact</th><th>Effort</th></tr></thead><tbody><tr><td>JSON-LD WebSite schema (all pages)</td><td>AEO/GEO — establishes site identity</td><td>10 lines</td></tr><tr><td>JSON-LD BlogPosting schema (posts)</td><td>AEO/GEO — per-post machine-readable metadata</td><td>15 lines</td></tr><tr><td>Sitemap.xml generation</td><td>SEO — crawler discovers all pages</td><td>25 lines</td></tr><tr><td>Improved title tag format</td><td>SEO — keyword context in title</td><td>1 line</td></tr><tr><td>Per-page OG type (article/website)</td><td>Social sharing + AI crawlers</td><td>1 line</td></tr><tr><td>OG locale + site name</td><td>Social sharing context</td><td>2 lines</td></tr><tr><td>Author meta tag</td><td>E-E-A-T signal</td><td>4 lines</td></tr><tr><td>Sitemap link in HTML</td><td>Crawler discovery</td><td>1 line</td></tr><tr><td>Better blog description</td><td>SEO + semantic context</td><td>1 line</td></tr><tr><td>OG image per post</td><td>Social sharing + AEO (TODO)</td><td>Frontmatter only</td></tr></tbody></table><hr /><h2 id="12.-what&apos;s-next:-og-image">12. What&apos;s Next: OG Image</h2><p>The one gap: no Open Graph image yet. Social platforms and AI crawlers prefer cards with images. The plan is to create a 1200x630px template image and add per-post images via the <code>Image:</code> frontmatter field (which quickblog supports natively).</p><p>The <code>:blog-image</code> option in quickblog handles the default for index/archive/tags pages, while per-post <code>Image:</code> frontmatter overrides it for individual posts.</p><hr /><h2 id="13.-measuring-results">13. Measuring Results</h2><p>These changes went live today, so no long-term data yet. But the immediate effects are measurable:</p><ul><li><strong>Google Search Console</strong>: submit sitemap for indexing, check for JSON-LD errors in the Rich Results report</li><li><strong>Schema.org Validator</strong>: <a href="https://validator.schema.org/">https://validator.schema.org/</a> — paste a post URL to verify BlogPosting markup</li><li><strong>Facebook Sharing Debugger</strong>: <a href="https://developers.facebook.com/tools/debug/">https://developers.facebook.com/tools/debug/</a> — check OG tags render correctly</li><li><strong>Perplexity</strong>: search for a post title — does it cite the blog?</li><li><strong>ChatGPT browsing</strong>: ask it about a topic covered in the blog — does it reference the content?</li></ul><p>The structured data doesn&apos;t guarantee ranking or citation. But without it, the machine has to guess what your page is. With it, you&apos;ve stated your identity, your content type, and your topics in a format that every major AI system reads natively.</p><hr /><p><em>This blog runs on <a href="https://github.com/borkdude/quickblog">quickblog</a> + <a href="https://babashka.org/">Babashka</a>, deployed to GitHub Pages. Source code at <a href="https://github.com/nurazhardotcom/blog.nurazhar.com">github.com/nurazhardotcom/blog.nurazhar.com</a>.</em></p></div>

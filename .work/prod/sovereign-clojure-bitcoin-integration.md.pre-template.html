@@ -1,0 +1,48 @@
+<div><hr /><p>Lisp (specifically Clojure) and Bitcoin are a natural match. Both prioritize immutable data structures, declarative transformations, and minimal state side-effects.</p><p>In this post, we&apos;ll walk through the architectural blueprint of <strong><a href="https://github.com/nurazhardotcom/bsv-clj">bsv-clj</a></strong>, a sandbox project showing how to query Bitcoin node RPCs, map spendable UTXOs from local SQLite databases, validate transaction payloads, and redact sensitive data at the edge.</p><hr /><h2 id="1.-node-rpc-client-plumbing">1. Node RPC Client Plumbing</h2><p>The first layer is talking to the Bitcoin node itself over JSON-RPC. Using <code>http-kit</code> and <code>cheshire</code> (JSON parser), we can call remote node methods natively:</p><pre><code class="language-clojure">(def rpc-config
+  {:url &quot;http://127.0.0.1:8332&quot;
+   :user &quot;rpcuser&quot;
+   :password &quot;rpcpassword&quot;})
+
+(defn rpc-call
+  &quot;Executes a JSON-RPC method call on the Bitcoin node.&quot;
+  ([method] (rpc-call method []))
+  ([method params]
+   (let [payload (json/generate-string
+                  {:jsonrpc &quot;2.0&quot;
+                   :id &quot;clj-rpc&quot;
+                   :method method
+                   :params params})
+         options {:headers {&quot;Content-Type&quot; &quot;application/json&quot;}
+                  :basic-auth [(:user rpc-config) (:password rpc-config)]
+                  :body payload}
+         response @(http/post (:url rpc-config) options)]
+     (if (= 200 (:status response))
+       (json/parse-string (:body response) true)
+       {:error (str &quot;HTTP Error: &quot; (:status response))}))))
+</code></pre><p>With this, running <code>(rpc-call &quot;getblockchaininfo&quot;)</code> returns a native Clojure map representing the blockchain status.</p><hr /><h2 id="2.-local-first-sandbox:-utxo-tracking-via-sqlite">2. Local-First Sandbox: UTXO Tracking via SQLite</h2><p>Instead of querying third-party APIs (which exposes your financial privacy), the sovereign way is to read directly from your local wallet database.</p><p>Using <code>next.jdbc</code> and <code>honey.sql</code>, we query spendable outputs (UTXOs) from a local wallet sandbox:</p><pre><code class="language-clojure">(defn query-wallet-utxos
+  &quot;Queries local SQLite database to list spendable outputs.&quot;
+  [db-path]
+  (let [ds (jdbc/get-datasource {:dbtype &quot;sqlite&quot; :dbname db-path})
+        query (sql/format {:select [:txid :outputIndex :amount :state]
+                           :from [:outputs]
+                           :where [:= :state &quot;SPENDABLE&quot;]})]
+    (jdbc/execute! ds query)))
+</code></pre><hr /><h2 id="3.-transaction-validation-with-malli">3. Transaction Validation with Malli</h2><p>To prevent malformed transaction request structures from reaching signing nodes, we define a declarative schema using <strong><a href="https://github.com/metosin/malli">Malli</a></strong>:</p><pre><code class="language-clojure">(def TransactionRequestSchema
+  [:map
+   [:appId :string]
+   [:inputs [:vector [:map
+                      [:txid [:re #&quot;^[a-fA-F0-9]{64}$&quot;]]
+                      [:outputIndex :int]]]]
+   [:outputs [:vector [:map
+                        [:toAddress [:re #&quot;^[13m-n2-9][a-km-zA-HJ-NP-Z1-9]{26,34}$&quot;]]
+                        [:satoshis [:pos-int]]]]]
+   [:metadata [:map
+               [:timestamp :int]
+               [:data :string]]]])
+</code></pre><p>This enforces strict hexagonal boundaries: matching valid transaction hex patterns, valid Bitcoin addresses, positive satoshi spends, and clean metadata.</p><hr /><h2 id="4.-privacy-sentry:-data-loss-prevention-(dlp)">4. Privacy Sentry: Data Loss Prevention (DLP)</h2><p>When attaching raw text metadata directly into transaction payloads or OP_RETURN scripts, leakages can happen. We inject a regex redaction layer to scrub sensitive Singapore NRIC profiles before they hit the blockchain:</p><pre><code class="language-clojure">(def sg-nric-regex #&quot;(?i)\b[SGTFAM]\d{7}[A-Z]\b&quot;)
+
+(defn redact-payload-metadata
+  &quot;Scans metadata text and redacts sensitive Singapore NRIC profiles.&quot;
+  [text]
+  (clojure.string/replace text sg-nric-regex &quot;[REDACTED_NRIC]&quot;))
+</code></pre><hr /><h2 id="why-this-architecture-fits-the-bitcoin-ethos">Why this Architecture Fits the Bitcoin Ethos</h2><p>By putting the RPC clients, local SQLite DBs, and payload validation under a Clojure workflow, we achieve:</p><ul><li><strong>Determinism</strong>: Zero side-effects inside key validations.</li><li><strong>Hermetic Runs</strong>: No dependency on cloud providers to run rules.</li><li><strong>Privacy</strong>: Data stays local and is scrubbed before broadcast.</li></ul><p>You can check out the sandbox project source code on GitHub: <strong><a href="https://github.com/nurazhardotcom/bsv-clj">github.com/nurazhardotcom/bsv-clj</a></strong>.</p></div>

@@ -1,0 +1,43 @@
+<div><hr /><p>On CachyOS (and Arch derivatives), <code>cachyos-rate-mirrors</code> ranks Arch and CachyOS mirrors by speed and rewrites <code>/etc/pacman.d/mirrorlist</code> and <code>/etc/pacman.d/cachyos-mirrorlist</code>. It is the difference between 20 MB/s downloads and 400 KB/s — or outright failures.</p><h2 id="the-problem">The Problem</h2><p>My pacman updates had been crawling. <code>pacman -Syu</code> would hang on &quot;synchronizing package lists&quot; or time out on specific mirrors. The mirrorlists were stale:</p><pre><code class="language-bash"># /etc/pacman.d/mirrorlist (before)
+# Singapore Arch Linux Mirrors
+Server = https://singapore.mirror.pkgbuild.com/$repo/os/$arch
+Server = https://sg.arch.niranjan.co/$repo/os/$arch
+
+# /etc/pacman.d/cachyos-mirrorlist (before)
+# CachyOS CDN (Routes to Singapore)
+Server = https://cdn77.cachyos.org/repo/$arch/$repo
+</code></pre><p>Only <strong>2 Arch mirrors</strong> and <strong>1 CachyOS mirror</strong>. If either Singapore mirror had issues, updates stalled.</p><h2 id="root-cause">Root Cause</h2><p>The systemd timer that runs <code>cachyos-rate-mirrors</code> defaults to <strong>every 10 days</strong>:</p><pre><code class="language-ini"># /usr/lib/systemd/system/cachyos-rate-mirrors.timer
+[Timer]
+OnUnitActiveSec=10d
+RandomizedDelaySec=6h
+Persistent=true
+</code></pre><p><code>systemctl list-timers</code> confirmed it last ran on <strong>June 3</strong> — two weeks ago. Ten days is too long for rolling-release mirror churn.</p><h2 id="the-fix:-systemd-drop-in-(survives-updates)">The Fix: Systemd Drop-In (Survives Updates)</h2><p>Instead of editing the package file (which <code>pacman -Syu</code> overwrites), create a drop-in:</p><pre><code class="language-fish">sudo mkdir -p /etc/systemd/system/cachyos-rate-mirrors.timer.d
+printf &apos;[Timer]\nOnUnitActiveSec=7d\nRandomizedDelaySec=6h\n&apos; \
+  | sudo tee /etc/systemd/system/cachyos-rate-mirrors.timer.d/override.conf &gt;/dev/null
+sudo systemctl daemon-reload
+</code></pre><p>Verify:</p><pre><code class="language-fish">systemctl cat cachyos-rate-mirrors.timer
+</code></pre><p>Output shows the override at the bottom:</p><pre><code># /usr/lib/systemd/system/cachyos-rate-mirrors.timer
+[Timer]
+OnUnitActiveSec=10d
+RandomizedDelaySec=6h
+Persistent=true
+
+# /etc/systemd/system/cachyos-rate-mirrors.timer.d/override.conf
+[Timer]
+OnUnitActiveSec=7d
+RandomizedDelaySec=6h
+</code></pre><h2 id="immediate-relief">Immediate Relief</h2><p>Run it manually once:</p><pre><code class="language-fish">sudo cachyos-rate-mirrors
+</code></pre><p>Now both mirrorlists populate with 30+ working mirrors:</p><pre><code class="language-text"># /etc/pacman.d/mirrorlist (after)
+Server = https://mirror.sahil.world/archlinux/$repo/os/$arch
+Server = https://geo.mirror.pkgbuild.com/$repo/os/$arch
+Server = https://singapore.mirror.pkgbuild.com/$repo/os/$arch
+... 30 more ...
+
+# /etc/pacman.d/cachyos-mirrorlist (after)
+Server = https://cdn77.cachyos.org/repo/$arch/$repo
+Server = https://mirror2.keiminem.com/cachyos/repo/$arch/$repo
+Server = https://mirror.hb9hil.org/cachyos/repo/$arch/$repo
+... 11 more ...
+</code></pre><p>Next <code>pacman -Syu</code> completes in seconds.</p><h2 id="why-this-doesn&apos;t-break-upstream">Why This Doesn&apos;t Break Upstream</h2><table><thead><tr><th>Concern</th><th>Reality</th></tr></thead><tbody><tr><td><strong>Mirror hammering</strong></td><td><code>rate-mirrors</code> does HEAD requests (~1 KB each). 30 mirrors × 2 repos = negligible load.</td></tr><tr><td><strong>Upstream rate limits</strong></td><td>None — mirrors are public CDN endpoints designed for this.</td></tr><tr><td><strong>Package updates overwrite fix</strong></td><td>Drop-in at <code>/etc/systemd/system/...</code> takes precedence over <code>/usr/lib/...</code>. <code>pacman</code> never touches <code>/etc/systemd/system/</code>.</td></tr><tr><td><strong>Timer drift</strong></td><td><code>RandomizedDelaySec=6h</code> spreads load across the day; <code>Persistent=true</code> catches up if machine was off.</td></tr></tbody></table><h2 id="evidence-table">Evidence Table</h2><table><thead><tr><th>Metric</th><th>Before (10d timer)</th><th>After (7d timer + manual run)</th></tr></thead><tbody><tr><td>Arch mirrors in list</td><td>2</td><td>34</td></tr><tr><td>CachyOS mirrors in list</td><td>1</td><td>14</td></tr><tr><td><code>pacman -Syu</code> sync time</td><td>30–60 s (often timeout)</td><td>&lt; 3 s</td></tr><tr><td>Failed mirror connections</td><td>Frequent</td><td>Zero</td></tr></tbody></table><h2 id="tl;dr">TL;DR</h2><pre><code class="language-fish"># One-liner (fish)
+sudo mkdir -p /etc/systemd/system/cachyos-rate-mirrors.timer.d; printf &apos;[Timer]\nOnUnitActiveSec=7d\nRandomizedDelaySec=6h\n&apos; | sudo tee /etc/systemd/system/cachyos-rate-mirrors.timer.d/override.conf &gt;/dev/null; sudo systemctl daemon-reload; sudo cachyos-rate-mirrors
+</code></pre><p>Rolling release = rolling mirrors. The default 10-day cadence assumes static infrastructure. It isn&apos;t. Seven days keeps mirrorlists fresh without burdening anyone.</p><hr /><p><em>Related: <a href="./userspace-rust-bootstrapping-on-fish.md">Userspace Rust Bootstrapping on Fish</a></em></p></div>

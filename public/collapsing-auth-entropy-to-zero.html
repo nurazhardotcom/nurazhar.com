@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      (function() {
+        try {
+          const savedTheme = localStorage.getItem('theme');
+          const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+    <title>Collapsing Auth Entropy to Zero: Debugging GitHub Credential Conflicts on Linux — Bitcoin, AI Agents, Protocol Engineering</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="application/atom+xml" rel="alternate" href="atom.xml" title="Collapsing Auth Entropy to Zero: Debugging GitHub Credential Conflicts on Linux">
+    <link rel="stylesheet" href="style.css">
+    <link rel="sitemap" type="application/xml" href="sitemap.xml">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css">
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      mermaid.initialize({ startOnLoad: false, theme: 'default' });
+      document.addEventListener("DOMContentLoaded", async () => {
+        const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
+        for (const codeBlock of codeBlocks) {
+          const pre = codeBlock.parentElement;
+          const div = document.createElement("div");
+          div.className = "mermaid";
+          div.textContent = codeBlock.textContent;
+          pre.replaceWith(div);
+        }
+        await mermaid.run();
+      });
+    </script>
+
+
+
+    <!-- Social sharing (Facebook, Twitter, LinkedIn, etc.) -->
+    <meta name="title" content="Collapsing Auth Entropy to Zero: Debugging GitHub Credential Conflicts on Linux">
+    <meta name="twitter:title" content="Collapsing Auth Entropy to Zero: Debugging GitHub Credential Conflicts on Linux">
+    <meta property="og:title" content="Collapsing Auth Entropy to Zero: Debugging GitHub Credential Conflicts on Linux">
+    <meta property="og:type" content="article">
+    <meta property="og:locale" content="en_SG">
+    <meta property="og:site_name" content="Nur Azhar's Blog">
+
+    <meta name="description" content="A visual walkthrough of debugging conflicting GitHub credentials — OAuth tokens, classic PATs, SSH keys, and rogue environment variables — and collapsing them into a single source of truth.">
+    <meta name="twitter:description" content="A visual walkthrough of debugging conflicting GitHub credentials — OAuth tokens, classic PATs, SSH keys, and rogue environment variables — and collapsing them into a single source of truth.">
+    <meta property="og:description" content="A visual walkthrough of debugging conflicting GitHub credentials — OAuth tokens, classic PATs, SSH keys, and rogue environment variables — and collapsing them into a single source of truth.">
+
+
+    <meta name="twitter:url" content="https://blog.nurazhar.com/collapsing-auth-entropy-to-zero.html">
+    <meta property="og:url" content="https://blog.nurazhar.com/collapsing-auth-entropy-to-zero.html">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image:alt" content="Nur Azhar's Blog - Bitcoin, AI Agents, Protocol Engineering">
+
+
+    <meta name="author" content="Nur Azhar">
+
+
+
+    <!-- JSON-LD Structured Data: WebSite -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Nur Azhar's Blog",
+  "url": "https://blog.nurazhar.com",
+  "description": "My technical blog to document my learnings",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  }
+}
+    </script>
+
+    <!-- JSON-LD Structured Data: BlogPosting -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Collapsing Auth Entropy to Zero: Debugging GitHub Credential Conflicts on Linux",
+  "description": "A visual walkthrough of debugging conflicting GitHub credentials — OAuth tokens, classic PATs, SSH keys, and rogue environment variables — and collapsing them into a single source of truth.",
+  "datePublished": "2026-06-15",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  },
+  "url": "https://blog.nurazhar.com/collapsing-auth-entropy-to-zero.html",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://blog.nurazhar.com/collapsing-auth-entropy-to-zero.html"
+  }
+}
+    </script>
+
+  </head>
+  <body>
+
+    <div class="site-header">
+      <div class="wrapper">
+        <div class="site-nav">
+          <a class="page-link" href="stats.html">Stats</a>
+          <a class="page-link" href="kanban.html">Kanban</a>
+          <a class="page-link" href="archive.html">Archive</a>
+          <a class="page-link" href="tags/index.html">Tags</a>
+          
+	  <a class="page-link" href="atom.xml">
+            Feed
+          </a>
+	  
+	  
+	  <a class="page-link" href="https://nurazhar.com/">About</a>
+	  
+          <button id="theme-toggle" style="background: none; border: none; cursor: pointer; padding: 0 10px; font-size: 1.2rem; vertical-align: middle;" aria-label="Toggle theme">🌙</button>
+        </div>
+        <div style="display: flex; align-items: center;">
+          <div>
+            <h1 class="site-title" style="margin: 0;">
+              <a class="page-link" href="index.html">Nur Azhar</a>
+            </h1>
+            <p style="margin: 2px 0 0 0;">My technical blog to document my learnings</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrapper">
+
+      <h1>
+  
+  Collapsing Auth Entropy to Zero: Debugging GitHub Credential Conflicts on Linux
+  
+</h1>
+<div><hr /><p>A routine <code>git push</code> failed. What followed was a 20-minute rabbit hole through five layers of GitHub authentication, a rogue environment variable injected by an IDE, and the realization that <strong>credential entropy is a silent DevOps killer</strong>.</p><p>This post documents the entire debugging journey with diagrams, commands, and the exact steps to reach <strong>zero auth entropy</strong> — one identity, two transports, no conflicts.</p><hr /><h2 id="the-symptom">🔥 The Symptom</h2><pre><code class="language-bash">git push origin main
+</code></pre><pre><code>remote: Invalid username or token.
+fatal: Authentication failed for &apos;https://github.com/nurazhardotcom/blog.nurazhar.com.git/&apos;
+</code></pre><p>A simple push to a repo. Should take 2 seconds. Instead, it opened a can of worms.</p><hr /><h2 id="the-credential-resolution-hierarchy">🗺️ The Credential Resolution Hierarchy</h2><p>Before diving into commands, it helps to understand <strong>how GitHub CLI (<code>gh</code>) and Git resolve credentials</strong>. They don&apos;t just check one place — they walk a priority chain, and the first match wins:</p><pre><code class="language-mermaid">flowchart TD
+    A[&quot;Git Push Request&quot;] --&gt; B{&quot;GITHUB_TOKEN&lt;br/&gt;env var set?&quot;}
+    B --&gt;|&quot;Yes&quot;| C[&quot;Use GITHUB_TOKEN&lt;br/&gt;(highest priority)&quot;]
+    B --&gt;|&quot;No&quot;| D{&quot;gh auth&lt;br/&gt;keyring token?&quot;}
+    D --&gt;|&quot;Yes&quot;| E[&quot;Use keyring token&lt;br/&gt;([REDACTED])&quot;]
+    D --&gt;|&quot;No&quot;| F{&quot;SSH key&lt;br/&gt;configured?&quot;}
+    F --&gt;|&quot;Yes&quot;| G[&quot;Use SSH&lt;br/&gt;(git@github.com)&quot;]
+    F --&gt;|&quot;No&quot;| H{&quot;~/.git-credentials&lt;br/&gt;file exists?&quot;}
+    H --&gt;|&quot;Yes&quot;| I[&quot;Use stored&lt;br/&gt;credentials&quot;]
+    H --&gt;|&quot;No&quot;| J[&quot;❌ Auth fails&quot;]
+
+    C --&gt; K{&quot;Token valid?&quot;}
+    K --&gt;|&quot;Yes&quot;| L[&quot;✅ Push succeeds&quot;]
+    K --&gt;|&quot;No&quot;| M[&quot;❌ Push fails&lt;br/&gt;(our problem)&quot;]
+
+    style C fill:#ff6b6b,stroke:#333,color:#fff
+    style M fill:#ff6b6b,stroke:#333,color:#fff
+    style E fill:#51cf66,stroke:#333
+    style L fill:#51cf66,stroke:#333
+</code></pre><p><strong>The critical insight:</strong> If <code>GITHUB_TOKEN</code> is set — even to garbage — <code>gh</code> and Git will use it and <strong>never fall through</strong> to the perfectly valid keyring token below.</p><hr /><h2 id="the-audit">🔍 The Audit</h2><h3 id="step-1:-check-gh-auth-status">Step 1: Check <code>gh auth status</code></h3><pre><code class="language-bash">gh auth status
+</code></pre><pre><code>github.com
+  ✗ Failed to log in to github.com using token (GITHUB_TOKEN)
+  - Active account: true
+  - The token in GITHUB_TOKEN is invalid.
+
+  ✓ Logged in to github.com account nurazhardotcom (keyring)
+  - Active account: false        ← buried under the broken token
+  - Git operations protocol: https
+  - Token: [REDACTED]
+  - Token scopes: &apos;delete_repo&apos;, &apos;gist&apos;, &apos;read:org&apos;, &apos;repo&apos;, &apos;workflow&apos;
+</code></pre><p>Two accounts. The broken one is <strong>active</strong>. The valid one is <strong>inactive</strong>. That&apos;s the bug.</p><h3 id="step-2:-find-the-rogue-token">Step 2: Find the rogue token</h3><pre><code class="language-bash">env | grep GITHUB_TOKEN
+</code></pre><pre><code>GITHUB_TOKEN=[REDACTED]
+</code></pre><p>A <strong>dummy placeholder token</strong> injected by the IDE process into every spawned shell. It&apos;s not a real token — it&apos;s a sentinel value — but <code>gh</code> doesn&apos;t know that. It just sees <code>GITHUB_TOKEN</code> is set and tries to use it.</p><h3 id="step-3:-trace-the-source">Step 3: Trace the source</h3><pre><code class="language-bash">grep -rl &quot;github_pat_antigravity&quot; ~/.config/ ~/.local/
+</code></pre><pre><code>~/ .local/share/antigravity-ide/resources/app/extensions/.../language_server_linux_x64
+~/ .local/bin/agy
+</code></pre><p>It&apos;s baked into the IDE binary. You can&apos;t delete it — you have to <strong>override</strong> it.</p><h3 id="step-4:-check-ssh">Step 4: Check SSH</h3><pre><code class="language-bash">ssh -T git@github.com
+</code></pre><pre><code>git@github.com: Permission denied (publickey).
+</code></pre><p>SSH key exists on disk (<code>~/.ssh/id_ed25519</code>) but was <strong>never registered</strong> on GitHub. Dead weight.</p><h3 id="step-5:-check-git-credential-helper">Step 5: Check Git credential helper</h3><pre><code class="language-bash">git config --global credential.helper
+# (empty — none set)
+
+cat ~/.git-credentials
+# No such file
+</code></pre><p>Clean. Nothing stale here.</p><hr /><h2 id="the-entropy-map">📊 The Entropy Map</h2><p>Here&apos;s what the full credential landscape looked like <strong>before</strong> the fix:</p><pre><code class="language-mermaid">graph TB
+    subgraph &quot;❌ Before — High Entropy&quot;
+        direction TB
+        ENV[&quot;🔴 GITHUB_TOKEN env var&lt;br/&gt;[REDACTED]&lt;br/&gt;&lt;b&gt;INVALID — Active&lt;/b&gt;&quot;]
+        KR[&quot;🟢 Keyring token&lt;br/&gt;[REDACTED]&lt;br/&gt;&lt;b&gt;VALID — Inactive&lt;/b&gt;&quot;]
+        SSH[&quot;🟡 SSH key&lt;br/&gt;~/.ssh/id_ed25519&lt;br/&gt;&lt;b&gt;EXISTS — Not registered&lt;/b&gt;&quot;]
+        GC[&quot;⚪ ~/.git-credentials&lt;br/&gt;&lt;b&gt;Does not exist&lt;/b&gt;&quot;]
+        HELPER[&quot;⚪ Git credential helper&lt;br/&gt;&lt;b&gt;Not configured&lt;/b&gt;&quot;]
+    end
+
+    ENV -.-&gt;|&quot;Blocks&quot;| KR
+    SSH -.-&gt;|&quot;Useless without&lt;br/&gt;GitHub registration&quot;| SSH
+
+    style ENV fill:#ff6b6b,stroke:#c92a2a,color:#fff
+    style KR fill:#51cf66,stroke:#2b8a3e
+    style SSH fill:#ffd43b,stroke:#e67700
+    style GC fill:#e9ecef,stroke:#868e96
+    style HELPER fill:#e9ecef,stroke:#868e96
+</code></pre><p>Five credential slots. One broken and blocking. One valid but buried. One half-configured. Two empty. <strong>Pure entropy.</strong></p><hr /><h2 id="the-fix-(4-commands)">🔧 The Fix (4 Commands)</h2><h3 id="1.-switch-active-account-to-the-keyring-token">1. Switch active account to the keyring token</h3><pre><code class="language-bash">unset GITHUB_TOKEN
+gh auth switch --user nurazhardotcom
+# ✓ Switched active account for github.com to nurazhardotcom
+</code></pre><h3 id="2.-override-the-dummy-token-permanently-in-fish-config">2. Override the dummy token permanently in fish config</h3><pre><code class="language-bash">echo &apos;set -gx GITHUB_TOKEN (gh auth token 2&gt;/dev/null)&apos; &gt;&gt; ~/.config/fish/config.fish
+</code></pre><p>Every new shell now reads the <strong>real</strong> token from <code>gh auth</code>, overriding whatever the IDE injects.</p><h3 id="3.-register-the-ssh-key-on-github">3. Register the SSH key on GitHub</h3><pre><code class="language-bash">gh auth refresh -h github.com -s admin:public_key
+# (authorize in browser)
+
+gh ssh-key add ~/.ssh/id_ed25519.pub --title &quot;CachyOS laptop&quot;
+# ✓ Public key added to your account
+</code></pre><h3 id="4.-verify-everything">4. Verify everything</h3><pre><code class="language-bash">unset GITHUB_TOKEN &amp;&amp; gh auth status
+# ✓ Logged in to github.com account nurazhardotcom (keyring)
+# - Active account: true
+
+ssh -T git@github.com
+# Hi nurazhardotcom! You&apos;ve successfully authenticated
+</code></pre><hr /><h2 id="the-final-state-—-zero-entropy">✅ The Final State — Zero Entropy</h2><pre><code class="language-mermaid">graph TB
+    subgraph &quot;✅ After — Zero Entropy&quot;
+        direction TB
+        KR2[&quot;🟢 Keyring token (HTTPS)&lt;br/&gt;[REDACTED]&lt;br/&gt;&lt;b&gt;VALID — Active — Primary&lt;/b&gt;&quot;]
+        SSH2[&quot;🟢 SSH key&lt;br/&gt;~/.ssh/id_ed25519&lt;br/&gt;&lt;b&gt;Registered on GitHub&lt;/b&gt;&quot;]
+        FISH[&quot;🟢 config.fish override&lt;br/&gt;set -gx GITHUB_TOKEN (gh auth token)&lt;br/&gt;&lt;b&gt;Neutralizes IDE dummy token&lt;/b&gt;&quot;]
+    end
+
+    FISH --&gt;|&quot;Feeds real token to&quot;| KR2
+    KR2 --&gt;|&quot;HTTPS transport&quot;| GH[&quot;🎯 github.com&quot;]
+    SSH2 --&gt;|&quot;SSH transport&quot;| GH
+
+    style KR2 fill:#51cf66,stroke:#2b8a3e,color:#000
+    style SSH2 fill:#51cf66,stroke:#2b8a3e,color:#000
+    style FISH fill:#51cf66,stroke:#2b8a3e,color:#000
+    style GH fill:#339af0,stroke:#1864ab,color:#fff
+</code></pre><table><thead><tr><th>Credential</th><th>Status</th></tr></thead><tbody><tr><td><strong>Keyring token</strong> (HTTPS)</td><td>✅ Active, valid, primary</td></tr><tr><td><strong>SSH key</strong></td><td>✅ Registered on GitHub</td></tr><tr><td><strong><code>config.fish</code> override</strong></td><td>✅ Neutralizes IDE dummy token</td></tr><tr><td><strong>Classic PAT</strong></td><td>🗑️ Deleted — nothing depends on it</td></tr><tr><td><strong><code>~/.git-credentials</code></strong></td><td>✅ Does not exist</td></tr></tbody></table><p><strong>One identity. Two transports. No conflicts. Zero entropy.</strong></p><hr /><h2 id="lessons-learned">🧠 Lessons Learned</h2><ol start="1"><li><p><strong>Environment variables win.</strong> If <code>GITHUB_TOKEN</code> is set, <code>gh</code> and Git will use it — even if it&apos;s garbage. Always check <code>env | grep GITHUB</code> before debugging auth failures.</p></li><li><p><strong>IDEs inject things.</strong> Development environments often set environment variables for their own internal use. These can silently override your carefully configured credentials.</p></li><li><p><strong>Audit all five credential slots.</strong> When auth fails, don&apos;t just re-generate a token. Check the full chain: env vars → keyring → SSH → credential files → credential helper.</p></li><li><p><strong>SSH keys need two halves.</strong> A key on disk without a matching registration on GitHub is dead weight. Always verify with <code>ssh -T git@github.com</code>.</p></li><li><p><strong><code>gh auth status</code> is your friend.</strong> It shows you the complete picture — which accounts exist, which is active, and what&apos;s broken.</p></li></ol><hr /><h2 id="quick-reference:-auth-debugging-cheatsheet">📋 Quick Reference: Auth Debugging Cheatsheet</h2><pre><code class="language-mermaid">flowchart LR
+    A[&quot;Auth fails&quot;] --&gt; B[&quot;gh auth status&quot;]
+    B --&gt; C[&quot;env | grep GITHUB&quot;]
+    C --&gt; D[&quot;ssh -T git@github.com&quot;]
+    D --&gt; E[&quot;cat ~/.git-credentials&quot;]
+    E --&gt; F[&quot;git config credential.helper&quot;]
+    F --&gt; G[&quot;Fix the broken link&lt;br/&gt;in the chain&quot;]
+
+    style A fill:#ff6b6b,stroke:#333,color:#fff
+    style G fill:#51cf66,stroke:#333
+</code></pre><table><thead><tr><th>Command</th><th>What it checks</th></tr></thead><tbody><tr><td><code>gh auth status</code></td><td>OAuth/keyring tokens, active account</td></tr><tr><td><code>env | grep GITHUB</code></td><td>Environment variable overrides</td></tr><tr><td><code>ssh -T git@github.com</code></td><td>SSH key registration</td></tr><tr><td><code>cat ~/.git-credentials</code></td><td>Stored plaintext credentials</td></tr><tr><td><code>git config credential.helper</code></td><td>Credential helper configuration</td></tr></tbody></table></div>
+
+<p><i>Published: 2026-06-15</i></p>
+
+<p>
+  <i>
+  Tagged:
+  
+  <span class="tag">
+    <a href="tags/devops.html">devops</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/github.html">github</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/security.html">security</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/cachyos.html">cachyos</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/linux.html">linux</a>
+  </span>
+  
+  </i>
+</p>
+
+
+
+      
+      <div style="margin-bottom: 20px; float: right;">
+        <a class="page-link" href="archive.html">Archive</a>
+      </div>
+      
+    </div>
+    
+    <footer class="site-footer" style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--code-border); font-size: 0.85rem; color: var(--text-color); opacity: 0.8;">
+      <div class="wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
+            <img alt="Creative Commons License" style="border-width:0; height: 31px;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+          </a>
+        </div>
+        <div>
+          This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" style="color: var(--link-color); text-decoration: underline;">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+        </div>
+        <div style="font-size: 0.75rem; opacity: 0.6;">
+          &copy; 2026 Nur Azhar. Build in public.
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.getElementById('theme-toggle');
+        if (toggleButton) {
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          toggleButton.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+          
+          toggleButton.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            try {
+              localStorage.setItem('theme', next);
+            } catch (e) {
+              console.warn('Storage blocked: theme preference will not persist.');
+            }
+            toggleButton.textContent = next === 'dark' ? '☀️' : '🌙';
+          });
+        }
+      });
+    </script>
+    <script>
+      (function() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+        
+        fetch('https://asia-southeast1-nurazhardotcom.cloudfunctions.net/blog-analytics-api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: window.location.pathname,
+            referrer: document.referrer || null
+          })
+        }).catch(err => console.error('Tracking failed', err));
+      })();
+    </script>
+  </body>
+</html>

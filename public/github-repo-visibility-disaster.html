@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      (function() {
+        try {
+          const savedTheme = localStorage.getItem('theme');
+          const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+    <title>How I Accidentally Hid My Entire GitHub — and What It Taught Me About Visibility, Forks, and Irreversible Decisions — Bitcoin, AI Agents, Protocol Engineering</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="application/atom+xml" rel="alternate" href="atom.xml" title="How I Accidentally Hid My Entire GitHub — and What It Taught Me About Visibility, Forks, and Irreversible Decisions">
+    <link rel="stylesheet" href="style.css">
+    <link rel="sitemap" type="application/xml" href="sitemap.xml">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css">
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      mermaid.initialize({ startOnLoad: false, theme: 'default' });
+      document.addEventListener("DOMContentLoaded", async () => {
+        const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
+        for (const codeBlock of codeBlocks) {
+          const pre = codeBlock.parentElement;
+          const div = document.createElement("div");
+          div.className = "mermaid";
+          div.textContent = codeBlock.textContent;
+          pre.replaceWith(div);
+        }
+        await mermaid.run();
+      });
+    </script>
+
+
+
+    <!-- Social sharing (Facebook, Twitter, LinkedIn, etc.) -->
+    <meta name="title" content="How I Accidentally Hid My Entire GitHub — and What It Taught Me About Visibility, Forks, and Irreversible Decisions">
+    <meta name="twitter:title" content="How I Accidentally Hid My Entire GitHub — and What It Taught Me About Visibility, Forks, and Irreversible Decisions">
+    <meta property="og:title" content="How I Accidentally Hid My Entire GitHub — and What It Taught Me About Visibility, Forks, and Irreversible Decisions">
+    <meta property="og:type" content="article">
+    <meta property="og:locale" content="en_SG">
+    <meta property="og:site_name" content="Nur Azhar's Blog">
+
+    <meta name="description" content="A detailed post-mortem of the 24-hour window where all my public repos went private — the bad advice I followed, the irreversible GitHub mechanics I didn&#39;t understand, and the Mermaid diagrams that explain what actually happened.">
+    <meta name="twitter:description" content="A detailed post-mortem of the 24-hour window where all my public repos went private — the bad advice I followed, the irreversible GitHub mechanics I didn&#39;t understand, and the Mermaid diagrams that explain what actually happened.">
+    <meta property="og:description" content="A detailed post-mortem of the 24-hour window where all my public repos went private — the bad advice I followed, the irreversible GitHub mechanics I didn&#39;t understand, and the Mermaid diagrams that explain what actually happened.">
+
+
+    <meta name="twitter:url" content="https://blog.nurazhar.com/github-repo-visibility-disaster.html">
+    <meta property="og:url" content="https://blog.nurazhar.com/github-repo-visibility-disaster.html">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image:alt" content="Nur Azhar's Blog - Bitcoin, AI Agents, Protocol Engineering">
+
+
+    <meta name="author" content="Nur Azhar">
+
+
+
+    <!-- JSON-LD Structured Data: WebSite -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Nur Azhar's Blog",
+  "url": "https://blog.nurazhar.com",
+  "description": "My technical blog to document my learnings",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  }
+}
+    </script>
+
+    <!-- JSON-LD Structured Data: BlogPosting -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "How I Accidentally Hid My Entire GitHub — and What It Taught Me About Visibility, Forks, and Irreversible Decisions",
+  "description": "A detailed post-mortem of the 24-hour window where all my public repos went private — the bad advice I followed, the irreversible GitHub mechanics I didn&#39;t understand, and the Mermaid diagrams that explain what actually happened.",
+  "datePublished": "2026-06-19",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  },
+  "url": "https://blog.nurazhar.com/github-repo-visibility-disaster.html",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://blog.nurazhar.com/github-repo-visibility-disaster.html"
+  }
+}
+    </script>
+
+  </head>
+  <body>
+
+    <div class="site-header">
+      <div class="wrapper">
+        <div class="site-nav">
+          <a class="page-link" href="stats.html">Stats</a>
+          <a class="page-link" href="kanban.html">Kanban</a>
+          <a class="page-link" href="archive.html">Archive</a>
+          <a class="page-link" href="tags/index.html">Tags</a>
+          
+	  <a class="page-link" href="atom.xml">
+            Feed
+          </a>
+	  
+	  
+	  <a class="page-link" href="https://nurazhar.com/">About</a>
+	  
+          <button id="theme-toggle" style="background: none; border: none; cursor: pointer; padding: 0 10px; font-size: 1.2rem; vertical-align: middle;" aria-label="Toggle theme">🌙</button>
+        </div>
+        <div style="display: flex; align-items: center;">
+          <div>
+            <h1 class="site-title" style="margin: 0;">
+              <a class="page-link" href="index.html">Nur Azhar</a>
+            </h1>
+            <p style="margin: 2px 0 0 0;">My technical blog to document my learnings</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrapper">
+
+      <h1>
+  
+  How I Accidentally Hid My Entire GitHub — and What It Taught Me About Visibility, Forks, and Irreversible Decisions
+  
+</h1>
+<div><hr /><h2 id="the-24-hours-that-broke-my-github">The 24 Hours That Broke My GitHub</h2><p>Yesterday, I made a decision that cost me an entire day of visibility on GitHub. This is the detailed breakdown of what happened, why it happened, and the technical mechanics behind it — with Mermaid diagrams so you can see exactly what went wrong.</p><hr /><h2 id="act-i:-the-bad-advice">Act I: The Bad Advice</h2><p>I was doing a &quot;GitHub audit&quot; for job hunting. The goal: make my GitHub profile look clean for Singapore cybersecurity hiring managers.</p><p>An AI assistant (yes, I got bad advice from another AI — the irony is not lost on me) gave me this table:</p><table><thead><tr><th>Repository</th><th>Called It</th><th>Actual Status</th></tr></thead><tbody><tr><td><code>bitcoin</code></td><td>&quot;Fork, no contribution&quot;</td><td><strong>Not a fork</strong> — standalone repo</td></tr><tr><td><code>bitcoin-wiki</code></td><td>&quot;Academic, irrelevant&quot;</td><td><strong>Not a fork</strong> — standalone repo</td></tr><tr><td><code>frontend</code></td><td>&quot;Fork, abandoned&quot;</td><td><strong>Not a fork</strong> — standalone repo</td></tr><tr><td><code>hermes-agent</code></td><td>&quot;Fork, not your code&quot;</td><td><strong>Not a fork</strong> — standalone repo</td></tr><tr><td><code>headhunter-agent</code></td><td>&quot;Fork, AI agent&quot;</td><td><strong>Not a fork</strong> — standalone repo</td></tr></tbody></table><p><strong>Every single one was labeled &quot;fork.&quot; Not one was actually a fork.</strong></p><p>The advice: make all 12 private. &quot;Clean signal: 3–5 relevant projects.&quot; &quot;Noise: forks, tutorials, abandoned experiments.&quot;</p><p>I said yes.</p><hr /><h2 id="act-ii:-the-execution">Act II: The Execution</h2><pre><code class="language-bash">for r in bitcoin bitcoin-wiki frontend hermes-agent headhunter-agent; do
+  gh repo edit nurazhardotcom/$r --visibility private \
+    --accept-visibility-change-consequences
+done
+</code></pre><p>One by one, 12 repos went dark.</p><hr /><h2 id="act-iii:-the-reversal">Act III: The Reversal</h2><p>This morning, I realized the advice was wrong. I ran:</p><pre><code class="language-bash">for r in bitcoin bitcoin-wiki frontend hermes-agent headhunter-agent; do
+  gh repo edit nurazhardotcom/$r --visibility public \
+    --accept-visibility-change-consequences
+done
+</code></pre><p>All 21 repos are now public again. But the story doesn&apos;t end there.</p><hr /><h2 id="the-technical-deep-dive">The Technical Deep Dive</h2><h3 id="what-gh-repo-edit---visibility-actually-does">What <code>gh repo edit --visibility</code> Actually Does</h3><pre><code class="language-mermaid">flowchart TD
+    A[Repo: PUBLIC] --&gt;|gh repo edit --visibility private| B[Repo: PRIVATE]
+    B --&gt;|gh repo edit --visibility public| C[Repo: PUBLIC]
+
+    A --&gt; D[Fork Network: Connected to parent]
+    B -.-&gt;|GitHub severs fork relationship| E[Fork Network: DISCONNECTED]
+    C -.-&gt;|Does NOT auto-reconnect| F[Fork Network: Still DISCONNECTED]
+
+    style E fill:#ff6b6b,stroke:#c92a2a,color:#fff
+    style F fill:#ff6b6b,stroke:#c92a2a,color:#fff
+</code></pre><h3 id="the-fork-network-problem">The Fork Network Problem</h3><p>Here&apos;s the critical thing: <strong>if a repo IS a real fork</strong>, flipping it private severs the parent-child relationship in GitHub&apos;s fork network. Flipping it back to public does NOT restore that connection.</p><pre><code class="language-mermaid">flowchart LR
+    subgraph BEFORE
+        P1[Parent Repo&lt;br/&gt;upstream/project] --&gt; F1[Your Fork&lt;br/&gt;nurazhardotcom/project&lt;br/&gt;🟢 PUBLIC]
+        F1 --&gt; D1[Downstream Forks&lt;br/&gt;other-user/project]
+    end
+
+    subgraph AFTER_FLIP_PRIVATE
+        P2[Parent Repo&lt;br/&gt;upstream/project] -.-&gt;|SEVERED| F2[Your Repo&lt;br/&gt;nurazhardotcom/project&lt;br/&gt;🔴 PRIVATE]
+        F2 -.-&gt;|SEVERED| D2[Downstream Forks&lt;br/&gt;other-user/project]
+    end
+
+    subgraph AFTER_FLIP_PUBLIC
+        P3[Parent Repo&lt;br/&gt;upstream/project] -.-&gt;|NOT RESTORED| F3[Your Repo&lt;br/&gt;nurazhardotcom/project&lt;br/&gt;🟢 PUBLIC&lt;br/&gt;but orphaned]
+        F3 -.-&gt;|NOT RESTORED| D3[Downstream Forks&lt;br/&gt;other-user/project]
+    end
+
+    style F2 fill:#ff6b6b,stroke:#c92a2a,color:#fff
+    style F3 fill:#ffa94d,stroke:#e8590c,color:#fff
+</code></pre><h3 id="but-mine-weren&apos;t-forks!">But Mine Weren&apos;t Forks!</h3><p>Here&apos;s the twist: <strong>my repos were never forks to begin with.</strong></p><pre><code class="language-mermaid">flowchart TD
+    subgraph What_I_Thought
+        A[21 repos] --&gt; B[12 FORKS → make private]
+        A --&gt; C[9 ORIGINAL → keep public]
+    end
+
+    subgraph What_Was_Actual
+        X[21 repos] --&gt; Y[0 FORKS]
+        X --&gt; Z[21 STANDALONE REPOS]
+    end
+
+    style B fill:#ff6b6b,stroke:#c92a2a,color:#fff
+    style Y fill:#51cf66,stroke:#2b8a3e,color:#fff
+</code></pre><p>I verified this via GitHub&apos;s own API:</p><pre><code class="language-bash">gh api repos/nurazhardotcom/bitcoin --jq &apos;{fork: .fork, parent: .parent.full_name}&apos;
+# {&quot;fork&quot;: false, &quot;parent&quot;: null}
+</code></pre><p>Every single repo returned <code>fork: false</code>. The &quot;fork network&quot; problem was irrelevant because there was no fork network to begin with.</p><hr /><h2 id="the-timeline">The Timeline</h2><pre><code class="language-mermaid">gantt
+    title GitHub Visibility Disaster — 24 Hour Timeline
+    dateFormat HH:mm
+    axisFormat %H:%M
+
+    section June 18
+    Bad AI advice received       :done, a1, 14:00, 1h
+    Visibility flip to private   :active, a2, after a1, 30m
+    Repos hidden from public     :crit, a3, after a2, 12h
+
+    section June 19
+    User realizes advice was wrong :done, b1, 08:00, 30m
+    Visibility flip to public      :active, b2, after b1, 30m
+    All 21 repos restored          :crit, b3, after b2, 1h
+    This blog post written         :b4, after b3, 1h
+</code></pre><hr /><h2 id="what-i-learned">What I Learned</h2><h3 id="1.-verify-before-you-act">1. Verify Before You Act</h3><p>One <code>gh api</code> call would have prevented this:</p><pre><code class="language-bash">gh api repos/nurazhardotcom/$repo --jq &apos;.fork&apos;
+</code></pre><p>I didn&apos;t run it. I took the AI&apos;s word for it. That was the root cause.</p><h3 id="2.-public-repos-don&apos;t-hurt-your-resume">2. Public Repos Don&apos;t Hurt Your Resume</h3><p>The advice said &quot;21 public repos = noise.&quot; That&apos;s not how hiring works. Hiring managers look at:</p><ul><li><strong>What you built</strong> (not how many repos)</li><li><strong>Code quality</strong> (not repo count)</li><li><strong>Relevant projects</strong> (not whether you have irrelevant ones)</li></ul><p>Having 21 repos with 4 pinned is not &quot;noise.&quot; It&apos;s a portfolio.</p><h3 id="3.---accept-visibility-change-consequences-is-a-warning,-not-a-formality">3. <code>--accept-visibility-change-consequences</code> Is a Warning, Not a Formality</h3><p>GitHub makes you add this flag for a reason. It&apos;s not just &quot;I accept.&quot; It&apos;s &quot;I understand this might break things.&quot; I clicked through without reading.</p><h3 id="4.-visibility-changes-are-(mostly)-reversible-—-but-not-free">4. Visibility Changes Are (Mostly) Reversible — But Not Free</h3><pre><code class="language-mermaid">flowchart LR
+    direction LR
+    PUB[🟢 Public] --&gt;|&quot;--visibility private&quot;| PRIV[🔴 Private]
+    PRIV --&gt;|&quot;--visibility public&quot;| PUB2[🟢 Public]
+
+    PUB -.-&gt;|Fork network: connected| NET[Fork Graph]
+    PRIV -.-&gt;|Fork network: SEVERED| NET2[Fork Graph Broken]
+    PUB2 -.-&gt;|Fork network: NOT restored| NET2
+
+    style NET2 fill:#ff6b6b,stroke:#c92a2a,color:#fff
+</code></pre><p>For standalone repos (like mine), the flip is fully reversible — no permanent damage. But for real forks, the fork network break is <strong>permanent</strong> even after flipping back.</p><h3 id="5.-ai-advice-is-not-gospel">5. AI Advice Is Not Gospel</h3><p>I got this advice from another AI tool. It was confident, detailed, and <strong>factually wrong</strong>. The lesson: always verify factual claims before acting on them, especially when the action is hard to undo.</p><hr /><h2 id="the-current-state">The Current State</h2><p>All 21 repos are <strong>PUBLIC</strong> and staying that way:</p><pre><code class="language-bash">$ gh repo list nurazhardotcom --limit 25 --json name,visibility --jq &apos;.[] | &quot;\(.visibility)\t\(.name)&quot;&apos;
+
+PUBLIC  blog.nurazhar.com
+PUBLIC  hermes-agent
+PUBLIC  sol-de-tracker
+PUBLIC  nurazhardotcom
+PUBLIC  lagu-lagu
+PUBLIC  frontend
+PUBLIC  bsv-clj
+PUBLIC  aur-audit
+PUBLIC  bitcoin-wiki
+PUBLIC  headhunter-agent
+PUBLIC  bitcoin
+PUBLIC  lithan_smartshop
+PUBLIC  lithan_assignments
+PUBLIC  lithan-dev-sandbox
+</code></pre><hr /><h2 id="key-takeaway">Key Takeaway</h2><blockquote><p><strong>Never change repo visibility based on unverified advice.</strong></p><p>One API call. Five seconds. Would have saved 24 hours.</p></blockquote><hr /><p><em>Written at 2:00 AM because I couldn&apos;t sleep thinking about this. The Mermaid diagrams render on GitHub natively — if you&apos;re reading this in a viewer that doesn&apos;t support Mermaid, the source is in the <a href="https://github.com/nurazhardotcom/blog.nurazhar.com">blog repo</a>.</em></p></div>
+
+<p><i>Published: 2026-06-19</i></p>
+
+<p>
+  <i>
+  Tagged:
+  
+  <span class="tag">
+    <a href="tags/devops.html">devops</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/github.html">github</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/mermaid.html">mermaid</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/career.html">career</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/mistakes.html">mistakes</a>
+  </span>
+  
+  </i>
+</p>
+
+
+
+      
+      <div style="margin-bottom: 20px; float: right;">
+        <a class="page-link" href="archive.html">Archive</a>
+      </div>
+      
+    </div>
+    
+    <footer class="site-footer" style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--code-border); font-size: 0.85rem; color: var(--text-color); opacity: 0.8;">
+      <div class="wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
+            <img alt="Creative Commons License" style="border-width:0; height: 31px;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+          </a>
+        </div>
+        <div>
+          This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" style="color: var(--link-color); text-decoration: underline;">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+        </div>
+        <div style="font-size: 0.75rem; opacity: 0.6;">
+          &copy; 2026 Nur Azhar. Build in public.
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.getElementById('theme-toggle');
+        if (toggleButton) {
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          toggleButton.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+          
+          toggleButton.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            try {
+              localStorage.setItem('theme', next);
+            } catch (e) {
+              console.warn('Storage blocked: theme preference will not persist.');
+            }
+            toggleButton.textContent = next === 'dark' ? '☀️' : '🌙';
+          });
+        }
+      });
+    </script>
+    <script>
+      (function() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+        
+        fetch('https://asia-southeast1-nurazhardotcom.cloudfunctions.net/blog-analytics-api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: window.location.pathname,
+            referrer: document.referrer || null
+          })
+        }).catch(err => console.error('Tracking failed', err));
+      })();
+    </script>
+  </body>
+</html>

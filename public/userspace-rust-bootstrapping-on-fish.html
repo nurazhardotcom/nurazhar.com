@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      (function() {
+        try {
+          const savedTheme = localStorage.getItem('theme');
+          const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+    <title>Least Privilege Devops: Userspace Rust Toolchain Bootstrapping on Fish Shell — Bitcoin, AI Agents, Protocol Engineering</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="application/atom+xml" rel="alternate" href="atom.xml" title="Least Privilege Devops: Userspace Rust Toolchain Bootstrapping on Fish Shell">
+    <link rel="stylesheet" href="style.css">
+    <link rel="sitemap" type="application/xml" href="sitemap.xml">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css">
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      mermaid.initialize({ startOnLoad: false, theme: 'default' });
+      document.addEventListener("DOMContentLoaded", async () => {
+        const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
+        for (const codeBlock of codeBlocks) {
+          const pre = codeBlock.parentElement;
+          const div = document.createElement("div");
+          div.className = "mermaid";
+          div.textContent = codeBlock.textContent;
+          pre.replaceWith(div);
+        }
+        await mermaid.run();
+      });
+    </script>
+
+
+
+    <!-- Social sharing (Facebook, Twitter, LinkedIn, etc.) -->
+    <meta name="title" content="Least Privilege Devops: Userspace Rust Toolchain Bootstrapping on Fish Shell">
+    <meta name="twitter:title" content="Least Privilege Devops: Userspace Rust Toolchain Bootstrapping on Fish Shell">
+    <meta property="og:title" content="Least Privilege Devops: Userspace Rust Toolchain Bootstrapping on Fish Shell">
+    <meta property="og:type" content="article">
+    <meta property="og:locale" content="en_SG">
+    <meta property="og:site_name" content="Nur Azhar's Blog">
+
+    <meta name="description" content="Why installing developer toolchains like Rust inside userspace ($HOME) is structurally superior to system-wide installations, and how to bootstrap it cleanly using the Fish shell path architecture.">
+    <meta name="twitter:description" content="Why installing developer toolchains like Rust inside userspace ($HOME) is structurally superior to system-wide installations, and how to bootstrap it cleanly using the Fish shell path architecture.">
+    <meta property="og:description" content="Why installing developer toolchains like Rust inside userspace ($HOME) is structurally superior to system-wide installations, and how to bootstrap it cleanly using the Fish shell path architecture.">
+
+
+    <meta name="twitter:url" content="https://blog.nurazhar.com/userspace-rust-bootstrapping-on-fish.html">
+    <meta property="og:url" content="https://blog.nurazhar.com/userspace-rust-bootstrapping-on-fish.html">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image:alt" content="Nur Azhar's Blog - Bitcoin, AI Agents, Protocol Engineering">
+
+
+    <meta name="author" content="Nur Azhar">
+
+
+
+    <!-- JSON-LD Structured Data: WebSite -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Nur Azhar's Blog",
+  "url": "https://blog.nurazhar.com",
+  "description": "My technical blog to document my learnings",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  }
+}
+    </script>
+
+    <!-- JSON-LD Structured Data: BlogPosting -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Least Privilege Devops: Userspace Rust Toolchain Bootstrapping on Fish Shell",
+  "description": "Why installing developer toolchains like Rust inside userspace ($HOME) is structurally superior to system-wide installations, and how to bootstrap it cleanly using the Fish shell path architecture.",
+  "datePublished": "2026-06-14",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  },
+  "url": "https://blog.nurazhar.com/userspace-rust-bootstrapping-on-fish.html",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://blog.nurazhar.com/userspace-rust-bootstrapping-on-fish.html"
+  }
+}
+    </script>
+
+  </head>
+  <body>
+
+    <div class="site-header">
+      <div class="wrapper">
+        <div class="site-nav">
+          <a class="page-link" href="stats.html">Stats</a>
+          <a class="page-link" href="kanban.html">Kanban</a>
+          <a class="page-link" href="archive.html">Archive</a>
+          <a class="page-link" href="tags/index.html">Tags</a>
+          
+	  <a class="page-link" href="atom.xml">
+            Feed
+          </a>
+	  
+	  
+	  <a class="page-link" href="https://nurazhar.com/">About</a>
+	  
+          <button id="theme-toggle" style="background: none; border: none; cursor: pointer; padding: 0 10px; font-size: 1.2rem; vertical-align: middle;" aria-label="Toggle theme">🌙</button>
+        </div>
+        <div style="display: flex; align-items: center;">
+          <div>
+            <h1 class="site-title" style="margin: 0;">
+              <a class="page-link" href="index.html">Nur Azhar</a>
+            </h1>
+            <p style="margin: 2px 0 0 0;">My technical blog to document my learnings</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrapper">
+
+      <h1>
+  
+  Least Privilege Devops: Userspace Rust Toolchain Bootstrapping on Fish Shell
+  
+</h1>
+<div><hr /><p>In systems administration and software security engineering, one of the most common anti-patterns is installing development runtimes globally via system package managers (e.g., <code>sudo pacman -S</code> or <code>sudo apt-get install</code>).</p><p>While convenient, this practice introduces unnecessary structural entropy and violates the <strong>Principle of Least Privilege (PoLP)</strong>. Here is why userspace installations are superior, followed by a clean bootstrapping script for modern environments running the <strong>Fish shell</strong>.</p><hr /><h3 id="the-security-&amp;-operations-case-for-userspace">The Security &amp; Operations Case for Userspace</h3><ol start="1"><li><strong>Privilege Isolation</strong>: Compilers, linters, package managers, and binary downloaders do not require root permissions. Running them system-wide creates unnecessary attack surface. A vulnerability in a cargo build script (<code>build.rs</code>) or a malicious dependency should never have write access to <code>/usr/bin</code> or <code>/etc</code>.</li><li><strong>Deterministic Version Management</strong>: Modern development moves faster than operating system release cycles. Systems that manage toolchains locally in <code>$HOME/.cargo</code> or <code>$HOME/.rustup</code> allow developers to pin toolchains per project without risking conflicts with OS-level binaries.</li><li><strong>No Configuration Drift</strong>: System updates should not break your development environments. Keeping the compiler toolchain within the user context ensures clean isolation from core OS updates.</li></ol><hr /><h3 id="bootstrapping-rust-in-userspace-(via-fish-shell)">Bootstrapping Rust in Userspace (via Fish Shell)</h3><p>Most legacy bootstrap instructions assume Bash or Zsh, resulting in messy exports appended to <code>.bashrc</code> or <code>.zshrc</code>.</p><p>On modern setups running the <strong>Fish shell</strong>, we can use Fish&apos;s native universal path variables to cleanly expose the userspace binaries without modifying global configuration files.</p><h4 id="step-1:-userspace-installation">Step 1: Userspace Installation</h4><p>Run the official installer. The <code>--no-modify-path</code> flag is critical—it prevents the installer from trying to append legacy bash syntax to your dotfiles.</p><pre><code class="language-fish">curl --proto &apos;=https&apos; --sv1.2 -sSf https://sh.rustup.rs | sh -s -- --no-modify-path
+</code></pre><h4 id="step-2:-configure-the-user-path-in-fish">Step 2: Configure the User Path in Fish</h4><p>Instead of manually editing config files, Fish provides the <code>fish_add_path</code> helper. This modifies the <code>fish_user_paths</code> universal variable securely and permanently.</p><pre><code class="language-fish">fish_add_path $HOME/.cargo/bin
+</code></pre><p>This updates your user path configuration immediately across all active and future Fish sessions.</p><hr /><h3 id="verification">Verification</h3><p>Confirm that the compiler is running from userspace:</p><pre><code class="language-fish">which rustc
+# Output: /home/username/.cargo/bin/rustc
+</code></pre><p>By confining the compiler, compiler tooling, and cargo crates to userspace, we achieve zero system footprint, high version control flexibility, and a much cleaner security posture.</p><hr /><p><em>Related: <a href="./cachyos-rate-mirrors-timer-fix.md">CachyOS Mirror Timer Fix</a></em></p></div>
+
+<p><i>Published: 2026-06-14</i></p>
+
+<p>
+  <i>
+  Tagged:
+  
+  <span class="tag">
+    <a href="tags/security.html">security</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/rust.html">rust</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/linux.html">linux</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/systems.html">systems</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/fish.html">fish</a>
+  </span>
+  
+  </i>
+</p>
+
+
+
+      
+      <div style="margin-bottom: 20px; float: right;">
+        <a class="page-link" href="archive.html">Archive</a>
+      </div>
+      
+    </div>
+    
+    <footer class="site-footer" style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--code-border); font-size: 0.85rem; color: var(--text-color); opacity: 0.8;">
+      <div class="wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
+            <img alt="Creative Commons License" style="border-width:0; height: 31px;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+          </a>
+        </div>
+        <div>
+          This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" style="color: var(--link-color); text-decoration: underline;">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+        </div>
+        <div style="font-size: 0.75rem; opacity: 0.6;">
+          &copy; 2026 Nur Azhar. Build in public.
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.getElementById('theme-toggle');
+        if (toggleButton) {
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          toggleButton.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+          
+          toggleButton.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            try {
+              localStorage.setItem('theme', next);
+            } catch (e) {
+              console.warn('Storage blocked: theme preference will not persist.');
+            }
+            toggleButton.textContent = next === 'dark' ? '☀️' : '🌙';
+          });
+        }
+      });
+    </script>
+    <script>
+      (function() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+        
+        fetch('https://asia-southeast1-nurazhardotcom.cloudfunctions.net/blog-analytics-api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: window.location.pathname,
+            referrer: document.referrer || null
+          })
+        }).catch(err => console.error('Tracking failed', err));
+      })();
+    </script>
+  </body>
+</html>

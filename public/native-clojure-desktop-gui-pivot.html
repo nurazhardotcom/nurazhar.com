@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      (function() {
+        try {
+          const savedTheme = localStorage.getItem('theme');
+          const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+    <title>The Browser is Fragile: Why I Nuked My Web GUI for Native Clojure Desktop — Bitcoin, AI Agents, Protocol Engineering</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="application/atom+xml" rel="alternate" href="atom.xml" title="The Browser is Fragile: Why I Nuked My Web GUI for Native Clojure Desktop">
+    <link rel="stylesheet" href="style.css">
+    <link rel="sitemap" type="application/xml" href="sitemap.xml">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css">
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      mermaid.initialize({ startOnLoad: false, theme: 'default' });
+      document.addEventListener("DOMContentLoaded", async () => {
+        const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
+        for (const codeBlock of codeBlocks) {
+          const pre = codeBlock.parentElement;
+          const div = document.createElement("div");
+          div.className = "mermaid";
+          div.textContent = codeBlock.textContent;
+          pre.replaceWith(div);
+        }
+        await mermaid.run();
+      });
+    </script>
+
+
+
+    <!-- Social sharing (Facebook, Twitter, LinkedIn, etc.) -->
+    <meta name="title" content="The Browser is Fragile: Why I Nuked My Web GUI for Native Clojure Desktop">
+    <meta name="twitter:title" content="The Browser is Fragile: Why I Nuked My Web GUI for Native Clojure Desktop">
+    <meta property="og:title" content="The Browser is Fragile: Why I Nuked My Web GUI for Native Clojure Desktop">
+    <meta property="og:type" content="article">
+    <meta property="og:locale" content="en_SG">
+    <meta property="og:site_name" content="Nur Azhar's Blog">
+
+    <meta name="description" content="I tried building headhunter-agent as a web app. It broke. In minutes, I nuked the browser code and rewrote it as a native cljfx desktop app. Here is why.">
+    <meta name="twitter:description" content="I tried building headhunter-agent as a web app. It broke. In minutes, I nuked the browser code and rewrote it as a native cljfx desktop app. Here is why.">
+    <meta property="og:description" content="I tried building headhunter-agent as a web app. It broke. In minutes, I nuked the browser code and rewrote it as a native cljfx desktop app. Here is why.">
+
+
+    <meta name="twitter:url" content="https://blog.nurazhar.com/native-clojure-desktop-gui-pivot.html">
+    <meta property="og:url" content="https://blog.nurazhar.com/native-clojure-desktop-gui-pivot.html">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image:alt" content="Nur Azhar's Blog - Bitcoin, AI Agents, Protocol Engineering">
+
+
+    <meta name="author" content="Nur Azhar">
+
+
+
+    <!-- JSON-LD Structured Data: WebSite -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Nur Azhar's Blog",
+  "url": "https://blog.nurazhar.com",
+  "description": "My technical blog to document my learnings",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  }
+}
+    </script>
+
+    <!-- JSON-LD Structured Data: BlogPosting -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "The Browser is Fragile: Why I Nuked My Web GUI for Native Clojure Desktop",
+  "description": "I tried building headhunter-agent as a web app. It broke. In minutes, I nuked the browser code and rewrote it as a native cljfx desktop app. Here is why.",
+  "datePublished": "2026-06-08",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  },
+  "url": "https://blog.nurazhar.com/native-clojure-desktop-gui-pivot.html",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://blog.nurazhar.com/native-clojure-desktop-gui-pivot.html"
+  }
+}
+    </script>
+
+  </head>
+  <body>
+
+    <div class="site-header">
+      <div class="wrapper">
+        <div class="site-nav">
+          <a class="page-link" href="stats.html">Stats</a>
+          <a class="page-link" href="kanban.html">Kanban</a>
+          <a class="page-link" href="archive.html">Archive</a>
+          <a class="page-link" href="tags/index.html">Tags</a>
+          
+	  <a class="page-link" href="atom.xml">
+            Feed
+          </a>
+	  
+	  
+	  <a class="page-link" href="https://nurazhar.com/">About</a>
+	  
+          <button id="theme-toggle" style="background: none; border: none; cursor: pointer; padding: 0 10px; font-size: 1.2rem; vertical-align: middle;" aria-label="Toggle theme">🌙</button>
+        </div>
+        <div style="display: flex; align-items: center;">
+          <div>
+            <h1 class="site-title" style="margin: 0;">
+              <a class="page-link" href="index.html">Nur Azhar</a>
+            </h1>
+            <p style="margin: 2px 0 0 0;">My technical blog to document my learnings</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrapper">
+
+      <h1>
+  
+  The Browser is Fragile: Why I Nuked My Web GUI for Native Clojure Desktop
+  
+</h1>
+<div><hr /><p>I&apos;ve been building <strong><code>headhunter-agent</code></strong>—a local-first job search assistant and resume compiler—to automate my career strategy.</p><p>Initially, I tried building it as a web app. It was a fragile mess. In under ten minutes of debugging browser errors, I nuked the web files and rewrote the entire thing as a native Clojure desktop app using <strong><code>cljfx</code> (JavaFX)</strong>.</p><p>Here is the unfiltered story of how it went down, and why the browser is the wrong sandbox for local-first tools.</p><hr /><h2 id="1.-the-design:-deep-profiling-&amp;-multi-agent-evaluations">1. The Design: Deep Profiling &amp; Multi-Agent Evaluations</h2><p>The project started as a fork of <code>career-ops</code>, a basic Babashka CLI. But standard resume builders are shallow keyword-stuffers. They produce generic garbage that falls apart in real interviews.</p><p>To fix this, I re-architected it around three core requirements:</p><ul><li><strong>A Data Vault:</strong> An EDN database containing full qualifications, deep work history, and a curated library of <strong>8-12 STAR stories</strong> (Situation, Task, Action, Result).</li><li><strong>A 3-Stage Multi-Agent System (MAS):</strong><ul><li><strong>Agent 1 (FCF Audit):</strong> Auditing the Job Description for legitimacy and Singapore&apos;s Fair Consideration Framework red flags.</li><li><strong>Agent 2 (Fit Analysis):</strong> A brutal comparison of Master Profile gaps/strengths against the JD.</li><li><strong>Agent 3 (Cheat Sheet):</strong> Business model deep dive, tech stack mapping, and cold outreach targets.</li></ul></li><li><strong>Interview Prep:</strong> Cross-referencing the JD with my STAR stories to map out exact answers to the 5 most likely questions.</li></ul><hr /><h2 id="2.-the-browser-fails-(the-10-minute-pivot)">2. The Browser Fails (The 10-Minute Pivot)</h2><p>To build a GUI, I initially went the default route: ClojureScript with Reagent, using <strong>Scittle</strong> to interpret it directly in the browser on GitHub Pages (<code>headhunter.nurazhar.com</code>). I used <code>typst.ts</code> (WASM) to compile PDFs in-browser.</p><p>It was fragile from day one. Web specs evolve, local storage is restrictive, and state-syncing inside a browser sandbox is prone to weird bugs. When <code>headhunter.nurazhar.com</code> failed to load, I didn&apos;t want to waste hours wrestling with browser console errors and JS dependency hell.</p><p>The web stack is bloated. So, we deleted the web code and pivoted.</p><hr /><h2 id="3.-native-desktop-gui-with-cljfx">3. Native Desktop GUI with <code>cljfx</code></h2><p>Instead of the browser, I shifted to <strong><code>cljfx</code></strong>, a declarative wrapper for JavaFX.</p><p>Now, it is a standalone desktop application. No local web servers, no browser tabs, no JavaScript. It runs directly on the JVM, rendering native desktop windows on Arch/CachyOS.</p><p>Why this actually works:</p><ol start="1"><li><strong>Zero Browser Bloat:</strong> It is a compiled program, not a tab running in an engine.</li><li><strong>Immutable UI State:</strong> The entire app state is inside a single Clojure atom. The UI is a pure function of the data. If the data is correct, the UI literally cannot render bugs.</li><li><strong>No Thread Freezing:</strong> Heavy Gemini API calls run in Clojure <code>futures</code> (background threads), while <code>Platform/runLater</code> dispatches the results back to the main UI. The desktop app stays responsive at 60 FPS while the agents run.</li><li><strong>Local Privacy:</strong> Everything is saved as local <code>.edn</code> files. No network syncing, no cloud databases, no trackers.</li></ol><hr /><h2 id="conclusion">Conclusion</h2><p>We are conditioned to default to the web for everything. But for local-first utilities, the browser is just a bloated, insecure sandbox that gets in the way.</p><p>Writing a native desktop app in Clojure is faster, runs better, and is vastly more stable. If your local tools are acting up because of browser quirks, stop trying to fix the JS bundle. Just delete it.</p><p><em>Codebase:</em> <strong><a href="https://github.com/nurazhardotcom/headhunter-agent">headhunter-agent</a></strong></p></div>
+
+<p><i>Published: 2026-06-08</i></p>
+
+<p>
+  <i>
+  Tagged:
+  
+  <span class="tag">
+    <a href="tags/automation.html">automation</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/clojure.html">clojure</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/multi-agent-system.html">multi-agent-system</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/cljfx.html">cljfx</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/career-ops.html">career-ops</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/desktop-gui.html">desktop-gui</a>
+  </span>
+  
+  </i>
+</p>
+
+
+
+      
+      <div style="margin-bottom: 20px; float: right;">
+        <a class="page-link" href="archive.html">Archive</a>
+      </div>
+      
+    </div>
+    
+    <footer class="site-footer" style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--code-border); font-size: 0.85rem; color: var(--text-color); opacity: 0.8;">
+      <div class="wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
+            <img alt="Creative Commons License" style="border-width:0; height: 31px;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+          </a>
+        </div>
+        <div>
+          This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" style="color: var(--link-color); text-decoration: underline;">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+        </div>
+        <div style="font-size: 0.75rem; opacity: 0.6;">
+          &copy; 2026 Nur Azhar. Build in public.
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.getElementById('theme-toggle');
+        if (toggleButton) {
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          toggleButton.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+          
+          toggleButton.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            try {
+              localStorage.setItem('theme', next);
+            } catch (e) {
+              console.warn('Storage blocked: theme preference will not persist.');
+            }
+            toggleButton.textContent = next === 'dark' ? '☀️' : '🌙';
+          });
+        }
+      });
+    </script>
+    <script>
+      (function() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+        
+        fetch('https://asia-southeast1-nurazhardotcom.cloudfunctions.net/blog-analytics-api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: window.location.pathname,
+            referrer: document.referrer || null
+          })
+        }).catch(err => console.error('Tracking failed', err));
+      })();
+    </script>
+  </body>
+</html>

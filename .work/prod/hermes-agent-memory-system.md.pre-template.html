@@ -1,0 +1,22 @@
+<div><h1 id="how-hermes-agent-memory-actually-works">How Hermes Agent Memory Actually Works</h1><p>Unlike conversational AIs that absorb patterns unconsciously, Hermes uses <strong>explicit durable memory</strong> - you decide what gets stored and what gets forgotten.</p><h2 id="the-memory-architecture">The Memory Architecture</h2><pre><code class="language-mermaid">flowchart TD
+    subgraph &quot;Persistent Storage&quot;
+        A[&quot;~/.hermes/memories/user.md&quot;] --&gt;|1,375 char limit| B[Character Budget]
+        C[&quot;~/.hermes/memories/memory.md&quot;] --&gt;|Same limit| B
+    end
+    
+    subgraph &quot;Runtime Context&quot;
+        D[Hermes Session] --&gt;|Injects both memories| E{LLM Decision}
+        B --&gt;|Injected into every prompt| D
+        F[Skills Directory] --&gt;|Loaded on-demand| D
+    end
+    
+    subgraph &quot;User Control&quot;
+        G[Explicit memory calls] --&gt;|add/replace/remove| A
+        H[Explicit skill calls] --&gt;|create/patch/delete| F
+    end
+    
+    style A fill:#1e1e2e,stroke:#cba6f7,color:#cdd6f4
+    style C fill:#1e1e2e,stroke:#cba6f7,color:#cdd6f4
+    style G fill:#313244,stroke:#a6e3a1,color:#cdd6f4
+    style H fill:#313244,stroke:#a6e3a1,color:#cdd6f4
+</code></pre><h2 id="key-constraints">Key Constraints</h2><ul><li><strong>Hard 1,375 character limit</strong> per memory file</li><li>No unconscious pattern absorption</li><li>No session-to-session learning without explicit <code>memory</code> tool calls</li><li>Skills (<code>skill_manage</code>) for procedural memory - separate from user facts</li></ul><h2 id="why-this-matters">Why This Matters</h2><table><thead><tr><th>Feature</th><th>Hermes Agent</th><th>Perplexity/Antigravity</th></tr></thead><tbody><tr><td>Pattern learning</td><td>❌ Explicit only</td><td>✅ Unconscious absorption</td></tr><tr><td>Memory limit</td><td>1,375 chars hard cap</td><td>Unlimited cloud storage</td></tr><tr><td>Memory drift</td><td>Impossible - you control all writes</td><td>Inevitable - patterns shift</td></tr><tr><td>Tool execution</td><td>✅ Direct to your terminal</td><td>❌ Chat only</td></tr></tbody></table><h2 id="practical-implications">Practical Implications</h2><p>When you tell Hermes something via <code>memory</code>, it:</p><ol start="1"><li>Gets stored in plain text markdown</li><li>Is injected into every subsequent prompt in that profile</li><li>Can be read/modified/deleted anytime via <code>memory</code> tool</li></ol><p>No magic. No drift. No unconscious learning. Just explicit, durable facts you control.</p><blockquote><p>This blog post was written to clarify how Hermes memory works after confusion about unconscious pattern absorption. It&apos;s a feature, not a bug - you stay in control.</p></blockquote></div>

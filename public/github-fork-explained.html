@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      (function() {
+        try {
+          const savedTheme = localStorage.getItem('theme');
+          const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+    <title>What Is a GitHub Fork? (And Why Mine Was Broken) — Bitcoin, AI Agents, Protocol Engineering</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="application/atom+xml" rel="alternate" href="atom.xml" title="What Is a GitHub Fork? (And Why Mine Was Broken)">
+    <link rel="stylesheet" href="style.css">
+    <link rel="sitemap" type="application/xml" href="sitemap.xml">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css">
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      mermaid.initialize({ startOnLoad: false, theme: 'default' });
+      document.addEventListener("DOMContentLoaded", async () => {
+        const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
+        for (const codeBlock of codeBlocks) {
+          const pre = codeBlock.parentElement;
+          const div = document.createElement("div");
+          div.className = "mermaid";
+          div.textContent = codeBlock.textContent;
+          pre.replaceWith(div);
+        }
+        await mermaid.run();
+      });
+    </script>
+
+
+
+    <!-- Social sharing (Facebook, Twitter, LinkedIn, etc.) -->
+    <meta name="title" content="What Is a GitHub Fork? (And Why Mine Was Broken)">
+    <meta name="twitter:title" content="What Is a GitHub Fork? (And Why Mine Was Broken)">
+    <meta property="og:title" content="What Is a GitHub Fork? (And Why Mine Was Broken)">
+    <meta property="og:type" content="article">
+    <meta property="og:locale" content="en_SG">
+    <meta property="og:site_name" content="Nur Azhar's Blog">
+
+    <meta name="description" content="I tried to contribute a feature to Hermes Agent and discovered my repo wasn&#39;t actually a fork. Here&#39;s what I learned about how GitHub forks work -- and why &quot;fork&quot; on GitHub doesn&#39;t mean what I thought it meant.">
+    <meta name="twitter:description" content="I tried to contribute a feature to Hermes Agent and discovered my repo wasn&#39;t actually a fork. Here&#39;s what I learned about how GitHub forks work -- and why &quot;fork&quot; on GitHub doesn&#39;t mean what I thought it meant.">
+    <meta property="og:description" content="I tried to contribute a feature to Hermes Agent and discovered my repo wasn&#39;t actually a fork. Here&#39;s what I learned about how GitHub forks work -- and why &quot;fork&quot; on GitHub doesn&#39;t mean what I thought it meant.">
+
+
+    <meta name="twitter:url" content="https://blog.nurazhar.com/github-fork-explained.html">
+    <meta property="og:url" content="https://blog.nurazhar.com/github-fork-explained.html">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image:alt" content="Nur Azhar's Blog - Bitcoin, AI Agents, Protocol Engineering">
+
+
+    <meta name="author" content="Nur Azhar">
+
+
+
+    <!-- JSON-LD Structured Data: WebSite -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Nur Azhar's Blog",
+  "url": "https://blog.nurazhar.com",
+  "description": "My technical blog to document my learnings",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  }
+}
+    </script>
+
+    <!-- JSON-LD Structured Data: BlogPosting -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "What Is a GitHub Fork? (And Why Mine Was Broken)",
+  "description": "I tried to contribute a feature to Hermes Agent and discovered my repo wasn&#39;t actually a fork. Here&#39;s what I learned about how GitHub forks work -- and why &quot;fork&quot; on GitHub doesn&#39;t mean what I thought it meant.",
+  "datePublished": "2026-06-20",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  },
+  "url": "https://blog.nurazhar.com/github-fork-explained.html",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://blog.nurazhar.com/github-fork-explained.html"
+  }
+}
+    </script>
+
+  </head>
+  <body>
+
+    <div class="site-header">
+      <div class="wrapper">
+        <div class="site-nav">
+          <a class="page-link" href="stats.html">Stats</a>
+          <a class="page-link" href="kanban.html">Kanban</a>
+          <a class="page-link" href="archive.html">Archive</a>
+          <a class="page-link" href="tags/index.html">Tags</a>
+          
+	  <a class="page-link" href="atom.xml">
+            Feed
+          </a>
+	  
+	  
+	  <a class="page-link" href="https://nurazhar.com/">About</a>
+	  
+          <button id="theme-toggle" style="background: none; border: none; cursor: pointer; padding: 0 10px; font-size: 1.2rem; vertical-align: middle;" aria-label="Toggle theme">🌙</button>
+        </div>
+        <div style="display: flex; align-items: center;">
+          <div>
+            <h1 class="site-title" style="margin: 0;">
+              <a class="page-link" href="index.html">Nur Azhar</a>
+            </h1>
+            <p style="margin: 2px 0 0 0;">My technical blog to document my learnings</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrapper">
+
+      <h1>
+  
+  What Is a GitHub Fork? (And Why Mine Was Broken)
+  
+</h1>
+<div><hr /><h2 id="the-confusion">The Confusion</h2><p>I built a <a href="/hermes-desktop-bulk-session-archive.html">bulk session archive feature</a> for Hermes Desktop. To contribute it back to the project, I needed to create a pull request to <code>NousResearch/hermes-agent</code>.</p><p>But GitHub said: <em>&quot;There isn&apos;t anything to compare.&quot;</em></p><p>I had a repo called <code>nurazhardotcom/hermes-agent</code> with the code, the branch, and the commits. It should work, right?</p><p>Wrong. My repo was <strong>not a fork</strong>. It was a standalone copy.</p><p>I didn&apos;t understand what a GitHub fork actually was. Here&apos;s what I learned.</p><h2 id="traditional-fork-vs-github-fork">Traditional Fork vs GitHub Fork</h2><p>When I hear &quot;fork,&quot; I think of real divergences — projects that split and became independent. Let me show you three examples.</p><h3 id="linux-distributions">Linux Distributions</h3><pre><code class="language-mermaid">%%{init: {&quot;theme&quot;: &quot;default&quot;}}%%
+flowchart TD
+    D[&quot;Debian&lt;br/&gt;1993&quot;]:::base
+    U[&quot;Ubuntu&lt;br/&gt;2004&quot;]:::fork
+    A[&quot;Arch Linux&lt;br/&gt;2002&quot;]:::fork
+    C[&quot;CentOS&lt;br/&gt;2004&quot;]:::fork
+    R[&quot;RHEL&quot;]:::rhel
+    SUSE[&quot;SUSE Linux&lt;br/&gt;1994&quot;]:::fork
+    
+    D --&gt;|&quot;fork → diverged&quot;| U
+    D --&gt;|&quot;inspired&quot;| A
+    R --&gt;|&quot;fork of&quot;| C
+    
+    D --&gt;|&quot;continues independently&quot;| D2[&quot;Debian → → →&quot;]:::base
+    U --&gt;|&quot;continues independently&quot;| U2[&quot;Ubuntu → → →&quot;]:::fork
+    A --&gt;|&quot;continues independently&quot;| A2[&quot;Arch → → →&quot;]:::fork
+    C --&gt;|&quot;continues independently&quot;| C2[&quot;CentOS → → →&quot;]:::fork
+    
+    SUSE ~~~|&quot;no connection&quot;| D
+    
+    classDef base fill:#e3f2fd,stroke:#2196f3,stroke-width:2px;
+    classDef fork fill:#fff3e0,stroke:#ff9800,stroke-width:2px;
+    classDef rhel fill:#e8f5e9,stroke:#4caf50,stroke-width:2px;
+</code></pre><p>Ubuntu forked Debian. They went separate ways — different package managers (apt vs dpkg directly), different release cycles, different communities. The fork created <strong>two independent projects</strong> that never merge back.</p><h3 id="bitcoin">Bitcoin</h3><pre><code class="language-mermaid">%%{init: {&quot;theme&quot;: &quot;default&quot;}}%%
+flowchart TD
+    SATOSHI[&quot;Satoshi&apos;s Whitepaper&lt;br/&gt;2008&lt;br/&gt;P2P Electronic Cash&quot;]:::base
+    V01[&quot;Bitcoin v0.1&lt;br/&gt;2009&lt;br/&gt;Original Protocol&quot;]:::base
+    
+    BTC[&quot;Bitcoin (BTC)&lt;br/&gt;2017+&lt;br/&gt;SegWit + Taproot&lt;br/&gt;L2 Lightning&lt;br/&gt;❌ NOT whitepaper&quot;]:::altcoin
+    BCH[&quot;Bitcoin Cash (BCH)&lt;br/&gt;2017&lt;br/&gt;bigger blocks&lt;br/&gt;kept some changes&quot;]:::fork
+    BSV[&quot;Bitcoin SV (BSV)&lt;br/&gt;2018&lt;br/&gt;unbounded scaling&lt;br/&gt;sub-cent fees, SPV&lt;br/&gt;✅ nearest to whitepaper&quot;]:::bsv
+    
+    V01 --&gt;|&quot;PROTOCOL DRIFT&lt;br/&gt;soft forks added&quot;| BTC
+    V01 --&gt;|&quot;hard fork&lt;br/&gt;block size debate&quot;| BCH
+    BCH --&gt;|&quot;hard fork&lt;br/&gt;restore original&quot;| BSV
+    
+    BSV -.-&gt;|&quot;restores&lt;br/&gt;Satoshi&apos;s design&quot;| SATOSHI
+    BTC -.-&gt;|&quot;diverges from&lt;br/&gt;whitepaper&quot;| SATOSHI
+    
+    classDef base fill:#e3f2fd,stroke:#2196f3,stroke-width:2px;
+    classDef bsv fill:#ffd700,stroke:#ff8c00,stroke-width:3px;
+    classDef fork fill:#fff3e0,stroke:#ff9800,stroke-width:2px;
+    classDef altcoin fill:#ffcccc,stroke:#cc0000,stroke-width:2px;
+</code></pre><p><strong>Critical correction:</strong> The common narrative says &quot;BTC = Bitcoin&apos;s whitepaper.&quot; That&apos;s wrong.</p><ul><li><strong>Satoshi&apos;s whitepaper (2008):</strong> Peer-to-peer electronic cash. Unbounded on-chain scaling. Sub-cent fees. SPV.</li><li><strong>Bitcoin v0.1 (2009):</strong> The original implementation that matched the whitepaper.</li><li><strong>BTC (today):</strong> Added SegWit (2017), Taproot (2021), pushed transactions to Lightning L2. These are <strong>protocol changes that deviate from the whitepaper.</strong> Blocks are no longer &quot;unbounded.&quot; Fees are not sub-cent.</li><li><strong>Bitcoin Cash (BCH):</strong> Forked BTC over the block size debate but kept SegWit.</li><li><strong>Bitcoin SV (BSV):</strong> Forked BCH to restore the original protocol — unbounded on-chain scaling, no artificial block caps, sub-cent fees, SPV. <strong>Nearest to Satoshi&apos;s whitepaper and v0.1 design.</strong></li></ul><p>Satoshi&apos;s famous quote: <em>&quot;The design supports a tremendous variety of possible transaction types... the system is not secure if fully anonymous, but the original Bitcoin software is.&quot;</em> BSV follows this. BTC moved to a different vision.</p><p>BSV is not a departure from Bitcoin. BSV <strong>is</strong> Bitcoin — the protocol as originally designed.</p><h3 id="the-pattern">The Pattern</h3><pre><code class="language-mermaid">%%{init: {&quot;theme&quot;: &quot;default&quot;}}%%
+flowchart LR
+    ORIGINAL[&quot;Original Project&quot;]:::base
+    
+    FK1[&quot;Fork A&lt;br/&gt;goes own way&quot;]:::fork
+    FK2[&quot;Fork B&lt;br/&gt;goes own way&quot;]:::fork
+    FK3[&quot;Fork C&lt;br/&gt;goes own way&quot;]:::fork
+    
+    ORIGINAL --&gt;|&quot;fork&lt;br/&gt;(depart)&quot;| FK1
+    ORIGINAL --&gt;|&quot;fork&lt;br/&gt;depart)&quot;| FK2
+    ORIGINAL --&gt;|&quot;fork&lt;br/&gt;depart)&quot;| FK3
+    
+    ORIGINAL --&gt;|&quot;continues&quot;| ORIGINAL2[&quot;Original → → →&quot;]:::base
+    
+    FK1 ~~~|&quot;never merges back&quot;| ORIGINAL
+    FK2 ~~~|&quot;never merges back&quot;| ORIGINAL
+    FK3 ~~~|&quot;never merges back&quot;| ORIGINAL
+    
+    classDef base fill:#e3f2fd,stroke:#2196f3,stroke-width:2px;
+    classDef fork fill:#fff3e0,stroke:#ff9800,stroke-width:2px;
+</code></pre><p>Every traditional fork follows this pattern:</p><ol start="1"><li><strong>Split</strong> — copy the code, go your own way</li><li><strong>Diverge</strong> — different features, different direction</li><li><strong>Independent</strong> — no merging back, no communication</li></ol><p>That&apos;s what I thought a GitHub fork was. And that&apos;s why I didn&apos;t want one. I didn&apos;t want to be Bitcoin Cash. I wanted to contribute to Bitcoin.</p><h2 id="what-a-github-fork-actually-is">What a GitHub Fork Actually Is</h2><p>A GitHub fork is the <strong>opposite</strong> of a divergence. It&apos;s a <strong>link that points back to the original</strong>.</p><pre><code class="language-mermaid">%%{init: {&quot;theme&quot;: &quot;default&quot;}}%%
+flowchart TD
+    UP[&quot;NousResearch/hermes-agent&lt;br/&gt;UPSTREAM&quot;]:::upstream
+    FK[&quot;nurazhardotcom/hermes-agent&lt;br/&gt;FORK&quot;]:::fork
+    
+    FK --&gt;|&quot;linked to&lt;br/&gt;parent&quot;| UP
+    FK --&gt;|&quot;pull request&lt;br/&gt;goes back&quot;| UP
+    
+    UP -.-&gt;|&quot;Fetch upstream&lt;br/&gt;sync changes&quot;| FK
+    
+    classDef upstream fill:#e8f5e9,stroke:#4caf50,stroke-width:2px;
+    classDef fork fill:#e3f2fd,stroke:#2196f3,stroke-width:2px;
+</code></pre><p>A GitHub fork is like a <strong>branch that lives in your own namespace</strong>. You can push to it freely, but the original project can still see it and accept changes from it.</p><p>The key difference: <strong>GitHub knows the two repos are connected</strong>.</p><h2 id="what-i-actually-did">What I Actually Did</h2><p>I created a <strong>standalone repo</strong> and pushed code to it. From the outside, it looked the same. But GitHub saw this:</p><pre><code class="language-mermaid">%%{init: {&quot;theme&quot;: &quot;default&quot;}}%%
+flowchart TD
+    UP[&quot;NousResearch/hermes-agent&lt;br/&gt;UPSTREAM&quot;]:::upstream
+    MY[&quot;nurazhardotcom/hermes-agent&lt;br/&gt;STANDALONE (not a fork)&quot;]:::broken
+    
+    UP ~~~|&quot;NO CONNECTION&quot;| MY
+    
+    MY --x|&quot;PR to upstream&lt;br/&gt;FAILED&quot;| UP
+    
+    classDef upstream fill:#e8f5e5,stroke:#4caf50,stroke-width:2px;
+    classDef broken fill:#ffebee,stroke:#f44336,stroke-width:2px;
+</code></pre><p>GitHub had no idea these two repos were related. Same commits, same code — but no link. When I tried to open a PR from my repo to upstream, GitHub said:</p><blockquote><p><em>&quot;There isn&apos;t anything to compare. We couldn&apos;t figure out how to compare these references.&quot;</em></p></blockquote><p>Because GitHub&apos;s PR system works by comparing branches <strong>across linked repos</strong>. No link = no comparison = no PR.</p><h2 id="the-three-ways-this-can-go">The Three Ways This Can Go</h2><pre><code class="language-mermaid">%%{init: {&quot;theme&quot;: &quot;default&quot;}}%%
+flowchart LR
+    A[&quot;My standalone repo&lt;br/&gt;nurazhardotcom/hermes-agent&quot;]:::start
+    
+    B[&quot;Option 1:&lt;br/&gt;Delete &amp; re-fork&quot;]:::opt1
+    C[&quot;Option 2:&lt;br/&gt;Rename &amp; re-fork&quot;]:::opt2
+    D[&quot;Option 3:&lt;br/&gt;Keep as-is&lt;br/&gt;no upstream contribution&quot;]:::opt3
+    
+    A --&gt; B
+    A --&gt; C
+    A --&gt; D
+    
+    B --&gt;|&quot;cleanest path&lt;br/&gt;PR works&quot;| E[&quot;✅ Contribute to&lt;br/&gt;NousResearch/hermes-agent&quot;]:::good
+    C --&gt;|&quot;extra repo&lt;br/&gt;PR works&quot;| E
+    D --&gt;|&quot;stays isolated&lt;br/&gt;your own patch&quot;| F[&quot;❌ No upstream&lt;br/&gt;contribution&quot;]:::bad
+    
+    classDef start fill:#fff3e0,stroke:#ff9800,stroke-width:2px;
+    classDef opt1 fill:#e3f2fd,stroke:#2196f3,stroke-width:2px;
+    classDef opt2 fill:#e3f2fd,stroke:#2196f3,stroke-width:2px;
+    classDef opt3 fill:#f5f5f5,stroke:#9e9e9e,stroke-width:2px;
+    classDef good fill:#e8f5e9,stroke:#4caf50,stroke-width:2px;
+    classDef bad fill:#ffebee,stroke:#f44336,stroke-width:2px;
+</code></pre><h3 id="option-1:-delete-&amp;-re-fork-(cleanest)">Option 1: Delete &amp; Re-Fork (Cleanest)</h3><p>Delete <code>nurazhardotcom/hermes-agent</code>. Then use GitHub&apos;s &quot;Fork&quot; button on <code>NousResearch/hermes-agent</code> to create a proper linked fork with the same name. Push your feature branch. Open the PR.</p><p><strong>Pros:</strong> Clean. Same repo name. PR works natively. <strong>Cons:</strong> Lose the existing repo (stars, watchers, any history — though you have none on this one).</p><h3 id="option-2:-rename-&amp;-re-fork-(safely)">Option 2: Rename &amp; Re-Fork (Safely)</h3><p>Rename your current repo to <code>nurazhardotcom/hermes-agent-backup</code>. Fork <code>NousResearch/hermes-agent</code> into the now-free <code>nurazhardotcom/hermes-agent</code> name. Push your branch. Open the PR.</p><p><strong>Pros:</strong> Keep your old repo around. <strong>Cons:</strong> Two repos to manage.</p><h3 id="option-3:-keep-as-is-(no-upstream)">Option 3: Keep As-Is (No Upstream)</h3><p>Leave everything where it is. Your feature lives in your repo only.</p><p><strong>Pros:</strong> Nothing to fix. <strong>Cons:</strong> You can&apos;t contribute to upstream. No PR possible.</p><h2 id="the-difference-in-one-table">The Difference in One Table</h2><table><thead><tr><th>Concept</th><th>Traditional Fork (Ubuntu, BCH)</th><th>GitHub Fork</th></tr></thead><tbody><tr><td><strong>Mechanism</strong></td><td>Copy code, diverge permanently</td><td>GitHub &quot;Fork&quot; button creates linked copy</td></tr><tr><td><strong>Relationship</strong></td><td>Becomes independent immediately</td><td>Stays connected to parent (&quot;forked from...&quot;)</td></tr><tr><td><strong>Direction</strong></td><td>One-way departure</td><td>Two-way: pull from upstream, PR back</td></tr><tr><td><strong>Merging back</strong></td><td>Never re-merges</td><td>Designed for PRs back to original</td></tr><tr><td><strong>Communication</strong></td><td>Ceases after fork</td><td>&quot;Fetch upstream&quot; keeps you synced</td></tr><tr><td><strong>Network effect</strong></td><td>Fragmented — N isolated projects</td><td>Consolidated — contributors cluster on one upstream</td></tr><tr><td><strong>Goal</strong></td><td>Become your own project</td><td>Contribute to the original</td></tr><tr><td><strong>Real examples</strong></td><td>Ubuntu, BCH, BSV, CentOS — all diverged permanently</td><td>Your fork of NousResearch/hermes-agent</td></tr><tr><td><strong>Bitcoin analogy</strong></td><td>BTC added SegWit/Taproot (drifted from whitepaper). BSV restored the original protocol. Neither merges back.</td><td>You fork, you contribute back via PR. The whole point is re-merging.</td></tr><tr><td><strong>Metaphor</strong></td><td>Bitcoin Cash leaving Bitcoin — permanent departure</td><td>A branch on a different remote — designed to merge back</td></tr></tbody></table><p>A GitHub fork is really a <strong>branch that lives in your own namespace</strong>. Not a departure.</p><h2 id="what-&quot;fetch-upstream&quot;-means">What &quot;Fetch Upstream&quot; Means</h2><p>On a proper GitHub fork, GitHub shows a &quot;Fetch upstream&quot; button:</p><pre><code class="language-mermaid">%%{init: {&quot;theme&quot;: &quot;default&quot;}}%%
+flowchart LR
+    UP[&quot;NousResearch/hermes-agent&lt;br/&gt;has new commits&quot;]:::upstream
+    SYNC[&quot;Fetch upstream&lt;br/&gt;sync button&quot;]:::sync
+    FK[&quot;nurazhardotcom/hermes-agent&lt;br/&gt;catches up&quot;]:::fork
+    
+    UP --&gt; SYNC --&gt; FK
+    
+    classDef upstream fill:#e8f5e9,stroke:#4caf50,stroke-width:2px;
+    classDef sync fill:#fff3e0,stroke:#ff9800,stroke-width:2px;
+    classDef fork fill:#e3f2fd,stroke:#2196f3,stroke-width:2px;
+</code></pre><p>This syncs the latest changes from the original project into your fork. Your fork stays up-to-date with upstream while you work on your feature branch. <strong>This is why a GitHub fork is &quot;contribute&quot; not &quot;diverge.&quot;</strong></p><h2 id="what-i&apos;ll-do">What I&apos;ll Do</h2><p>Option 1. Delete the standalone. Create a proper fork. Push the feature branch. Open the PR.</p><p>The bulk archive feature is 3 files, 106 lines, tests included. It&apos;s a contribution worth making properly.</p><hr /><p><em>Next post: the actual PR workflow — creating the issue, implementing the feature, and getting it merged.</em></p></div>
+
+<p><i>Published: 2026-06-20</i></p>
+
+<p>
+  <i>
+  Tagged:
+  
+  <span class="tag">
+    <a href="tags/github.html">github</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/opensource.html">opensource</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/git.html">git</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/contribution.html">contribution</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/fork.html">fork</a>
+  </span>
+  
+  </i>
+</p>
+
+
+
+      
+      <div style="margin-bottom: 20px; float: right;">
+        <a class="page-link" href="archive.html">Archive</a>
+      </div>
+      
+    </div>
+    
+    <footer class="site-footer" style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--code-border); font-size: 0.85rem; color: var(--text-color); opacity: 0.8;">
+      <div class="wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
+            <img alt="Creative Commons License" style="border-width:0; height: 31px;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+          </a>
+        </div>
+        <div>
+          This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" style="color: var(--link-color); text-decoration: underline;">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+        </div>
+        <div style="font-size: 0.75rem; opacity: 0.6;">
+          &copy; 2026 Nur Azhar. Build in public.
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.getElementById('theme-toggle');
+        if (toggleButton) {
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          toggleButton.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+          
+          toggleButton.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            try {
+              localStorage.setItem('theme', next);
+            } catch (e) {
+              console.warn('Storage blocked: theme preference will not persist.');
+            }
+            toggleButton.textContent = next === 'dark' ? '☀️' : '🌙';
+          });
+        }
+      });
+    </script>
+    <script>
+      (function() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+        
+        fetch('https://asia-southeast1-nurazhardotcom.cloudfunctions.net/blog-analytics-api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: window.location.pathname,
+            referrer: document.referrer || null
+          })
+        }).catch(err => console.error('Tracking failed', err));
+      })();
+    </script>
+  </body>
+</html>
