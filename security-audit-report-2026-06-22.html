@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      (function() {
+        try {
+          const savedTheme = localStorage.getItem('theme');
+          const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+    <title>Security Audit Report — June 2026 — Bitcoin, AI Agents, Protocol Engineering</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="application/atom+xml" rel="alternate" href="atom.xml" title="Security Audit Report — June 2026">
+    <link rel="stylesheet" href="style.css">
+    <link rel="sitemap" type="application/xml" href="sitemap.xml">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css">
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'default',
+        themeVariables: {
+          fontSize: '14px',
+          primaryTextColor: '#334155',
+          actorFontSize: '14px',
+          actorTextColor: '#334155',
+          noteFontSize: '13px',
+          messageFontSize: '13px',
+          labelFontSize: '13px',
+        },
+        flowchart: { useMaxWidth: false, htmlLabels: true },
+        sequence: { useMaxWidth: false, actorFontSize: 14, noteFontSize: 13, messageFontSize: 13 },
+      });
+      document.addEventListener("DOMContentLoaded", async () => {
+        const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
+        for (const codeBlock of codeBlocks) {
+          const pre = codeBlock.parentElement;
+          const div = document.createElement("div");
+          div.className = "mermaid";
+          div.textContent = codeBlock.textContent;
+          pre.replaceWith(div);
+        }
+        await mermaid.run();
+      });
+    </script>
+
+
+
+    <!-- Social sharing (Facebook, Twitter, LinkedIn, etc.) -->
+    <meta name="title" content="Security Audit Report — June 2026">
+    <meta name="twitter:title" content="Security Audit Report — June 2026">
+    <meta property="og:title" content="Security Audit Report — June 2026">
+    <meta property="og:type" content="article">
+    <meta property="og:locale" content="en_SG">
+    <meta property="og:site_name" content="Nur Azhar's Blog">
+
+    <meta name="description" content="Comprehensive security and leakage scan across all 18 GitHub repositories using pdpa-sg-clj, OWASP tools, trufflehog, detect-secrets, npm audit, safety, and pip-audit.">
+    <meta name="twitter:description" content="Comprehensive security and leakage scan across all 18 GitHub repositories using pdpa-sg-clj, OWASP tools, trufflehog, detect-secrets, npm audit, safety, and pip-audit.">
+    <meta property="og:description" content="Comprehensive security and leakage scan across all 18 GitHub repositories using pdpa-sg-clj, OWASP tools, trufflehog, detect-secrets, npm audit, safety, and pip-audit.">
+
+
+    <meta name="twitter:url" content="https://blog.nurazhar.com/security-audit-report-2026-06-22.html">
+    <meta property="og:url" content="https://blog.nurazhar.com/security-audit-report-2026-06-22.html">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image:alt" content="Nur Azhar's Blog - Bitcoin, AI Agents, Protocol Engineering">
+
+
+    <meta name="author" content="Nur Azhar">
+
+
+
+    <!-- JSON-LD Structured Data: WebSite -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Nur Azhar's Blog",
+  "url": "https://blog.nurazhar.com",
+  "description": "My technical blog to document my learnings",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  }
+}
+    </script>
+
+    <!-- JSON-LD Structured Data: BlogPosting -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Security Audit Report — June 2026",
+  "description": "Comprehensive security and leakage scan across all 18 GitHub repositories using pdpa-sg-clj, OWASP tools, trufflehog, detect-secrets, npm audit, safety, and pip-audit.",
+  "datePublished": "2026-06-22",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  },
+  "url": "https://blog.nurazhar.com/security-audit-report-2026-06-22.html",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://blog.nurazhar.com/security-audit-report-2026-06-22.html"
+  }
+}
+    </script>
+
+  </head>
+  <body>
+
+    <div class="site-header">
+      <div class="wrapper">
+        <div class="site-nav">
+          <a class="page-link" href="stats.html">Stats</a>
+          <a class="page-link" href="kanban.html">Kanban</a>
+          <a class="page-link" href="archive.html">Archive</a>
+          <a class="page-link" href="tags/index.html">Tags</a>
+          
+	  <a class="page-link" href="atom.xml">
+            Feed
+          </a>
+	  
+	  
+	  <a class="page-link" href="https://nurazhar.com/">About</a>
+	  
+          <button id="theme-toggle" style="background: none; border: none; cursor: pointer; padding: 0 10px; font-size: 1.2rem; vertical-align: middle;" aria-label="Toggle theme">🌙</button>
+        </div>
+        <div style="display: flex; align-items: center;">
+          <div>
+            <h1 class="site-title" style="margin: 0;">
+              <a class="page-link" href="index.html">Nur Azhar</a>
+            </h1>
+            <p style="margin: 2px 0 0 0;">My technical blog to document my learnings</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrapper">
+
+      <h1>
+  
+  Security Audit Report — June 2026
+  
+</h1>
+<div><hr /><h2 id="executive-summary">Executive Summary</h2><p><strong>Date:</strong> 2026-06-22 <strong>Scope:</strong> 18 repositories (~2,775 files, ~438K LOC) <strong>Tools used:</strong></p><ul><li><a href="https://github.com/nurazhardotcom/pdpa-sg-clj">pdpa-sg-clj</a> — PII/secret/NRIC scanner (critical: NRIC, SG phone, email; high: AWS keys, Stripe, GitHub tokens, private keys; medium: passwords, secrets)</li><li><strong>trufflehog</strong> — git-history secret scanning</li><li><strong>detect-secrets (Yelp)</strong> — entropy-based secret detection</li><li><strong>npm audit</strong> — Node.js dependency vulnerability scanner</li><li><strong>safety (PyUp)</strong> — Python dependency vulnerability scanner</li><li><strong>pip-audit</strong> — Python CVE scanner</li><li><strong>OWASP dependency-check methodology</strong> — applied via combination of npm audit, safety, pip-audit</li></ul><p><strong>Overall verdict: Low severity.</strong> No PII leaks, no committed credentials, no API keys in git history. Minor dependency vulnerabilities in two Node.js repos and configuration hardening opportunities.</p><hr /><h2 id="1.-pii-&amp;-secret-scan-(pdpa-sg-clj)">1. PII &amp; Secret Scan (pdpa-sg-clj)</h2><table><thead><tr><th>Severity</th><th>Count</th><th>Details</th></tr></thead><tbody><tr><td>CRITICAL</td><td>0</td><td>No NRIC/FIN, SG phone, or live emails detected</td></tr><tr><td>HIGH</td><td>0</td><td>No AWS keys, Stripe keys, GitHub tokens, or private keys</td></tr><tr><td>MEDIUM</td><td>0</td><td>No hardcoded passwords or secrets</td></tr><tr><td>LOW</td><td>0</td><td>No emails (excluding example domains)</td></tr></tbody></table><p><strong>All 18 repos are clean.</strong></p><hr /><h2 id="2.-git-history-secret-scan-(trufflehog)">2. Git History Secret Scan (trufflehog)</h2><table><thead><tr><th>Result</th><th>Count</th><th>Details</th></tr></thead><tbody><tr><td>True positives</td><td>0</td><td>No committed secrets found</td></tr><tr><td>False positives</td><td>1</td><td>Git SHA reference in <code>blog.nurazhar.com/bb.edn</code> (<code>github.borkdude/quickblog {:git/sha &quot;c542bdd...&quot;}</code>) — not a real secret</td></tr></tbody></table><hr /><h2 id="3.-static-secret-detection-(detect-secrets)">3. Static Secret Detection (detect-secrets)</h2><p><strong>0 findings across all 18 repos.</strong> No base64-encoded secrets, high-entropy strings, or credential patterns detected.</p><hr /><h2 id="4.-dependency-vulnerability-scan">4. Dependency Vulnerability Scan</h2><h3 id="node.js-repos-(npm-audit)">Node.js Repos (npm audit)</h3><table><thead><tr><th>Repository</th><th>Vulns</th><th>Severity</th><th>Key Issues</th></tr></thead><tbody><tr><td><strong>lagu-lagu</strong></td><td>N/A</td><td>Info</td><td>No <code>package-lock.json</code> — audit skipped</td></tr><tr><td><strong>lithan_smartshop</strong></td><td>3</td><td>1 moderate, 2 high</td><td><code>vite</code>/<code>esbuild</code> dep, <code>form-data</code> CRLF injection</td></tr><tr><td><strong>president-dao</strong></td><td>20</td><td>1 low, 9 moderate, 10 high</td><td><code>gittar</code>/<code>tar</code>, <code>yaml</code> stack overflow, 17 others</td></tr></tbody></table><h3 id="python-repos-(safety-/-pip-audit)">Python Repos (safety / pip-audit)</h3><table><thead><tr><th>Repository</th><th>Vulns</th><th>Notes</th></tr></thead><tbody><tr><td><strong>lithan-dev-sandbox</strong></td><td>0</td><td>62 unpinned dependency warnings — pin deps to enable full scanning</td></tr><tr><td><strong>lithan_smartshop</strong> (backend)</td><td>N/A</td><td>No root-level <code>requirements.txt</code></td></tr></tbody></table><h3 id="clojure-repos">Clojure Repos</h3><p><code>nvd-clojure</code> (OWASP NVD wrapper) not available on this system. Library versions are recent (Clojure 1.12.0, Cheshire 5.13.0, Ring 1.13.0). Notable:</p><ul><li><strong>headhunter-agent</strong> still on <strong>Clojure 1.11.1</strong> (others on 1.12.0)</li><li><strong>hiccup</strong> is at <strong>2.0.0-RC3</strong> (release candidate) in 3 projects</li></ul><hr /><h2 id="5.-exposed-credential-files">5. Exposed Credential Files</h2><table><thead><tr><th>Repository</th><th>File</th><th>Status</th><th>Risk</th></tr></thead><tbody><tr><td><strong>president-dao</strong></td><td><code>.env</code> with <code>PRIVATE_KEY</code></td><td>Local only (not tracked in git)</td><td><strong>Medium</strong> — no <code>.gitignore</code> exists; accidental commit risk</td></tr><tr><td><strong>lithan_assignments</strong></td><td><code>.env.example</code> (2 files)</td><td>Committed (templates only)</td><td>Low</td></tr><tr><td><strong>lithan_smartshop</strong></td><td><code>.env.example</code></td><td>Committed (template only)</td><td>Low</td></tr></tbody></table><p><strong>Action required:</strong> Add <code>.env</code> to <code>.gitignore</code> in <code>president-dao</code>.</p><hr /><h2 id="6.-missing-security-controls">6. Missing Security Controls</h2><table><thead><tr><th>Issue</th><th>Repos Affected</th></tr></thead><tbody><tr><td>No <code>.gitignore</code></td><td><strong>president-dao</strong></td></tr><tr><td>No <code>package-lock.json</code> committed</td><td><strong>lagu-lagu</strong></td></tr><tr><td>Unpinned Python deps (&gt;= ranges)</td><td><strong>lithan-dev-sandbox</strong></td></tr><tr><td>No CI/CD security scan workflow</td><td>All repos</td></tr><tr><td>No pre-commit hook for secret detection</td><td>All repos</td></tr></tbody></table><hr /><h2 id="7.-per-repository-summary">7. Per-Repository Summary</h2><table><thead><tr><th>#</th><th>Repository</th><th>Type</th><th>Status</th></tr></thead><tbody><tr><td>1</td><td>agent-bond</td><td>Clojure</td><td>✅ Clean</td></tr><tr><td>2</td><td>aur-audit</td><td>Clojure</td><td>✅ Clean</td></tr><tr><td>3</td><td>bitcoin-wiki</td><td>Documentation</td><td>✅ Clean</td></tr><tr><td>4</td><td>blog.nurazhar.com</td><td>Clojure (Babashka blog)</td><td>✅ Clean</td></tr><tr><td>5</td><td>bsv-clj</td><td>Clojure</td><td>✅ Clean</td></tr><tr><td>6</td><td>bsv-de-tracker</td><td>Clojure</td><td>✅ Clean</td></tr><tr><td>7</td><td>bunker</td><td>Clojure</td><td>✅ Clean</td></tr><tr><td>8</td><td>headhunter-agent</td><td>Clojure</td><td>✅ Clean (⚠ older Clojure 1.11.1)</td></tr><tr><td>9</td><td>ipso-agent</td><td>Clojure</td><td>✅ Clean</td></tr><tr><td>10</td><td>lagu-lagu</td><td>Node.js</td><td>⚠ No lockfile</td></tr><tr><td>11</td><td>lithan_assignments</td><td>Mixed coursework</td><td>✅ Clean</td></tr><tr><td>12</td><td>lithan_smartshop</td><td>Node + Docker</td><td>⚠ 3 npm vulns, unpinned Python deps</td></tr><tr><td>13</td><td>lithan-dev-sandbox</td><td>Python + Node</td><td>⚠ Unpinned deps (62 warnings)</td></tr><tr><td>14</td><td>nurazhardotcom</td><td>Static site</td><td>✅ Clean</td></tr><tr><td>15</td><td>original-bitcoin-awesome</td><td>Documentation</td><td>✅ Clean</td></tr><tr><td>16</td><td>paperclip-clj</td><td>Clojure</td><td>✅ Clean</td></tr><tr><td>17</td><td>pdpa-sg-clj</td><td>Clojure</td><td>✅ Clean (self-audited)</td></tr><tr><td>18</td><td>president-dao</td><td>Node/TypeScript</td><td>⚠ 20 npm vulns, .env not gitignored</td></tr></tbody></table><hr /><h2 id="8.-recommendations">8. Recommendations</h2><h3 id="immediate-(high-priority)">Immediate (High Priority)</h3><ol start="1"><li><strong>president-dao:</strong> Create <code>.gitignore</code> with <code>.env</code> entry; rotate the exposed private key</li><li><strong>president-dao:</strong> Run <code>npm audit fix</code> to address 20 dependency vulnerabilities</li><li><strong>lithan_smartshop:</strong> Run <code>npm audit fix</code> to address 3 vulnerabilities</li></ol><h3 id="short-term-(medium-priority)">Short-term (Medium Priority)</h3><ol start="4"><li><strong>lagu-lagu:</strong> Generate and commit <code>package-lock.json</code></li><li><strong>lithan-dev-sandbox:</strong> Pin all Python dependency versions (replace <code>&gt;=</code> with <code>==</code>)</li><li><strong>headhunter-agent:</strong> Upgrade from Clojure 1.11.1 to 1.12.0</li></ol><h3 id="ongoing-(low-priority)">Ongoing (Low Priority)</h3><ol start="7"><li>Add GitHub Action for secret scanning (e.g., <code>trufflehog</code> or <code>gitleaks</code>) to every repo</li><li>Add <code>nvd-clojure</code> to Clojure project CI pipelines for dependency vulnerability scanning</li><li>Install pre-commit hooks with <code>detect-secrets</code> across all repos</li></ol><hr /><p><em>Report generated 2026-06-22 using pdpa-sg-clj v0.1.0, trufflehog, detect-secrets, npm audit, safety, and pip-audit.</em></p></div>
+
+<p><i>Published: 2026-06-22</i></p>
+
+<p>
+  <i>
+  Tagged:
+  
+  <span class="tag">
+    <a href="tags/devops.html">devops</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/owasp.html">owasp</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/pdpa.html">pdpa</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/security.html">security</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/audit.html">audit</a>
+  </span>
+  
+  </i>
+</p>
+
+
+
+      
+      <div style="margin-bottom: 20px; float: right;">
+        <a class="page-link" href="archive.html">Archive</a>
+      </div>
+      
+    </div>
+    
+    <footer class="site-footer" style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--code-border); font-size: 0.85rem; color: var(--text-color); opacity: 0.8;">
+      <div class="wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
+            <img alt="Creative Commons License" style="border-width:0; height: 31px;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+          </a>
+        </div>
+        <div>
+          This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" style="color: var(--link-color); text-decoration: underline;">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+        </div>
+        <div style="font-size: 0.75rem; opacity: 0.6;">
+          &copy; 2026 Nur Azhar. Build in public.
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.getElementById('theme-toggle');
+        if (toggleButton) {
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          toggleButton.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+          
+          toggleButton.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            try {
+              localStorage.setItem('theme', next);
+            } catch (e) {
+              console.warn('Storage blocked: theme preference will not persist.');
+            }
+            toggleButton.textContent = next === 'dark' ? '☀️' : '🌙';
+          });
+        }
+      });
+    </script>
+    <script>
+      (function() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+        
+        fetch('https://asia-southeast1-nurazhardotcom.cloudfunctions.net/blog-analytics-api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: window.location.pathname,
+            referrer: document.referrer || null
+          })
+        }).catch(err => console.error('Tracking failed', err));
+      })();
+    </script>
+  </body>
+</html>
