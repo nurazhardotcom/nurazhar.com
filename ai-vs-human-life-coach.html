@@ -157,65 +157,167 @@
   AI Life Coach vs Human Life Coach — A Systems Comparison
   
 </h1>
-<div><hr /><p>A lifestyle design coach helps you map your constraints, identify leverage points, and design a daily reality that serves you instead of draining you.</p><p>That role can now be performed by two different entities: a human or a large language model. They have complementary strengths and blind spots. This post compares them without marketing spin.</p><h2 id="the-comparison">The Comparison</h2><pre><code class="language-d2">direction: down
-
-Human Coach: &quot;Human Coach&quot; {
-  style.fill: &quot;#e0f2fe&quot;
-  style.stroke: &quot;#0284c7&quot;
+<div><hr /><p>A lifestyle design coach helps you map your constraints, identify leverage points, and design a daily reality that serves you instead of draining you.</p><p>That role can now be performed by two different entities: a human or a large language model. They have complementary strengths and blind spots. This post compares them without marketing spin.</p><h2 id="the-comparison">The Comparison</h2><div class="d2-diagram">
+<!-- D2:
+direction: down
+#
+Human Coach: "Human Coach" {
+  style.fill: "#e0f2fe"
+  style.stroke: "#0284c7"
+}
+#
+AI Coach: "AI Coach (LLM)" {
+  style.fill: "#f0f9ff"
+  style.stroke: "#0ea5e9"
+}
+#
+Comparison: "Dimension Comparison" {
+  Data: "Data Collection" {
+    Human: "Human: Hour-long intake session. Takes your word for everything. Cannot independently verify."
+    AI: "AI: Reads your GitHub, blog, bank statements, network diagnostics, and employment contracts. Cross-references."
+    style.fill: "#f5f3ff"
+    style.stroke: "#7c3aed"
+  }
+#
+  Context: "Context Retention" {
+    Human: "Human: ~50 min session. Takes notes. Forgets between weeks."
+    AI: "AI: 1M token context (~5 hours of dense conversation). Remembers everything until context fills. Saves to files."
+    style.fill: "#f5f3ff"
+    style.stroke: "#7c3aed"
+  }
+#
+  Accountability: "Accountability" {
+    Human: "Human: Can push back. Sits with your discomfort. Holds you to weekly commitments. Calls you out."
+    AI: "AI: Cannot call you. Cannot send reminders autonomously. Only pushes back within a session."
+    style.fill: "#f5f3ff"
+    style.stroke: "#7c3aed"
+  }
+#
+  Cost: "Cost" {
+    Human: "Human: \$200-\$500/session. Weekly commitment. 3-6 month minimum."
+    AI: "AI: ~\$0.50/hr API cost. No commitment. Available 24/7."
+    style.fill: "#f5f3ff"
+    style.stroke: "#7c3aed"
+  }
+#
+  Bias: "Bias" {
+    Human: "Human: Has their own methodology to sell. Wants you to stay onboarded."
+    AI: "AI: No methodology to protect. No retention incentive. But constrained by safety training."
+    style.fill: "#f5f3ff"
+    style.stroke: "#7c3aed"
+  }
+#
+  Depth: "Domain Depth" {
+    Human: "Human: Can't read 18 repos. Can't audit your internet connection. Takes your self-assessment at face value."
+    AI: "AI: Reads everything you've built. Spots contradictions between what you say and what you ship."
+    style.fill: "#f5f3ff"
+    style.stroke: "#7c3aed"
+  }
+}
+#
+Human -> Comparison
+AI -> Comparison
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-d2-version="v0.7.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 9104 434"><svg class="d2-2168141371 d2-svg" width="9104" height="434" viewBox="-21 -21 9104 434"><rect x="-21.000000" y="-21.000000" width="9104.000000" height="434.000000" rx="0.000000" fill="#FFFFFF" class=" fill-N7" stroke-width="0" /><style type="text/css"><![CDATA[
+.d2-2168141371 .text {
+	font-family: "d2-2168141371-font-regular";
+}
+@font-face {
+	font-family: d2-2168141371-font-regular;
+	src: url("data:application/font-woff;base64,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");
+}
+.d2-2168141371 .text-bold {
+	font-family: "d2-2168141371-font-bold";
+}
+@font-face {
+	font-family: d2-2168141371-font-bold;
+	src: url("data:application/font-woff;base64,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");
+}]]></style><style type="text/css"><![CDATA[.shape {
+  shape-rendering: geometricPrecision;
+  stroke-linejoin: round;
+}
+.connection {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blend {
+  mix-blend-mode: multiply;
+  opacity: 0.5;
 }
 
-AI Coach: &quot;AI Coach (LLM)&quot; {
-  style.fill: &quot;#f0f9ff&quot;
-  style.stroke: &quot;#0ea5e9&quot;
-}
-
-Comparison: &quot;Dimension Comparison&quot; {
-  Data: &quot;Data Collection&quot; {
-    Human: &quot;Human: Hour-long intake session. Takes your word for everything. Cannot independently verify.&quot;
-    AI: &quot;AI: Reads your GitHub, blog, bank statements, network diagnostics, and employment contracts. Cross-references.&quot;
-    style.fill: &quot;#f5f3ff&quot;
-    style.stroke: &quot;#7c3aed&quot;
-  }
-
-  Context: &quot;Context Retention&quot; {
-    Human: &quot;Human: ~50 min session. Takes notes. Forgets between weeks.&quot;
-    AI: &quot;AI: 1M token context (~5 hours of dense conversation). Remembers everything until context fills. Saves to files.&quot;
-    style.fill: &quot;#f5f3ff&quot;
-    style.stroke: &quot;#7c3aed&quot;
-  }
-
-  Accountability: &quot;Accountability&quot; {
-    Human: &quot;Human: Can push back. Sits with your discomfort. Holds you to weekly commitments. Calls you out.&quot;
-    AI: &quot;AI: Cannot call you. Cannot send reminders autonomously. Only pushes back within a session.&quot;
-    style.fill: &quot;#f5f3ff&quot;
-    style.stroke: &quot;#7c3aed&quot;
-  }
-
-  Cost: &quot;Cost&quot; {
-    Human: &quot;Human: $200-$500/session. Weekly commitment. 3-6 month minimum.&quot;
-    AI: &quot;AI: ~$0.50/hr API cost. No commitment. Available 24/7.&quot;
-    style.fill: &quot;#f5f3ff&quot;
-    style.stroke: &quot;#7c3aed&quot;
-  }
-
-  Bias: &quot;Bias&quot; {
-    Human: &quot;Human: Has their own methodology to sell. Wants you to stay onboarded.&quot;
-    AI: &quot;AI: No methodology to protect. No retention incentive. But constrained by safety training.&quot;
-    style.fill: &quot;#f5f3ff&quot;
-    style.stroke: &quot;#7c3aed&quot;
-  }
-
-  Depth: &quot;Domain Depth&quot; {
-    Human: &quot;Human: Can&apos;t read 18 repos. Can&apos;t audit your internet connection. Takes your self-assessment at face value.&quot;
-    AI: &quot;AI: Reads everything you&apos;ve built. Spots contradictions between what you say and what you ship.&quot;
-    style.fill: &quot;#f5f3ff&quot;
-    style.stroke: &quot;#7c3aed&quot;
-  }
-}
-
-Human -&gt; Comparison
-AI -&gt; Comparison
-</code></pre><h2 id="when-to-use-which">When to Use Which</h2><table><thead><tr><th>Situation</th><th>Human</th><th>AI</th></tr></thead><tbody><tr><td>Initial systems audit and constraint mapping</td><td>No</td><td><strong>Yes</strong></td></tr><tr><td>Weekly accountability check-in</td><td><strong>Yes</strong></td><td>No</td></tr><tr><td>Reading your entire digital footprint</td><td>No</td><td><strong>Yes</strong></td></tr><tr><td>Calling you on your bullshit with emotional intelligence</td><td><strong>Yes</strong></td><td>Partial</td></tr><tr><td>Available at 4am when you&apos;re thinking</td><td>No</td><td><strong>Yes</strong></td></tr><tr><td>Holding you to a commitment for 6 months</td><td><strong>Yes</strong></td><td>No</td></tr><tr><td>Zero-cost experimentation</td><td>Possibly</td><td><strong>Yes</strong></td></tr></tbody></table><h2 id="the-hybrid-model">The Hybrid Model</h2><p>The optimal configuration is both:</p><ol start="1"><li><p><strong>AI</strong> does the architectural work — maps your constraints, identifies leverage points, flags contradictions, generates options. This happens in extended sessions (2-5 hours) where the AI consumes your actual artifacts, not your self-summary.</p></li><li><p><strong>Human</strong> does the grounding work — weekly check-ins, accountability, emotional support when the architectural plan hits real-world resistance.</p></li><li><p><strong>One-shot summaries</strong> from the AI are fed to the human coach so they don&apos;t waste sessions on data collection.</p></li></ol><p>Most people skip step 1 because they can&apos;t afford $500/session for 8 weeks of discovery. The AI collapses discovery into one session at near-zero cost. The human then operates from a complete map instead of building one from scratch.</p><h2 id="the-trap">The Trap</h2><p>The trap is using only one or the other.</p><ul><li><strong>AI only:</strong> You get perfect architecture with no execution pressure. You know exactly what to do. You don&apos;t do it.</li><li><strong>Human only:</strong> You spend 8 weeks teaching them your context before they can give you useful advice. By then you&apos;ve lost momentum.</li></ul><p>The AI is a mapmaker. The human is a trainer. You need both to finish the race.</p></div>
+		.d2-2168141371 .fill-N1{fill:#0A0F25;}
+		.d2-2168141371 .fill-N2{fill:#676C7E;}
+		.d2-2168141371 .fill-N3{fill:#9499AB;}
+		.d2-2168141371 .fill-N4{fill:#CFD2DD;}
+		.d2-2168141371 .fill-N5{fill:#DEE1EB;}
+		.d2-2168141371 .fill-N6{fill:#EEF1F8;}
+		.d2-2168141371 .fill-N7{fill:#FFFFFF;}
+		.d2-2168141371 .fill-B1{fill:#0D32B2;}
+		.d2-2168141371 .fill-B2{fill:#0D32B2;}
+		.d2-2168141371 .fill-B3{fill:#E3E9FD;}
+		.d2-2168141371 .fill-B4{fill:#E3E9FD;}
+		.d2-2168141371 .fill-B5{fill:#EDF0FD;}
+		.d2-2168141371 .fill-B6{fill:#F7F8FE;}
+		.d2-2168141371 .fill-AA2{fill:#4A6FF3;}
+		.d2-2168141371 .fill-AA4{fill:#EDF0FD;}
+		.d2-2168141371 .fill-AA5{fill:#F7F8FE;}
+		.d2-2168141371 .fill-AB4{fill:#EDF0FD;}
+		.d2-2168141371 .fill-AB5{fill:#F7F8FE;}
+		.d2-2168141371 .stroke-N1{stroke:#0A0F25;}
+		.d2-2168141371 .stroke-N2{stroke:#676C7E;}
+		.d2-2168141371 .stroke-N3{stroke:#9499AB;}
+		.d2-2168141371 .stroke-N4{stroke:#CFD2DD;}
+		.d2-2168141371 .stroke-N5{stroke:#DEE1EB;}
+		.d2-2168141371 .stroke-N6{stroke:#EEF1F8;}
+		.d2-2168141371 .stroke-N7{stroke:#FFFFFF;}
+		.d2-2168141371 .stroke-B1{stroke:#0D32B2;}
+		.d2-2168141371 .stroke-B2{stroke:#0D32B2;}
+		.d2-2168141371 .stroke-B3{stroke:#E3E9FD;}
+		.d2-2168141371 .stroke-B4{stroke:#E3E9FD;}
+		.d2-2168141371 .stroke-B5{stroke:#EDF0FD;}
+		.d2-2168141371 .stroke-B6{stroke:#F7F8FE;}
+		.d2-2168141371 .stroke-AA2{stroke:#4A6FF3;}
+		.d2-2168141371 .stroke-AA4{stroke:#EDF0FD;}
+		.d2-2168141371 .stroke-AA5{stroke:#F7F8FE;}
+		.d2-2168141371 .stroke-AB4{stroke:#EDF0FD;}
+		.d2-2168141371 .stroke-AB5{stroke:#F7F8FE;}
+		.d2-2168141371 .background-color-N1{background-color:#0A0F25;}
+		.d2-2168141371 .background-color-N2{background-color:#676C7E;}
+		.d2-2168141371 .background-color-N3{background-color:#9499AB;}
+		.d2-2168141371 .background-color-N4{background-color:#CFD2DD;}
+		.d2-2168141371 .background-color-N5{background-color:#DEE1EB;}
+		.d2-2168141371 .background-color-N6{background-color:#EEF1F8;}
+		.d2-2168141371 .background-color-N7{background-color:#FFFFFF;}
+		.d2-2168141371 .background-color-B1{background-color:#0D32B2;}
+		.d2-2168141371 .background-color-B2{background-color:#0D32B2;}
+		.d2-2168141371 .background-color-B3{background-color:#E3E9FD;}
+		.d2-2168141371 .background-color-B4{background-color:#E3E9FD;}
+		.d2-2168141371 .background-color-B5{background-color:#EDF0FD;}
+		.d2-2168141371 .background-color-B6{background-color:#F7F8FE;}
+		.d2-2168141371 .background-color-AA2{background-color:#4A6FF3;}
+		.d2-2168141371 .background-color-AA4{background-color:#EDF0FD;}
+		.d2-2168141371 .background-color-AA5{background-color:#F7F8FE;}
+		.d2-2168141371 .background-color-AB4{background-color:#EDF0FD;}
+		.d2-2168141371 .background-color-AB5{background-color:#F7F8FE;}
+		.d2-2168141371 .color-N1{color:#0A0F25;}
+		.d2-2168141371 .color-N2{color:#676C7E;}
+		.d2-2168141371 .color-N3{color:#9499AB;}
+		.d2-2168141371 .color-N4{color:#CFD2DD;}
+		.d2-2168141371 .color-N5{color:#DEE1EB;}
+		.d2-2168141371 .color-N6{color:#EEF1F8;}
+		.d2-2168141371 .color-N7{color:#FFFFFF;}
+		.d2-2168141371 .color-B1{color:#0D32B2;}
+		.d2-2168141371 .color-B2{color:#0D32B2;}
+		.d2-2168141371 .color-B3{color:#E3E9FD;}
+		.d2-2168141371 .color-B4{color:#E3E9FD;}
+		.d2-2168141371 .color-B5{color:#EDF0FD;}
+		.d2-2168141371 .color-B6{color:#F7F8FE;}
+		.d2-2168141371 .color-AA2{color:#4A6FF3;}
+		.d2-2168141371 .color-AA4{color:#EDF0FD;}
+		.d2-2168141371 .color-AA5{color:#F7F8FE;}
+		.d2-2168141371 .color-AB4{color:#EDF0FD;}
+		.d2-2168141371 .color-AB5{color:#F7F8FE;}.appendix text.text{fill:#0A0F25}.md{--color-fg-default:#0A0F25;--color-fg-muted:#676C7E;--color-fg-subtle:#9499AB;--color-canvas-default:#FFFFFF;--color-canvas-subtle:#EEF1F8;--color-border-default:#0D32B2;--color-border-muted:#0D32B2;--color-neutral-muted:#EEF1F8;--color-accent-fg:#0D32B2;--color-accent-emphasis:#0D32B2;--color-attention-subtle:#676C7E;--color-danger-fg:red;}.sketch-overlay-B1{fill:url(#streaks-darker-d2-2168141371);mix-blend-mode:lighten}.sketch-overlay-B2{fill:url(#streaks-darker-d2-2168141371);mix-blend-mode:lighten}.sketch-overlay-B3{fill:url(#streaks-bright-d2-2168141371);mix-blend-mode:darken}.sketch-overlay-B4{fill:url(#streaks-bright-d2-2168141371);mix-blend-mode:darken}.sketch-overlay-B5{fill:url(#streaks-bright-d2-2168141371);mix-blend-mode:darken}.sketch-overlay-B6{fill:url(#streaks-bright-d2-2168141371);mix-blend-mode:darken}.sketch-overlay-AA2{fill:url(#streaks-dark-d2-2168141371);mix-blend-mode:overlay}.sketch-overlay-AA4{fill:url(#streaks-bright-d2-2168141371);mix-blend-mode:darken}.sketch-overlay-AA5{fill:url(#streaks-bright-d2-2168141371);mix-blend-mode:darken}.sketch-overlay-AB4{fill:url(#streaks-bright-d2-2168141371);mix-blend-mode:darken}.sketch-overlay-AB5{fill:url(#streaks-bright-d2-2168141371);mix-blend-mode:darken}.sketch-overlay-N1{fill:url(#streaks-darker-d2-2168141371);mix-blend-mode:lighten}.sketch-overlay-N2{fill:url(#streaks-dark-d2-2168141371);mix-blend-mode:overlay}.sketch-overlay-N3{fill:url(#streaks-normal-d2-2168141371);mix-blend-mode:color-burn}.sketch-overlay-N4{fill:url(#streaks-normal-d2-2168141371);mix-blend-mode:color-burn}.sketch-overlay-N5{fill:url(#streaks-bright-d2-2168141371);mix-blend-mode:darken}.sketch-overlay-N6{fill:url(#streaks-bright-d2-2168141371);mix-blend-mode:darken}.sketch-overlay-N7{fill:url(#streaks-bright-d2-2168141371);mix-blend-mode:darken}.light-code{display: block}.dark-code{display: none}]]></style><g class="SHVtYW4gQ29hY2g="><g class="shape" ><rect x="5165.000000" y="0.000000" width="142.000000" height="66.000000" stroke="#0284c7" fill="#e0f2fe" style="stroke-width:2;" /></g><text x="5236.000000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Human Coach</text></g><g class="QUkgQ29hY2g="><g class="shape" ><rect x="5367.000000" y="0.000000" width="149.000000" height="66.000000" stroke="#0ea5e9" fill="#f0f9ff" style="stroke-width:2;" /></g><text x="5441.500000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">AI Coach (LLM)</text></g><g class="Q29tcGFyaXNvbg=="><g class="shape" ><rect x="0.000000" y="195.000000" width="9062.000000" height="197.000000" stroke="#0D32B2" fill="#E3E9FD" class=" stroke-B1 fill-B4" style="stroke-width:2;" /></g><text x="4531.000000" y="182.000000" fill="#0A0F25" class="text fill-N1" style="text-anchor:middle;font-size:28px">Dimension Comparison</text></g><g class="SHVtYW4="><g class="shape" ><rect x="5576.000000" y="0.000000" width="96.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="5624.000000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Human</text></g><g class="QUk="><g class="shape" ><rect x="5781.000000" y="0.000000" width="60.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="5811.000000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">AI</text></g><g class="Q29tcGFyaXNvbi5EYXRh"><g class="shape" ><rect x="30.000000" y="236.000000" width="1690.000000" height="126.000000" stroke="#7c3aed" fill="#f5f3ff" style="stroke-width:2;" /></g><text x="875.000000" y="224.000000" fill="#0A0F25" class="text fill-N1" style="text-anchor:middle;font-size:24px">Data Collection</text></g><g class="Q29tcGFyaXNvbi5Db250ZXh0"><g class="shape" ><rect x="1760.000000" y="236.000000" width="1431.000000" height="126.000000" stroke="#7c3aed" fill="#f5f3ff" style="stroke-width:2;" /></g><text x="2475.500000" y="224.000000" fill="#0A0F25" class="text fill-N1" style="text-anchor:middle;font-size:24px">Context Retention</text></g><g class="Q29tcGFyaXNvbi5BY2NvdW50YWJpbGl0eQ=="><g class="shape" ><rect x="3231.000000" y="236.000000" width="1573.000000" height="126.000000" stroke="#7c3aed" fill="#f5f3ff" style="stroke-width:2;" /></g><text x="4017.500000" y="224.000000" fill="#0A0F25" class="text fill-N1" style="text-anchor:middle;font-size:24px">Accountability</text></g><g class="Q29tcGFyaXNvbi5Db3N0"><g class="shape" ><rect x="4844.000000" y="236.000000" width="1094.000000" height="126.000000" stroke="#7c3aed" fill="#f5f3ff" style="stroke-width:2;" /></g><text x="5391.000000" y="224.000000" fill="#0A0F25" class="text fill-N1" style="text-anchor:middle;font-size:24px">Cost</text></g><g class="Q29tcGFyaXNvbi5CaWFz"><g class="shape" ><rect x="5978.000000" y="236.000000" width="1360.000000" height="126.000000" stroke="#7c3aed" fill="#f5f3ff" style="stroke-width:2;" /></g><text x="6658.000000" y="224.000000" fill="#0A0F25" class="text fill-N1" style="text-anchor:middle;font-size:24px">Bias</text></g><g class="Q29tcGFyaXNvbi5EZXB0aA=="><g class="shape" ><rect x="7378.000000" y="236.000000" width="1654.000000" height="126.000000" stroke="#7c3aed" fill="#f5f3ff" style="stroke-width:2;" /></g><text x="8205.000000" y="224.000000" fill="#0A0F25" class="text fill-N1" style="text-anchor:middle;font-size:24px">Domain Depth</text></g><g class="Q29tcGFyaXNvbi5EYXRhLkh1bWFu"><g class="shape" ><rect x="60.000000" y="266.000000" width="722.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="421.000000" y="304.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Human: Hour-long intake session. Takes your word for everything. Cannot independently verify.</text></g><g class="Q29tcGFyaXNvbi5EYXRhLkFJ"><g class="shape" ><rect x="842.000000" y="266.000000" width="848.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="1266.000000" y="304.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">AI: Reads your GitHub, blog, bank statements, network diagnostics, and employment contracts. Cross-references.</text></g><g class="Q29tcGFyaXNvbi5Db250ZXh0Lkh1bWFu"><g class="shape" ><rect x="1790.000000" y="266.000000" width="486.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="2033.000000" y="304.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Human: ~50 min session. Takes notes. Forgets between weeks.</text></g><g class="Q29tcGFyaXNvbi5Db250ZXh0LkFJ"><g class="shape" ><rect x="2336.000000" y="266.000000" width="825.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="2748.500000" y="304.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">AI: 1M token context (~5 hours of dense conversation). Remembers everything until context fills. Saves to files.</text></g><g class="Q29tcGFyaXNvbi5BY2NvdW50YWJpbGl0eS5IdW1hbg=="><g class="shape" ><rect x="3261.000000" y="266.000000" width="747.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="3634.500000" y="304.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Human: Can push back. Sits with your discomfort. Holds you to weekly commitments. Calls you out.</text></g><g class="Q29tcGFyaXNvbi5BY2NvdW50YWJpbGl0eS5BSQ=="><g class="shape" ><rect x="4068.000000" y="266.000000" width="706.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="4421.000000" y="304.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">AI: Cannot call you. Cannot send reminders autonomously. Only pushes back within a session.</text></g><g class="Q29tcGFyaXNvbi5Db3N0Lkh1bWFu"><g class="shape" ><rect x="4874.000000" y="266.000000" width="544.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="5146.000000" y="304.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Human: $200-$500/session. Weekly commitment. 3-6 month minimum.</text></g><g class="Q29tcGFyaXNvbi5Db3N0LkFJ"><g class="shape" ><rect x="5478.000000" y="266.000000" width="430.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="5693.000000" y="304.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">AI: ~$0.50/hr API cost. No commitment. Available 24/7.</text></g><g class="Q29tcGFyaXNvbi5CaWFzLkh1bWFu"><g class="shape" ><rect x="6008.000000" y="266.000000" width="562.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="6289.000000" y="304.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Human: Has their own methodology to sell. Wants you to stay onboarded.</text></g><g class="Q29tcGFyaXNvbi5CaWFzLkFJ"><g class="shape" ><rect x="6630.000000" y="266.000000" width="678.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="6969.000000" y="304.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">AI: No methodology to protect. No retention incentive. But constrained by safety training.</text></g><g class="Q29tcGFyaXNvbi5EZXB0aC5IdW1hbg=="><g class="shape" ><rect x="7408.000000" y="266.000000" width="804.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="7810.000000" y="304.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Human: Can&#39;t read 18 repos. Can&#39;t audit your internet connection. Takes your self-assessment at face value.</text></g><g class="Q29tcGFyaXNvbi5EZXB0aC5BSQ=="><g class="shape" ><rect x="8272.000000" y="266.000000" width="730.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="8637.000000" y="304.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">AI: Reads everything you&#39;ve built. Spots contradictions between what you say and what you ship.</text></g><g class="KEh1bWFuIC0mZ3Q7IENvbXBhcmlzb24pWzBd"><marker id="mk-d2-2168141371-3488378134" markerWidth="10.000000" markerHeight="12.000000" refX="7.000000" refY="6.000000" viewBox="0.000000 0.000000 10.000000 12.000000" orient="auto" markerUnits="userSpaceOnUse"> <polygon points="0.000000,0.000000 10.000000,6.000000 0.000000,12.000000" fill="#0D32B2" class="connection fill-B1" stroke-width="2" /> </marker><path d="M 5624.000000 68.000000 C 5624.000000 106.000000 5624.000000 131.800003 5624.000000 191.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2168141371-3488378134)" mask="url(#d2-2168141371)" /></g><g class="KEFJIC0mZ3Q7IENvbXBhcmlzb24pWzBd"><path d="M 5810.500000 68.000000 C 5810.500000 106.000000 5810.500000 131.800003 5810.500000 191.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2168141371-3488378134)" mask="url(#d2-2168141371)" /></g><mask id="d2-2168141371" maskUnits="userSpaceOnUse" x="-21" y="-21" width="9104" height="434">
+<rect x="-21" y="-21" width="9104" height="434" fill="white"></rect><p></mask></svg></svg></p></div><h2 id="when-to-use-which">When to Use Which</h2><table><thead><tr><th>Situation</th><th>Human</th><th>AI</th></tr></thead><tbody><tr><td>Initial systems audit and constraint mapping</td><td>No</td><td><strong>Yes</strong></td></tr><tr><td>Weekly accountability check-in</td><td><strong>Yes</strong></td><td>No</td></tr><tr><td>Reading your entire digital footprint</td><td>No</td><td><strong>Yes</strong></td></tr><tr><td>Calling you on your bullshit with emotional intelligence</td><td><strong>Yes</strong></td><td>Partial</td></tr><tr><td>Available at 4am when you&apos;re thinking</td><td>No</td><td><strong>Yes</strong></td></tr><tr><td>Holding you to a commitment for 6 months</td><td><strong>Yes</strong></td><td>No</td></tr><tr><td>Zero-cost experimentation</td><td>Possibly</td><td><strong>Yes</strong></td></tr></tbody></table><h2 id="the-hybrid-model">The Hybrid Model</h2><p>The optimal configuration is both:</p><ol start="1"><li><p><strong>AI</strong> does the architectural work — maps your constraints, identifies leverage points, flags contradictions, generates options. This happens in extended sessions (2-5 hours) where the AI consumes your actual artifacts, not your self-summary.</p></li><li><p><strong>Human</strong> does the grounding work — weekly check-ins, accountability, emotional support when the architectural plan hits real-world resistance.</p></li><li><p><strong>One-shot summaries</strong> from the AI are fed to the human coach so they don&apos;t waste sessions on data collection.</p></li></ol><p>Most people skip step 1 because they can&apos;t afford $500/session for 8 weeks of discovery. The AI collapses discovery into one session at near-zero cost. The human then operates from a complete map instead of building one from scratch.</p><h2 id="the-trap">The Trap</h2><p>The trap is using only one or the other.</p><ul><li><strong>AI only:</strong> You get perfect architecture with no execution pressure. You know exactly what to do. You don&apos;t do it.</li><li><strong>Human only:</strong> You spend 8 weeks teaching them your context before they can give you useful advice. By then you&apos;ve lost momentum.</li></ul><p>The AI is a mapmaker. The human is a trainer. You need both to finish the race.</p></div>
 
 <p><i>Published: 2026-06-22</i></p>
 
