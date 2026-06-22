@@ -193,7 +193,41 @@ printf &apos;[Resolve]\nDNS=9.9.9.9 9.9.9.10\nDomains=~.\n&apos; | \
 sudo systemctl restart systemd-resolved
 </code></pre><p>Or use <code>nmcli</code>:</p><pre><code class="language-bash">sudo nmcli connection modify &quot;SINGTEL-11D4&quot; ipv4.dns &quot;9.9.9.9 9.9.9.10&quot;
 sudo nmcli connection up &quot;SINGTEL-11D4&quot;
-</code></pre><p>Both require sudo, but they&apos;re one-liners.</p><hr /><h2 id="why-quad9-over-cloudflare?">Why Quad9 Over Cloudflare?</h2><p>From my benchmarks on Singtel Fibre in Singapore:</p><table><thead><tr><th>Metric</th><th>Quad9</th><th>Cloudflare</th></tr></thead><tbody><tr><td>Plain DNS latency</td><td>8ms</td><td>9ms</td></tr><tr><td>DoH latency</td><td>35ms</td><td>60ms</td></tr><tr><td>Jurisdiction</td><td>Switzerland</td><td>US (CLOUD Act)</td></tr><tr><td>Logging</td><td>Zero, independently audited</td><td>Deleted within 24h</td></tr><tr><td>Privacy law</td><td>Swiss FADP</td><td>US CLOUD Act / NSLs</td></tr></tbody></table><p>Plain DNS is a tie. DoH speed and jurisdiction are the differentiators — Quad9 wins on both.</p><hr /><h2 id="bottom-line">Bottom Line</h2><p>CachyOS&apos;s DNS Changer is the cleanest way to configure system-wide encrypted DNS on any distro I&apos;ve used. One click in the GUI and you get blocky-managed DoH, systemd-resolved caching, and NetworkManager integration. No config files, no terminal gymnastics, no <code>/etc/resolv.conf</code> fights.</p><p>Quad9 with DoH is the setting I&apos;d recommend: best privacy jurisdiction, fastest DoH from Singapore, and full encryption against ISP snooping.</p><hr /><p><em>Benchmarks run on Singtel Fibre Broadband (AS9506, Ulu Bedok, Singapore). CachyOS Hello version shipping with April 2026 release. Kernel: Linux 6.14+.</em></p></div>
+</code></pre><p>Both require sudo, but they&apos;re one-liners.</p><hr /><h2 id="verification-—-real-output-after-applying-quad9-(dot)">Verification — Real Output After Applying Quad9 (DoT)</h2><p>After selecting Quad9 with DoT in CachyOS Hello → DNS, here&apos;s the live system state:</p><pre><code class="language-bash">$ resolvectl status
+
+Global
+           Protocols: +LLMNR +mDNS -DNSOverTLS DNSSEC=no/unsupported
+    resolv.conf mode: foreign
+Fallback DNS Servers: 9.9.9.9#dns.quad9.net 2620:fe::9#dns.quad9.net
+                      1.1.1.1#cloudflare-dns.com
+                      ...
+
+Link 2 (wlan0)
+    Current Scopes: DNS LLMNR/IPv4 LLMNR/IPv6 mDNS/IPv4 mDNS/IPv6
+         Protocols: +DefaultRoute +LLMNR +mDNS +DNSOverTLS DNSSEC=no/unsupported
+Current DNS Server: 9.9.9.9#dns.quad9.net
+       DNS Servers: 9.9.9.9#dns.quad9.net
+                    149.112.112.112#dns.quad9.net
+                    192.168.1.254    ← fallback to Singtel ONT
+        DNS Domain: ~.
+</code></pre><p>Key indicators:</p><ul><li><strong><code>Current DNS Server: 9.9.9.9#dns.quad9.net</code></strong> — Quad9 is active</li><li><strong><code>+DNSOverTLS</code></strong> — DoT encryption is enabled on the link</li><li><strong><code>192.168.1.254</code></strong> only as fallback (Singtel ONT no longer primary)</li></ul><pre><code class="language-bash">$ resolvectl query google.com
+
+google.com: 142.251.10.100                    -- link: wlan0
+            142.251.10.113                    -- link: wlan0
+            ...
+-- Information acquired via protocol DNS in 15.9ms.
+-- Data is authenticated: no; Data was acquired via local or encrypted transport: yes
+-- Data from: network
+</code></pre><p><strong><code>encrypted transport: yes</code></strong> confirms DoT is working. Query time dropped from 28ms (Singtel ONT) to 15.9ms (Quad9 via DoT).</p><p>To double-check, compare Quad9 against the old Singtel resolver directly:</p><pre><code class="language-bash">$ dig +short @9.9.9.9 google.com
+142.251.10.101
+142.251.10.102
+...
+
+$ dig +short @192.168.1.254 google.com
+142.250.4.100
+142.250.4.138
+...
+</code></pre><p>Both resolve, but Quad9 is now the primary and your ISP no longer logs the domain names you visit.</p><hr /><h2 id="why-quad9-over-cloudflare?">Why Quad9 Over Cloudflare?</h2><p>From my benchmarks on Singtel Fibre in Singapore:</p><table><thead><tr><th>Metric</th><th>Quad9</th><th>Cloudflare</th></tr></thead><tbody><tr><td>Plain DNS latency</td><td>8ms</td><td>9ms</td></tr><tr><td>DoH latency</td><td>35ms</td><td>60ms</td></tr><tr><td>Jurisdiction</td><td>Switzerland</td><td>US (CLOUD Act)</td></tr><tr><td>Logging</td><td>Zero, independently audited</td><td>Deleted within 24h</td></tr><tr><td>Privacy law</td><td>Swiss FADP</td><td>US CLOUD Act / NSLs</td></tr></tbody></table><p>Plain DNS is a tie. DoH speed and jurisdiction are the differentiators — Quad9 wins on both.</p><hr /><h2 id="bottom-line">Bottom Line</h2><p>CachyOS&apos;s DNS Changer is the cleanest way to configure system-wide encrypted DNS on any distro I&apos;ve used. One click in the GUI and you get blocky-managed DoH, systemd-resolved caching, and NetworkManager integration. No config files, no terminal gymnastics, no <code>/etc/resolv.conf</code> fights.</p><p>Quad9 with DoH is the setting I&apos;d recommend: best privacy jurisdiction, fastest DoH from Singapore, and full encryption against ISP snooping.</p><hr /><p><em>Benchmarks run on Singtel Fibre Broadband (AS9506, Ulu Bedok, Singapore). CachyOS Hello version shipping with April 2026 release. Kernel: Linux 6.14+.</em></p></div>
 
 <p><i>Published: 2026-06-22</i></p>
 
