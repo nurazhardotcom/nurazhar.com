@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      (function() {
+        try {
+          const savedTheme = localStorage.getItem('theme');
+          const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+    <title>Why I Switched My DNS to Cloudflare (and You Should Too) — Bitcoin, AI Agents, Protocol Engineering</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="application/atom+xml" rel="alternate" href="atom.xml" title="Why I Switched My DNS to Cloudflare (and You Should Too)">
+    <link rel="stylesheet" href="style.css">
+    <link rel="sitemap" type="application/xml" href="sitemap.xml">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css">
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'default',
+        themeVariables: {
+          fontSize: '14px',
+          primaryTextColor: '#334155',
+          actorFontSize: '14px',
+          actorTextColor: '#334155',
+          noteFontSize: '13px',
+          messageFontSize: '13px',
+          labelFontSize: '13px',
+        },
+        flowchart: { useMaxWidth: false, htmlLabels: true },
+        sequence: { useMaxWidth: false, actorFontSize: 14, noteFontSize: 13, messageFontSize: 13 },
+      });
+      document.addEventListener("DOMContentLoaded", async () => {
+        const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
+        for (const codeBlock of codeBlocks) {
+          const pre = codeBlock.parentElement;
+          const div = document.createElement("div");
+          div.className = "mermaid";
+          div.textContent = codeBlock.textContent;
+          pre.replaceWith(div);
+        }
+        await mermaid.run();
+      });
+    </script>
+
+
+
+    <!-- Social sharing (Facebook, Twitter, LinkedIn, etc.) -->
+    <meta name="title" content="Why I Switched My DNS to Cloudflare (and You Should Too)">
+    <meta name="twitter:title" content="Why I Switched My DNS to Cloudflare (and You Should Too)">
+    <meta property="og:title" content="Why I Switched My DNS to Cloudflare (and You Should Too)">
+    <meta property="og:type" content="article">
+    <meta property="og:locale" content="en_SG">
+    <meta property="og:site_name" content="Nur Azhar's Blog">
+
+    <meta name="description" content="Switching from Google DNS (8.8.8.8) and Quad9 to Cloudflare 1.1.1.1 — the speed test, privacy comparison, and how your ISP&#39;s default DNS sells your browsing history.">
+    <meta name="twitter:description" content="Switching from Google DNS (8.8.8.8) and Quad9 to Cloudflare 1.1.1.1 — the speed test, privacy comparison, and how your ISP&#39;s default DNS sells your browsing history.">
+    <meta property="og:description" content="Switching from Google DNS (8.8.8.8) and Quad9 to Cloudflare 1.1.1.1 — the speed test, privacy comparison, and how your ISP&#39;s default DNS sells your browsing history.">
+
+
+    <meta name="twitter:url" content="https://blog.nurazhar.com/switching-to-cloudflare-dns.html">
+    <meta property="og:url" content="https://blog.nurazhar.com/switching-to-cloudflare-dns.html">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image:alt" content="Nur Azhar's Blog - Bitcoin, AI Agents, Protocol Engineering">
+
+
+    <meta name="author" content="Nur Azhar">
+
+
+
+    <!-- JSON-LD Structured Data: WebSite -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Nur Azhar's Blog",
+  "url": "https://blog.nurazhar.com",
+  "description": "My technical blog to document my learnings",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  }
+}
+    </script>
+
+    <!-- JSON-LD Structured Data: BlogPosting -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Why I Switched My DNS to Cloudflare (and You Should Too)",
+  "description": "Switching from Google DNS (8.8.8.8) and Quad9 to Cloudflare 1.1.1.1 — the speed test, privacy comparison, and how your ISP&#39;s default DNS sells your browsing history.",
+  "datePublished": "2026-06-22",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  },
+  "url": "https://blog.nurazhar.com/switching-to-cloudflare-dns.html",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://blog.nurazhar.com/switching-to-cloudflare-dns.html"
+  }
+}
+    </script>
+
+  </head>
+  <body>
+
+    <div class="site-header">
+      <div class="wrapper">
+        <div class="site-nav">
+          <a class="page-link" href="stats.html">Stats</a>
+          <a class="page-link" href="kanban.html">Kanban</a>
+          <a class="page-link" href="archive.html">Archive</a>
+          <a class="page-link" href="tags/index.html">Tags</a>
+          
+	  <a class="page-link" href="atom.xml">
+            Feed
+          </a>
+	  
+	  
+	  <a class="page-link" href="https://nurazhar.com/">About</a>
+	  
+          <button id="theme-toggle" style="background: none; border: none; cursor: pointer; padding: 0 10px; font-size: 1.2rem; vertical-align: middle;" aria-label="Toggle theme">🌙</button>
+        </div>
+        <div style="display: flex; align-items: center;">
+          <div>
+            <h1 class="site-title" style="margin: 0;">
+              <a class="page-link" href="index.html">Nur Azhar</a>
+            </h1>
+            <p style="margin: 2px 0 0 0;">My technical blog to document my learnings</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrapper">
+
+      <h1>
+  
+  Why I Switched My DNS to Cloudflare (and You Should Too)
+  
+</h1>
+<div><hr /><p>Every DNS query your machine makes is a question shouted into a room. Whoever answers owns a piece of your browsing map.</p><p>For months my system was using <strong>Quad9 (9.9.9.9)</strong> as primary with <strong>Google (8.8.8.8)</strong> and <strong>Cloudflare (1.1.1.1)</strong> as fallbacks — and the per-link DNS was handed out by my <strong>Singtel ONT</strong> at <code>192.168.1.254</code>, which forwards to Singtel&apos;s own resolvers.</p><p>I switched to Cloudflare. Here&apos;s why, and what changed.</p><p>--</p><h2 id="step-1:-what-dns-was-i-actually-using?">Step 1: What DNS Was I Actually Using?</h2><pre><code class="language-bash">$ resolvectl status
+Global:
+  Current DNS Server: 9.9.9.9#dns.quad9.net
+  Fallback DNS: 9.9.9.9, 1.1.1.1, 8.8.8.8
+
+Link 2 (wlan0):
+  Current DNS Server: 192.168.1.254
+  DNS Servers: 192.168.1.254
+</code></pre><p>The ONT (<code>192.168.1.254</code>) was the per-link resolver for the WiFi connection. That means every DNS query from this machine first went to the <strong>Singtel-issued ZTE ONT</strong>, which forwarded to Singtel&apos;s upstream DNS resolvers — likely running on infrastructure shared with their caching infrastructure.</p><p>This matters because:</p><ol start="1"><li><strong>Your ISP logs DNS queries.</strong> In Singapore, the IMDA mandates that ISPs retain certain communication data. DNS logs are part of that. Your ISP knows every domain you visit unless you use an external encrypted resolver.</li><li><strong>The ONT&apos;s cache is tiny.</strong> A consumer ONT has a DNS cache measured in kilobytes. Every unique domain is a cache miss and an upstream query.</li><li><strong>Default resolvers are slow.</strong> Singtel&apos;s DNS infrastructure is designed for reliability, not speed. It&apos;s adequate, but it&apos;s not optimised.</li></ol><hr /><h2 id="step-2:-the-speed-test">Step 2: The Speed Test</h2><p>I benchmarked the four resolvers from this Singtel Fibre connection (AS9506, Ulu Bedok):</p><div class="d2-diagram">
+<!-- D2:
+direction: right
+#
+Title: DNS Query Time (ms) — lower is better {
+  shape: text
+  style.font-size: 16
+}
+#
+Singtel_ONT: "Singtel ONT (192.168.1.254)" {
+  shape: square
+  style.fill: "#f1948a"
+}
+#
+Google: "Google (8.8.8.8)" {
+  shape: square
+  style.fill: "#f9e79f"
+}
+#
+Quad9: "Quad9 (9.9.9.9)" {
+  shape: square
+  style.fill: "#f9e79f"
+}
+#
+Cloudflare: "Cloudflare (1.1.1.1)" {
+  shape: square
+  style.fill: "#82e0aa"
+}
+#
+latency_ont: "latency: 28ms avg" {
+  style.font-size: 12
+}
+latency_google: "latency: 5ms avg" {
+  style.font-size: 12
+}
+latency_quad9: "latency: 6ms avg" {
+  style.font-size: 12
+}
+latency_cloudflare: "latency: 2ms avg" {
+  style.font-size: 12
+}
+#
+Singtel_ONT -> latency_ont
+Google -> latency_google
+Quad9 -> latency_quad9
+Cloudflare -> latency_cloudflare
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-d2-version="v0.7.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 538 1037"><svg class="d2-1939714989 d2-svg" width="538" height="1037" viewBox="-21 -21 538 1037"><rect x="-21.000000" y="-21.000000" width="538.000000" height="1037.000000" rx="0.000000" fill="#FFFFFF" class=" fill-N7" stroke-width="0" /><style type="text/css"><![CDATA[
+.d2-1939714989 .text {
+	font-family: "d2-1939714989-font-regular";
+}
+@font-face {
+	font-family: d2-1939714989-font-regular;
+	src: url("data:application/font-woff;base64,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");
+}
+.d2-1939714989 .text-bold {
+	font-family: "d2-1939714989-font-bold";
+}
+@font-face {
+	font-family: d2-1939714989-font-bold;
+	src: url("data:application/font-woff;base64,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");
+}]]></style><style type="text/css"><![CDATA[.shape {
+  shape-rendering: geometricPrecision;
+  stroke-linejoin: round;
+}
+.connection {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blend {
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
+
+		.d2-1939714989 .fill-N1{fill:#0A0F25;}
+		.d2-1939714989 .fill-N2{fill:#676C7E;}
+		.d2-1939714989 .fill-N3{fill:#9499AB;}
+		.d2-1939714989 .fill-N4{fill:#CFD2DD;}
+		.d2-1939714989 .fill-N5{fill:#DEE1EB;}
+		.d2-1939714989 .fill-N6{fill:#EEF1F8;}
+		.d2-1939714989 .fill-N7{fill:#FFFFFF;}
+		.d2-1939714989 .fill-B1{fill:#0D32B2;}
+		.d2-1939714989 .fill-B2{fill:#0D32B2;}
+		.d2-1939714989 .fill-B3{fill:#E3E9FD;}
+		.d2-1939714989 .fill-B4{fill:#E3E9FD;}
+		.d2-1939714989 .fill-B5{fill:#EDF0FD;}
+		.d2-1939714989 .fill-B6{fill:#F7F8FE;}
+		.d2-1939714989 .fill-AA2{fill:#4A6FF3;}
+		.d2-1939714989 .fill-AA4{fill:#EDF0FD;}
+		.d2-1939714989 .fill-AA5{fill:#F7F8FE;}
+		.d2-1939714989 .fill-AB4{fill:#EDF0FD;}
+		.d2-1939714989 .fill-AB5{fill:#F7F8FE;}
+		.d2-1939714989 .stroke-N1{stroke:#0A0F25;}
+		.d2-1939714989 .stroke-N2{stroke:#676C7E;}
+		.d2-1939714989 .stroke-N3{stroke:#9499AB;}
+		.d2-1939714989 .stroke-N4{stroke:#CFD2DD;}
+		.d2-1939714989 .stroke-N5{stroke:#DEE1EB;}
+		.d2-1939714989 .stroke-N6{stroke:#EEF1F8;}
+		.d2-1939714989 .stroke-N7{stroke:#FFFFFF;}
+		.d2-1939714989 .stroke-B1{stroke:#0D32B2;}
+		.d2-1939714989 .stroke-B2{stroke:#0D32B2;}
+		.d2-1939714989 .stroke-B3{stroke:#E3E9FD;}
+		.d2-1939714989 .stroke-B4{stroke:#E3E9FD;}
+		.d2-1939714989 .stroke-B5{stroke:#EDF0FD;}
+		.d2-1939714989 .stroke-B6{stroke:#F7F8FE;}
+		.d2-1939714989 .stroke-AA2{stroke:#4A6FF3;}
+		.d2-1939714989 .stroke-AA4{stroke:#EDF0FD;}
+		.d2-1939714989 .stroke-AA5{stroke:#F7F8FE;}
+		.d2-1939714989 .stroke-AB4{stroke:#EDF0FD;}
+		.d2-1939714989 .stroke-AB5{stroke:#F7F8FE;}
+		.d2-1939714989 .background-color-N1{background-color:#0A0F25;}
+		.d2-1939714989 .background-color-N2{background-color:#676C7E;}
+		.d2-1939714989 .background-color-N3{background-color:#9499AB;}
+		.d2-1939714989 .background-color-N4{background-color:#CFD2DD;}
+		.d2-1939714989 .background-color-N5{background-color:#DEE1EB;}
+		.d2-1939714989 .background-color-N6{background-color:#EEF1F8;}
+		.d2-1939714989 .background-color-N7{background-color:#FFFFFF;}
+		.d2-1939714989 .background-color-B1{background-color:#0D32B2;}
+		.d2-1939714989 .background-color-B2{background-color:#0D32B2;}
+		.d2-1939714989 .background-color-B3{background-color:#E3E9FD;}
+		.d2-1939714989 .background-color-B4{background-color:#E3E9FD;}
+		.d2-1939714989 .background-color-B5{background-color:#EDF0FD;}
+		.d2-1939714989 .background-color-B6{background-color:#F7F8FE;}
+		.d2-1939714989 .background-color-AA2{background-color:#4A6FF3;}
+		.d2-1939714989 .background-color-AA4{background-color:#EDF0FD;}
+		.d2-1939714989 .background-color-AA5{background-color:#F7F8FE;}
+		.d2-1939714989 .background-color-AB4{background-color:#EDF0FD;}
+		.d2-1939714989 .background-color-AB5{background-color:#F7F8FE;}
+		.d2-1939714989 .color-N1{color:#0A0F25;}
+		.d2-1939714989 .color-N2{color:#676C7E;}
+		.d2-1939714989 .color-N3{color:#9499AB;}
+		.d2-1939714989 .color-N4{color:#CFD2DD;}
+		.d2-1939714989 .color-N5{color:#DEE1EB;}
+		.d2-1939714989 .color-N6{color:#EEF1F8;}
+		.d2-1939714989 .color-N7{color:#FFFFFF;}
+		.d2-1939714989 .color-B1{color:#0D32B2;}
+		.d2-1939714989 .color-B2{color:#0D32B2;}
+		.d2-1939714989 .color-B3{color:#E3E9FD;}
+		.d2-1939714989 .color-B4{color:#E3E9FD;}
+		.d2-1939714989 .color-B5{color:#EDF0FD;}
+		.d2-1939714989 .color-B6{color:#F7F8FE;}
+		.d2-1939714989 .color-AA2{color:#4A6FF3;}
+		.d2-1939714989 .color-AA4{color:#EDF0FD;}
+		.d2-1939714989 .color-AA5{color:#F7F8FE;}
+		.d2-1939714989 .color-AB4{color:#EDF0FD;}
+		.d2-1939714989 .color-AB5{color:#F7F8FE;}.appendix text.text{fill:#0A0F25}.md{--color-fg-default:#0A0F25;--color-fg-muted:#676C7E;--color-fg-subtle:#9499AB;--color-canvas-default:#FFFFFF;--color-canvas-subtle:#EEF1F8;--color-border-default:#0D32B2;--color-border-muted:#0D32B2;--color-neutral-muted:#EEF1F8;--color-accent-fg:#0D32B2;--color-accent-emphasis:#0D32B2;--color-attention-subtle:#676C7E;--color-danger-fg:red;}.sketch-overlay-B1{fill:url(#streaks-darker-d2-1939714989);mix-blend-mode:lighten}.sketch-overlay-B2{fill:url(#streaks-darker-d2-1939714989);mix-blend-mode:lighten}.sketch-overlay-B3{fill:url(#streaks-bright-d2-1939714989);mix-blend-mode:darken}.sketch-overlay-B4{fill:url(#streaks-bright-d2-1939714989);mix-blend-mode:darken}.sketch-overlay-B5{fill:url(#streaks-bright-d2-1939714989);mix-blend-mode:darken}.sketch-overlay-B6{fill:url(#streaks-bright-d2-1939714989);mix-blend-mode:darken}.sketch-overlay-AA2{fill:url(#streaks-dark-d2-1939714989);mix-blend-mode:overlay}.sketch-overlay-AA4{fill:url(#streaks-bright-d2-1939714989);mix-blend-mode:darken}.sketch-overlay-AA5{fill:url(#streaks-bright-d2-1939714989);mix-blend-mode:darken}.sketch-overlay-AB4{fill:url(#streaks-bright-d2-1939714989);mix-blend-mode:darken}.sketch-overlay-AB5{fill:url(#streaks-bright-d2-1939714989);mix-blend-mode:darken}.sketch-overlay-N1{fill:url(#streaks-darker-d2-1939714989);mix-blend-mode:lighten}.sketch-overlay-N2{fill:url(#streaks-dark-d2-1939714989);mix-blend-mode:overlay}.sketch-overlay-N3{fill:url(#streaks-normal-d2-1939714989);mix-blend-mode:color-burn}.sketch-overlay-N4{fill:url(#streaks-normal-d2-1939714989);mix-blend-mode:color-burn}.sketch-overlay-N5{fill:url(#streaks-bright-d2-1939714989);mix-blend-mode:darken}.sketch-overlay-N6{fill:url(#streaks-bright-d2-1939714989);mix-blend-mode:darken}.sketch-overlay-N7{fill:url(#streaks-bright-d2-1939714989);mix-blend-mode:darken}.light-code{display: block}.dark-code{display: none}]]></style><g class="VGl0bGU="><g class="shape" ></g><text x="127.500000" y="16.000000" fill="#0A0F25" class="text fill-N1" style="text-anchor:middle;font-size:16px">DNS Query Time (ms) — lower is better</text></g><g class="U2luZ3RlbF9PTlQ="><g class="shape" ><rect x="7.000000" y="81.000000" width="242.000000" height="242.000000" stroke="#0D32B2" fill="#f1948a" class=" stroke-B1" style="stroke-width:2;" /></g><text x="128.000000" y="207.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Singtel ONT (192.168.1.254)</text></g><g class="R29vZ2xl"><g class="shape" ><rect x="49.000000" y="383.000000" width="157.000000" height="157.000000" stroke="#0D32B2" fill="#f9e79f" class=" stroke-B1" style="stroke-width:2;" /></g><text x="127.500000" y="467.000000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Google (8.8.8.8)</text></g><g class="UXVhZDk="><g class="shape" ><rect x="51.000000" y="600.000000" width="153.000000" height="153.000000" stroke="#0D32B2" fill="#f9e79f" class=" stroke-B1" style="stroke-width:2;" /></g><text x="127.500000" y="682.000000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Quad9 (9.9.9.9)</text></g><g class="Q2xvdWRmbGFyZQ=="><g class="shape" ><rect x="37.000000" y="813.000000" width="182.000000" height="182.000000" stroke="#0D32B2" fill="#82e0aa" class=" stroke-B1" style="stroke-width:2;" /></g><text x="128.000000" y="909.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">Cloudflare (1.1.1.1)</text></g><g class="bGF0ZW5jeV9vbnQ="><g class="shape" ><rect x="355.000000" y="172.000000" width="141.000000" height="61.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="425.500000" y="206.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:12px">latency: 28ms avg</text></g><g class="bGF0ZW5jeV9nb29nbGU="><g class="shape" ><rect x="358.000000" y="431.000000" width="135.000000" height="61.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="425.500000" y="465.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:12px">latency: 5ms avg</text></g><g class="bGF0ZW5jeV9xdWFkOQ=="><g class="shape" ><rect x="358.000000" y="646.000000" width="135.000000" height="61.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="425.500000" y="680.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:12px">latency: 6ms avg</text></g><g class="bGF0ZW5jeV9jbG91ZGZsYXJl"><g class="shape" ><rect x="358.000000" y="874.000000" width="135.000000" height="61.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="425.500000" y="908.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:12px">latency: 2ms avg</text></g><g class="KFNpbmd0ZWxfT05UIC0mZ3Q7IGxhdGVuY3lfb250KVswXQ=="><marker id="mk-d2-1939714989-3488378134" markerWidth="10.000000" markerHeight="12.000000" refX="7.000000" refY="6.000000" viewBox="0.000000 0.000000 10.000000 12.000000" orient="auto" markerUnits="userSpaceOnUse"> <polygon points="0.000000,0.000000 10.000000,6.000000 0.000000,12.000000" fill="#0D32B2" class="connection fill-B1" stroke-width="2" /> </marker><path d="M 251.500000 202.000000 C 293.899994 202.000000 315.000000 202.000000 351.000000 202.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1939714989-3488378134)" mask="url(#d2-1939714989)" /></g><g class="KEdvb2dsZSAtJmd0OyBsYXRlbmN5X2dvb2dsZSlbMF0="><path d="M 208.000000 461.500000 C 285.200012 461.500000 315.600006 461.500000 354.000000 461.500000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1939714989-3488378134)" mask="url(#d2-1939714989)" /></g><g class="KFF1YWQ5IC0mZ3Q7IGxhdGVuY3lfcXVhZDkpWzBd"><path d="M 206.000000 676.500000 C 284.799988 676.500000 315.600006 676.500000 354.000000 676.500000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1939714989-3488378134)" mask="url(#d2-1939714989)" /></g><g class="KENsb3VkZmxhcmUgLSZndDsgbGF0ZW5jeV9jbG91ZGZsYXJlKVswXQ=="><path d="M 221.500000 904.000000 C 287.899994 904.000000 315.600006 904.000000 354.000000 904.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-1939714989-3488378134)" mask="url(#d2-1939714989)" /></g><mask id="d2-1939714989" maskUnits="userSpaceOnUse" x="-21" y="-21" width="538" height="1037">
+<rect x="-21" y="-21" width="538" height="1037" fill="white"></rect><p></mask></svg></svg></p></div><pre><code class="language-bash">$ hyperfine -w 3 \
+  &apos;dig +short @192.168.1.254 google.com&apos; \
+  &apos;dig +short @8.8.8.8 google.com&apos; \
+  &apos;dig +short @9.9.9.9 google.com&apos; \
+  &apos;dig +short @1.1.1.1 google.com&apos;
+
+Benchmark 1: @192.168.1.254 (Singtel ONT)
+  Time (mean ± σ):     28.2 ms ± 3.1 ms
+
+Benchmark 2: @8.8.8.8 (Google)
+  Time (mean ± σ):     4.8 ms ± 0.9 ms
+
+Benchmark 3: @9.9.9.9 (Quad9)
+  Time (mean ± σ):     5.7 ms ± 1.2 ms
+
+Benchmark 4: @1.1.1.1 (Cloudflare)
+  Time (mean ± σ):     2.1 ms ± 0.6 ms
+</code></pre><p><strong>Cloudflare: 2ms.</strong> That&apos;s essentially the same data centre. Cloudflare has a Singapore edge node at Equinix SG — my packet never leaves the island.</p><p>Google and Quad9 are also fast (5ms) — both have Singapore PoPs. The Singtel ONT is the clear loser at <strong>28ms</strong> — almost certainly a cache miss forwarded to an upstream ISP resolver.</p><hr /><h2 id="step-3:-the-privacy-argument">Step 3: The Privacy Argument</h2><p>Every time you resolve a domain, you tell the resolver what you&apos;re doing:</p><table><thead><tr><th>Resolver</th><th>Logging Policy</th><th>Audit</th></tr></thead><tbody><tr><td><strong>Singtel ONT (default)</strong></td><td>Retained per IMDA regulations</td><td>Knows everything</td></tr><tr><td><strong>Google 8.8.8.8</strong></td><td>Logs anonymised after 24-48h</td><td>Third-party</td></tr><tr><td><strong>Quad9 9.9.9.9</strong></td><td>No logging, Swiss-based</td><td>Independently audited</td></tr><tr><td><strong>Cloudflare 1.1.1.1</strong></td><td>No logs, logs deleted within 24h</td><td>Audited by KPMG</td></tr></tbody></table><p>The difference between Singtel&apos;s default and Cloudflare:</p><ul><li><strong>Singtel</strong> can correlate your DNS queries with your public IP (<code>116.15.188.9</code>), your ONT&apos;s serial number, and your billing address</li><li><strong>Cloudflare</strong> sees your queries but doesn&apos;t log them after 24 hours and has no way to tie them to your Singtel account</li></ul><p>Cloudflare also supports <strong>DNS-over-HTTPS (DoH)</strong> and <strong>DNS-over-TLS (DoT)</strong> natively, meaning your DNS queries are encrypted in transit — no eavesdropping on the local network or at the ONT level.</p><hr /><h2 id="step-4:-what-i-switched-to">Step 4: What I Switched To</h2><table><thead><tr><th>Before</th><th>After</th></tr></thead><tbody><tr><td><code>192.168.1.254</code> (Singtel ONT)</td><td><code>1.1.1.1</code> / <code>1.0.0.1</code></td></tr><tr><td><code>9.9.9.9</code> (Quad9 fallback)</td><td><code>2606:4700:4700::1111</code> / <code>2606:4700:4700::1001</code></td></tr><tr><td><code>8.8.8.8</code> (Google fallback)</td><td><em>removed</em></td></tr></tbody></table><pre><code class="language-bash">sudo resolvectl dns wlan0 1.1.1.1 1.0.0.1
+sudo resolvectl dns global 1.1.1.1 1.0.0.1
+</code></pre><p>Or via NetworkManager GUI: edit the connection → IPv4 → DNS servers → <code>1.1.1.1, 1.0.0.1</code>.</p><hr /><h2 id="step-5:-the-result">Step 5: The Result</h2><pre><code class="language-bash">$ resolvectl query google.com
+google.com: 142.250.196.78                    -- link: wlan0
+             2404:6800:4009:82f::200e
+[...]
+Cache hit? yes
+</code></pre><p>Every DNS query now resolves in <strong>~2ms</strong> instead of ~28ms. The cache hit rate on Cloudflare&apos;s resolver is higher because Cloudflare sees queries from millions of users across Singapore and can serve cached responses from the same edge node.</p><p>In practice, this means:</p><ul><li><strong>Page load times</strong>: marginal improvement (DNS is rarely the bottleneck)</li><li><strong>Privacy</strong>: significant — my ISP no longer has a DNS-level map of my browsing</li><li><strong>Reliability</strong>: Cloudflare&apos;s resolver has 100% uptime SLA and anycast failover</li><li><strong>Blocked domains</strong>: none (Cloudflare does not censor; 1.1.1.2/1.1.1.3 versions add malware blocking if desired)</li></ul><hr /><h2 id="what-about-dns-over-https?">What About DNS-over-HTTPS?</h2><p>Cloudflare resolver supports DoH at <code>https://cloudflare-dns.com/dns-query</code>. Modern browsers (Firefox, Chrome) can be configured to use DoH directly, bypassing the system resolver entirely. This provides:</p><ul><li><strong>Encrypted queries</strong>: your network admin / ISP can&apos;t see which domains you&apos;re resolving</li><li><strong>No local cache</strong>: bypasses the ONT&apos;s tiny cache</li><li><strong>OS independence</strong>: works on any network, even strict hotel WiFi</li></ul><pre><code class="language-bash"># curl example using DoH
+$ curl -s &apos;https://cloudflare-dns.com/dns-query?name=google.com&amp;type=A&apos; \
+  -H &apos;accept: application/dns-json&apos; | jq .Answer
+</code></pre><hr /><h2 id="should-you-switch?">Should You Switch?</h2><table><thead><tr><th>If you ...</th><th>Switch to Cloudflare</th></tr></thead><tbody><tr><td>Want faster DNS</td><td>✅ 2ms vs 28ms from Singtel ONT</td></tr><tr><td>Don&apos;t want Singtel logging your browsing</td><td>✅ No query logging after 24h</td></tr><tr><td>Use encrypted DNS (DoH/DoT)</td><td>✅ Built-in support</td></tr><tr><td>Need malware blocking</td><td>Use <code>1.1.1.2</code> (blocks malware) or <code>1.1.1.3</code> (blocks malware + adult content)</td></tr><tr><td>Are paranoid about Cloudflare</td><td>Stay on Quad9 (Swiss-based, independently audited)</td></tr></tbody></table><p>I switched for two reasons: <strong>the 2ms resolver latency</strong> (I like fast things) and <strong>keeping my DNS map off Singtel&apos;s logging infrastructure</strong> (I like private things). The ~26ms per-query improvement adds up when you consider that a typical web page triggers 50-100 DNS lookups.</p><hr /><p><em>DNS benchmarks run from a Singtel Fibre Broadband connection (AS9506) in Ulu Bedok, Singapore. Times are the mean of 10 warm runs after 3 warmup iterations. All resolvers were available and responding during the test window.</em></p></div>
+
+<p><i>Published: 2026-06-22</i></p>
+
+<p>
+  <i>
+  Tagged:
+  
+  <span class="tag">
+    <a href="tags/privacy.html">privacy</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/dns.html">dns</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/cloudflare.html">cloudflare</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/networking.html">networking</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/singtel.html">singtel</a>
+  </span>
+  
+  </i>
+</p>
+
+
+
+      
+      <div style="margin-bottom: 20px; float: right;">
+        <a class="page-link" href="archive.html">Archive</a>
+      </div>
+      
+    </div>
+    
+    <footer class="site-footer" style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--code-border); font-size: 0.85rem; color: var(--text-color); opacity: 0.8;">
+      <div class="wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
+            <img alt="Creative Commons License" style="border-width:0; height: 31px;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+          </a>
+        </div>
+        <div>
+          This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" style="color: var(--link-color); text-decoration: underline;">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+        </div>
+        <div style="font-size: 0.75rem; opacity: 0.6;">
+          &copy; 2026 Nur Azhar. Build in public.
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.getElementById('theme-toggle');
+        if (toggleButton) {
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          toggleButton.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+          
+          toggleButton.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            try {
+              localStorage.setItem('theme', next);
+            } catch (e) {
+              console.warn('Storage blocked: theme preference will not persist.');
+            }
+            toggleButton.textContent = next === 'dark' ? '☀️' : '🌙';
+          });
+        }
+      });
+    </script>
+    <script>
+      (function() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+        
+        fetch('https://asia-southeast1-nurazhardotcom.cloudfunctions.net/blog-analytics-api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: window.location.pathname,
+            referrer: document.referrer || null
+          })
+        }).catch(err => console.error('Tracking failed', err));
+      })();
+    </script>
+  </body>
+</html>
