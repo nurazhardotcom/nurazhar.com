@@ -157,21 +157,117 @@
   
 </h1>
 <div><hr /><p>Two network topology concepts drive BSV&apos;s architecture: <strong>small world networks</strong> and the <strong>Mandala</strong> topology. Together they enable a blockchain where any node can reach any other node in ~2 hops, regardless of network size.</p><p>Here&apos;s how they work and how BTC compares.</p><hr /><h2 id="small-world-networks">Small World Networks</h2><p>A <strong>small world network</strong> is one where the minimum distance between any two nodes (in hops) grows logarithmically with the number of nodes:</p><pre><code>L ∝ log N
-</code></pre><p>Double the nodes → one more hop. A billion nodes → ~30 hops. This property emerges naturally in networks that balance local clustering with a few long-range connections.</p><p>The classic example is &quot;six degrees of separation&quot; — any two humans are ~6 social connections apart. Same principle.</p><p>In a blockchain context, small world means:</p><ul><li><strong>Miners</strong> are incentivised to connect to other miners directly (they need blocks fast to avoid orphan risk)</li><li>Over time, this drives the miner subnetwork toward a <strong>nearly complete graph</strong> — every miner connected to almost every other miner</li><li>The average distance between any two miner nodes converges toward <strong>1.3 hops</strong></li></ul><p>This is not by protocol design — it&apos;s emergent. Miners economically optimise their connectivity to minimise block propagation latency, and the topology self-organises into a small world.</p><hr /><h2 id="the-mandala-topology">The Mandala Topology</h2><p>The Mandala is a <strong>layered, recursive network</strong> named after the concentric circular patterns. It stacks layers (or &quot;shells&quot;) where:</p><ol start="1"><li><p><strong>Core — Teranodes (Transaction Processors)</strong></p><ul><li>Densely interconnected mesh — the &quot;giant node&quot;</li><li>All core nodes connected to almost all other core nodes</li><li>Handle block assembly, proof-of-work, transaction ordering</li></ul></li><li><p><strong>Middle — Overlay Services</strong></p><ul><li>Specialised services built on top of the core</li><li>Token tracking, key-value stores, data indexing</li><li>Can encapsulate each other (layers within layers)</li><li>Each overlay connects to multiple core nodes</li></ul></li><li><p><strong>Edge — Applications / Wallets (Transacting Parties)</strong></p><ul><li>SPV wallets, business applications</li><li>Connect to one or more overlay services</li><li>Validate via Merkle proofs (SPV) — no need to run a full node</li></ul></li></ol><pre><code>         ┌─────────────────────┐
-         │    Applications     │  ← Edge layer
-         │  (SPV Wallets, etc) │
-         └──────┬──────┬──────┘
-                │      │
-         ┌──────┴──────┴──────┐
-         │  Overlay Services  │  ← Middle layer
-         │  (Tokens, Indexes) │
-         └──────┬──────┬──────┘
-                │      │
-         ┌──────┴──────┴──────┐
-         │ Teranode Core Mesh │  ← Core layer (nearly complete graph)
-         │  (Miners) 1.3 hops │
-         └─────────────────────┘
-</code></pre><p>The critical property: <strong>the topology is recursive</strong>. Each overlay can itself contain sub-overlays in the same concentric pattern. This allows the network to scale unboundedly — new layers stack on top without congesting the core.</p><hr /><h2 id="how-2-hop-routing-works">How 2-Hop Routing Works</h2><p>In a Mandala network, any edge node reaches any other node in <strong>at most 2 hops</strong>:</p><pre><code>Edge A → [1 hop to nearest core node] → [1 hop from core to target&apos;s edge]
+</code></pre><p>Double the nodes → one more hop. A billion nodes → ~30 hops. This property emerges naturally in networks that balance local clustering with a few long-range connections.</p><p>The classic example is &quot;six degrees of separation&quot; — any two humans are ~6 social connections apart. Same principle.</p><p>In a blockchain context, small world means:</p><ul><li><strong>Miners</strong> are incentivised to connect to other miners directly (they need blocks fast to avoid orphan risk)</li><li>Over time, this drives the miner subnetwork toward a <strong>nearly complete graph</strong> — every miner connected to almost every other miner</li><li>The average distance between any two miner nodes converges toward <strong>1.3 hops</strong></li></ul><p>This is not by protocol design — it&apos;s emergent. Miners economically optimise their connectivity to minimise block propagation latency, and the topology self-organises into a small world.</p><hr /><h2 id="the-mandala-topology">The Mandala Topology</h2><p>The Mandala is a <strong>layered, recursive network</strong> named after the concentric circular patterns. It stacks layers (or &quot;shells&quot;) where:</p><ol start="1"><li><p><strong>Core — Teranodes (Transaction Processors)</strong></p><ul><li>Densely interconnected mesh — the &quot;giant node&quot;</li><li>All core nodes connected to almost all other core nodes</li><li>Handle block assembly, proof-of-work, transaction ordering</li></ul></li><li><p><strong>Middle — Overlay Services</strong></p><ul><li>Specialised services built on top of the core</li><li>Token tracking, key-value stores, data indexing</li><li>Can encapsulate each other (layers within layers)</li><li>Each overlay connects to multiple core nodes</li></ul></li><li><p><strong>Edge — Applications / Wallets (Transacting Parties)</strong></p><ul><li>SPV wallets, business applications</li><li>Connect to one or more overlay services</li><li>Validate via Merkle proofs (SPV) — no need to run a full node</li></ul></li></ol><pre><code class="language-d2">direction: down
+
+App1: &quot;App / Wallet&quot; {
+  shape: oval
+  style.fill: &quot;#82e0aa&quot;
+}
+App2: &quot;App / Wallet&quot; {
+  shape: oval
+  style.fill: &quot;#82e0aa&quot;
+}
+App3: &quot;App / Wallet&quot; {
+  shape: oval
+  style.fill: &quot;#82e0aa&quot;
+}
+
+Overlay1: &quot;Token Overlay&quot; {
+  shape: rectangle
+  style.fill: &quot;#85c1e9&quot;
+}
+Overlay2: &quot;Data Index&quot; {
+  shape: rectangle
+  style.fill: &quot;#85c1e9&quot;
+}
+
+Core1: &quot;Teranode A&quot; {
+  shape: diamond
+  style.fill: &quot;#f1948a&quot;
+}
+Core2: &quot;Teranode B&quot; {
+  shape: diamond
+  style.fill: &quot;#f1948a&quot;
+}
+Core3: &quot;Teranode C&quot; {
+  shape: diamond
+  style.fill: &quot;#f1948a&quot;
+}
+
+Edge: &quot;Edge Layer (Apps)&quot; {
+  shape: text
+  style.font-size: 11
+}
+Middle: &quot;Overlay Layer&quot; {
+  shape: text
+  style.font-size: 11
+}
+Core: &quot;Core Layer (Teranodes)
+~1.3 hop internal distance&quot; {
+  shape: text
+  style.font-size: 11
+}
+
+App1 -&gt; Overlay1
+App2 -&gt; Overlay1
+App3 -&gt; Overlay2
+
+Overlay1 -&gt; Core1
+Overlay1 -&gt; Core2
+Overlay2 -&gt; Core2
+Overlay2 -&gt; Core3
+
+Core1 -&gt; Core2
+Core2 -&gt; Core3
+Core1 -&gt; Core3
+
+Edge -&gt; Middle -&gt; Core
+</code></pre><p>The critical property: <strong>the topology is recursive</strong>. Each overlay can itself contain sub-overlays in the same concentric pattern. This allows the network to scale unboundedly — new layers stack on top without congesting the core.</p><hr /><h2 id="how-2-hop-routing-works">How 2-Hop Routing Works</h2><p>In a Mandala network, any edge node reaches any other node in <strong>at most 2 hops</strong>:</p><pre><code class="language-d2">direction: right
+
+EdgeA: &quot;Edge A
+(Waller)&quot; {
+  shape: oval
+  style.fill: &quot;#82e0aa&quot;
+}
+
+OverlayA: &quot;Overlay&quot; {
+  shape: rectangle
+  style.fill: &quot;#85c1e9&quot;
+}
+
+CoreNode: &quot;Teranode Core
+(~1.3 hop internal)&quot; {
+  shape: diamond
+  style.fill: &quot;#f1948a&quot;
+}
+
+OverlayB: &quot;Overlay&quot; {
+  shape: rectangle
+  style.fill: &quot;#85c1e9&quot;
+}
+
+EdgeB: &quot;Edge B
+(App)&quot; {
+  shape: oval
+  style.fill: &quot;#82e0aa&quot;
+}
+
+Hop1: &quot;Hop 1
+(Edge → Core)&quot; {
+  shape: text
+  style.font-size: 10
+}
+Hop2: &quot;Hop 2
+(Core → Edge)&quot; {
+  shape: text
+  style.font-size: 10
+}
+
+EdgeA -&gt; OverlayA -&gt; CoreNode -&gt; OverlayB -&gt; EdgeB
+
+Hop1 -&gt; Hop1: &quot;&quot; {
+  style.stroke: transparent
+}
 </code></pre><p>Broken down:</p><ol start="1"><li><strong>Edge to core</strong>: Your SPV wallet is connected to an overlay service, which is connected to one (or a few) Teranodes in the core. That&apos;s 1 hop from edge to core.</li><li><strong>Core to target</strong>: The Teranode core is a nearly complete graph — every core node is ~1.3 hops from every other core node. For practical purposes, 1 hop.</li><li><strong>Core to target&apos;s edge</strong>: The target&apos;s overlay/application is similarly 1 hop up from a core node.</li></ol><p><strong>Total: 2 hops edge-to-edge.</strong> This is bounded and constant — it does not grow with network size.</p><p>This works because:</p><ul><li>The core is <strong>densely connected</strong> (miners maximise their peer count)</li><li>Edge nodes don&apos;t need to find each other — they route through the core</li><li>The overlay layer abstracts the discovery problem</li></ul><p>Contrast with a flat P2P network where a node has 8 random peers, and reaching a specific node across 10,000 nodes might take 5-10 hops.</p><hr /><h2 id="the-&quot;giant-node&quot;-emergence">The &quot;Giant Node&quot; Emergence</h2><p>As miners compete, they naturally optimise connectivity:</p><ol start="1"><li>A miner with more peers gets blocks faster → lower orphan risk → higher profitability</li><li>This incentivises each miner to peer with every other miner</li><li>The result is a <strong>nearly complete graph</strong> at the core</li><li>The core behaves as a single &quot;giant node&quot; with extremely low internal latency</li></ol><p>From the BSV Wiki:</p><blockquote><p>&quot;The typical distance between any two nodes in the Bitcoin Core Network is just 1.3. This property is emergent over time as Miners learn how to optimise the network topology to create more efficient communication between nodes.&quot;</p></blockquote><p>The giant node is the centre of the Mandala. Everything else connects to it.</p><hr /><h2 id="comparison-to-bitcoin-core-(btc)">Comparison to Bitcoin Core (BTC)</h2><p>Bitcoin Core uses a <strong>flat P2P mesh</strong> topology. Here&apos;s how it differs:</p><table><thead><tr><th>Property</th><th>BSV (Mandala)</th><th>BTC (Flat P2P)</th></tr></thead><tbody><tr><td><strong>Network structure</strong></td><td>Layered (core/middle/edge)</td><td>Flat mesh</td></tr><tr><td><strong>Node peer count</strong></td><td>Core: unlimited (economic incentive to maximise)</td><td>Default 8-12 outbound</td></tr><tr><td><strong>Typical hop count</strong></td><td>~2 (bounded, constant)</td><td>O(log N) ~5-10 for 10k nodes</td></tr><tr><td><strong>Propagation latency</strong></td><td>~1 second (giant node + SPV)</td><td>~10-30 seconds (block propagation via relay)</td></tr><tr><td><strong>Node roles</strong></td><td>Specialised (miners, overlays, wallets)</td><td>Monolithic (every node does everything)</td></tr><tr><td><strong>Validation</strong></td><td>Tiered (core validates fully, edges use SPV)</td><td>Every full node validates all transactions</td></tr><tr><td><strong>Scaling model</strong></td><td>Horizontal (add more layers)</td><td>Vertical (bigger nodes, bigger blocks)</td></tr><tr><td><strong>Incentive for connectivity</strong></td><td>Direct (economic: orphan risk)</td><td>Weak (no economic penalty for slow propagation)</td></tr><tr><td><strong>Topology control</strong></td><td>Emergent + protocol guided</td><td>Random peer selection</td></tr><tr><td><strong>Resilience to partitioning</strong></td><td>High (multiple paths through core)</td><td>Moderate (relies on mesh redundancy)</td></tr><tr><td><strong>SPV adoption</strong></td><td>Core design pattern (all wallets use SPV)</td><td>Minimal (most wallets trust third-party APIs)</td></tr></tbody></table><h3 id="key-differences-explained">Key Differences Explained</h3><p><strong>BTC&apos;s 8-12 peer limit</strong>: Bitcoin Core caps outbound connections at 8 (with some additional inbound). This prevents the network from forming a dense core. A transaction or block must ripple through the mesh node-by-node. This is a deliberate design choice to reduce bandwidth for low-resource nodes, but it limits propagation speed.</p><p><strong>BSV&apos;s core density</strong>: There&apos;s no artificial peer limit. Miners are incentivised to maximise peers. The Mandala formalises this into a layered architecture where the core is expected to be dense, and the edge is expected to be light (SPV-only).</p><p><strong>Monolithic vs specialised</strong>: Every BTC full node stores the entire UTXO set, validates all scripts, and relays all transactions. In BSV&apos;s Mandala, the Teranode layer handles block assembly and consensus, overlay services handle specialised data, and wallets handle only their own transactions via SPV. This division of labour is what enables unbounded scaling.</p><p><strong>Propagation</strong>: A BTC block takes ~10-30 seconds to propagate across the network (via FIBRE, compact blocks, relay networks). A BSV block in the Mandala propagates in &lt;1 second because the core is a nearly-complete graph — every miner receives it in 1-2 hops.</p><hr /><h2 id="why-this-matters-for-scale">Why This Matters for Scale</h2><p>The Mandala&apos;s bounded hop count is essential for BSV&apos;s throughput targets (1.1 million TPS with Teranode). If hop count grew with network size, propagation latency would eventually exceed the block interval, making the chain unsafe.</p><p>With ~2-hop routing:</p><ul><li><strong>Latency is constant</strong>, not a function of network size</li><li><strong>Throughput scales horizontally</strong> by adding more overlay layers without congesting the core</li><li><strong>Edge nodes are lightweight</strong> — SPV means a phone can validate without syncing the full chain</li><li><strong>Resilience is high</strong> — the dense core means multiple redundant paths; a partition that would split a flat mesh still has cross-connections through the core</li></ul><p>BTC solves the scaling problem differently — bigger blocks, segwit, lightning. These work but don&apos;t preserve the P2P validation model at the edge. Light clients in BTC still depend on third-party servers (or assume the sender is honest).</p><hr /><h2 id="summary">Summary</h2><table><thead><tr><th>Concept</th><th>What It Means</th></tr></thead><tbody><tr><td><strong>Small world network</strong></td><td>Any two nodes reachable in ~log N hops; miners naturally form a dense core</td></tr><tr><td><strong>Mandala topology</strong></td><td>Concentric layers (core/middle/edge) where each layer provides services outward</td></tr><tr><td><strong>Giant node</strong></td><td>The core becomes a nearly-complete graph (~1.3 hops between any two miners)</td></tr><tr><td><strong>2-hop routing</strong></td><td>Edge → core → other edge in 2 hops, regardless of network size</td></tr><tr><td><strong>BSV approach</strong></td><td>Specialised layer + dense core + SPV edge</td></tr><tr><td><strong>BTC approach</strong></td><td>Flat mesh + monolithic nodes + capped peer count</td></tr></tbody></table><p>The Mandala isn&apos;t just a network topology — it&apos;s a scaling philosophy. By stratifying the network into specialised layers with a densely-connected core, BSV achieves constant-hop routing that doesn&apos;t degrade as the network grows. Bitcoin Core&apos;s flat mesh trades hop count for node simplicity, which works at current scale but doesn&apos;t provide a clear path to the throughput BSV targets.</p><hr /><p><em>Sources: BSV Wiki (Small World Network), BSV Blockchain docs (Mandala Upgrade), CoinGeek (Jerry Chan on Mandala networks), Bitcoin Wiki. The Mandala upgrade components (Teranode, Overlay Services, SPV Wallet) are in public beta as of 2026.</em></p></div>
 
 <p><i>Published: 2026-06-22</i></p>
