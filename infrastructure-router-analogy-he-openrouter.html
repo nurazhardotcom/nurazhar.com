@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      (function() {
+        try {
+          const savedTheme = localStorage.getItem('theme');
+          const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+    <title>Every Layer Has a Router — Hurricane Electric (Layer 3) and OpenRouter (Layer 7) — Bitcoin, AI Agents, Protocol Engineering</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="application/atom+xml" rel="alternate" href="atom.xml" title="Every Layer Has a Router — Hurricane Electric (Layer 3) and OpenRouter (Layer 7)">
+    <link rel="stylesheet" href="style.css">
+    <link rel="sitemap" type="application/xml" href="sitemap.xml">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css">
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'default',
+        themeVariables: {
+          fontSize: '14px',
+          primaryTextColor: '#334155',
+          actorFontSize: '14px',
+          actorTextColor: '#334155',
+          noteFontSize: '13px',
+          messageFontSize: '13px',
+          labelFontSize: '13px',
+        },
+        flowchart: { useMaxWidth: false, htmlLabels: true },
+        sequence: { useMaxWidth: false, actorFontSize: 14, noteFontSize: 13, messageFontSize: 13 },
+      });
+      document.addEventListener("DOMContentLoaded", async () => {
+        const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
+        for (const codeBlock of codeBlocks) {
+          const pre = codeBlock.parentElement;
+          const div = document.createElement("div");
+          div.className = "mermaid";
+          div.textContent = codeBlock.textContent;
+          pre.replaceWith(div);
+        }
+        await mermaid.run();
+      });
+    </script>
+
+
+
+    <!-- Social sharing (Facebook, Twitter, LinkedIn, etc.) -->
+    <meta name="title" content="Every Layer Has a Router — Hurricane Electric (Layer 3) and OpenRouter (Layer 7)">
+    <meta name="twitter:title" content="Every Layer Has a Router — Hurricane Electric (Layer 3) and OpenRouter (Layer 7)">
+    <meta property="og:title" content="Every Layer Has a Router — Hurricane Electric (Layer 3) and OpenRouter (Layer 7)">
+    <meta property="og:type" content="article">
+    <meta property="og:locale" content="en_SG">
+    <meta property="og:site_name" content="Nur Azhar's Blog">
+
+    <meta name="description" content="Hurricane Electric routes packets; OpenRouter routes inference calls. Same business model, different layer of the stack — and both win by being the default pipe.">
+    <meta name="twitter:description" content="Hurricane Electric routes packets; OpenRouter routes inference calls. Same business model, different layer of the stack — and both win by being the default pipe.">
+    <meta property="og:description" content="Hurricane Electric routes packets; OpenRouter routes inference calls. Same business model, different layer of the stack — and both win by being the default pipe.">
+
+
+    <meta name="twitter:url" content="https://blog.nurazhar.com/infrastructure-router-analogy-he-openrouter.html">
+    <meta property="og:url" content="https://blog.nurazhar.com/infrastructure-router-analogy-he-openrouter.html">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image:alt" content="Nur Azhar's Blog - Bitcoin, AI Agents, Protocol Engineering">
+
+
+    <meta name="author" content="Nur Azhar">
+
+
+
+    <!-- JSON-LD Structured Data: WebSite -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Nur Azhar's Blog",
+  "url": "https://blog.nurazhar.com",
+  "description": "Infrastructure, protocols, and systems engineering",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  }
+}
+    </script>
+
+    <!-- JSON-LD Structured Data: BlogPosting -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Every Layer Has a Router — Hurricane Electric (Layer 3) and OpenRouter (Layer 7)",
+  "description": "Hurricane Electric routes packets; OpenRouter routes inference calls. Same business model, different layer of the stack — and both win by being the default pipe.",
+  "datePublished": "2026-06-22",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  },
+  "url": "https://blog.nurazhar.com/infrastructure-router-analogy-he-openrouter.html",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://blog.nurazhar.com/infrastructure-router-analogy-he-openrouter.html"
+  }
+}
+    </script>
+
+  </head>
+  <body>
+
+    <div class="site-header">
+      <div class="wrapper">
+        <div class="site-nav">
+          <a class="page-link" href="stats.html">Stats</a>
+          <a class="page-link" href="kanban.html">Kanban</a>
+          <a class="page-link" href="archive.html">Archive</a>
+          <a class="page-link" href="tags/index.html">Tags</a>
+          
+	  <a class="page-link" href="atom.xml">
+            Feed
+          </a>
+	  
+	  
+	  <a class="page-link" href="https://nurazhar.com/">About</a>
+	  
+          <button id="theme-toggle" style="background: none; border: none; cursor: pointer; padding: 0 10px; font-size: 1.2rem; vertical-align: middle;" aria-label="Toggle theme">🌙</button>
+        </div>
+        <div style="display: flex; align-items: center;">
+          <div>
+            <h1 class="site-title" style="margin: 0;">
+              <a class="page-link" href="index.html">Nur Azhar</a>
+            </h1>
+            <p style="margin: 2px 0 0 0;">Infrastructure, protocols, and systems engineering</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrapper">
+
+      <h1>
+  
+  Every Layer Has a Router — Hurricane Electric (Layer 3) and OpenRouter (Layer 7)
+  
+</h1>
+<div><hr /><p>Hurricane Electric (AS6939) routes IP packets. OpenRouter routes API calls to LLM providers. Same job, different layer:</p><table><thead><tr><th></th><th>Hurricane Electric</th><th>OpenRouter</th></tr></thead><tbody><tr><td><strong>Layer</strong></td><td>3 (IP packets)</td><td>7 (Inference requests)</td></tr><tr><td><strong>Product</strong></td><td>IP transit + peering</td><td>Unified LLM API</td></tr><tr><td><strong>Network</strong></td><td>10,500+ peered networks</td><td>300+ models from 30+ providers</td></tr><tr><td><strong>Pricing</strong></td><td>~$0.20/Mbps (commodity transit)</td><td>10-30% markup on inference</td></tr><tr><td><strong>Adjacent revenue</strong></td><td>Colocation, transport, hardware</td><td>Enterprise billing, rate limiting</td></tr><tr><td><strong>Strategy</strong></td><td>Loss leader transit → peering empire → colo lock-in</td><td>Thin-margin routing → volume → premium features</td></tr></tbody></table><hr /><h2 id="the-structural-pattern">The Structural Pattern</h2><p>Both companies built a <strong>commodity router</strong> at their layer:</p><ol start="1"><li><p><strong>Make it cheap</strong> — HE sells transit at or near cost (often below Tier 1 pricing). OpenRouter takes a tiny margin on each API call (often 10-15%).</p></li><li><p><strong>Make it universal</strong> — HE peers with everyone (open peering policy). OpenRouter adds every model provider (even competitors).</p></li><li><p><strong>Grow by being the default</strong> — When a Tier 2 ISP needs IPv6, they call HE. When a developer needs to ship an AI feature without evaluating every model API, they call OpenRouter.</p></li><li><p><strong>Monetize the adjacencies</strong> — HE makes real money on colocation cages and transport circuits, not transit. OpenRouter makes real money on enterprise billing, rate limits, and analytics, not API call margins.</p></li></ol><hr /><h2 id="the-network-effect">The Network Effect</h2><p>Both benefit from a <strong>cross-side network effect</strong>:</p><pre><code class="language-d2">direction: right
+
+Title: &quot;Cross-Side Network Effect&quot; {
+  shape: text
+  style.font-size: 16
+}
+
+Router: &quot;The Router
+(HE / OpenRouter)&quot; {
+  shape: diamond
+  style.fill: &quot;#f9ab00&quot;
+}
+
+Producers: &quot;Producers
+(Networks / Model Providers)&quot; {
+  shape: oval
+  style.fill: &quot;#82e0aa&quot;
+}
+
+Consumers: &quot;Consumers
+(ISPs / Developers)&quot; {
+  shape: oval
+  style.fill: &quot;#85c1e9&quot;
+}
+
+Producers -&gt; Router: &quot;More producers →
+better selection&quot;
+Router -&gt; Consumers: &quot;Better selection →
+more consumers&quot;
+Consumers -&gt; Router: &quot;More consumers →
+more volume&quot;
+Router -&gt; Producers: &quot;More volume →
+better terms for producers&quot;
+
+Note: &quot;Both sides reinforce each other.
+The router captures the middle.&quot; {
+  shape: square
+  style.stroke-dash: 2
+  style.font-size: 11
+}
+</code></pre><p>More networks/providers → more value for consumers → more consumers → more volume → better terms for producers → more providers. The router sits in the middle and captures the spread.</p><hr /><h2 id="the-defense">The Defense</h2><p>HE is hard to displace because:</p><ul><li>320+ IXP presences are physical — you can&apos;t replicate them in software</li><li>10,500+ peer relationships take years to build</li><li>The colocation cages at Equinix/Global Switch are long-term leases</li></ul><p>OpenRouter is hard to displace because:</p><ul><li>Provider integrations (30+ APIs, each with unique auth, formatting, billing) are a moat</li><li>Developer workflows built around the unified API create switching cost</li><li>Volume pricing with providers gets better with scale</li></ul><p>Both are <strong>infrastructure middlemen</strong> that win by being the easiest way to access a fragmented supply side.</p><hr /><h2 id="why-this-matters">Why This Matters</h2><p>This pattern repeats across layers of the stack:</p><table><thead><tr><th>Layer</th><th>Commodity</th><th>Router</th></tr></thead><tbody><tr><td>1 (Physical)</td><td>Dark fibre</td><td>Neutrona / Equinix Fabric</td></tr><tr><td>2 (Data link)</td><td>Ethernet</td><td>Carrier Ethernet exchanges</td></tr><tr><td>3 (Network)</td><td>IP transit</td><td>Hurricane Electric</td></tr><tr><td>7 (Application)</td><td>LLM inference</td><td>OpenRouter</td></tr></tbody></table><p>Every layer that fragments into many producers and many consumers will eventually produce a commodity router that captures the middle. The router doesn&apos;t need to be the best at anything — it needs to be the easiest way to connect <em>everything</em>.</p><hr /><p><em>Sources: Hurricane Electric network page, OpenRouter docs, HE peering policy (AS6939), OpenRouter pricing page.</em></p></div>
+
+<p><i>Published: 2026-06-22</i></p>
+
+<p>
+  <i>
+  Tagged:
+  
+  <span class="tag">
+    <a href="tags/routing.html">routing</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/networking.html">networking</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/ai.html">ai</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/hurricane-electric.html">hurricane-electric</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/analogy.html">analogy</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/openrouter.html">openrouter</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/infrastructure.html">infrastructure</a>
+  </span>
+  
+  </i>
+</p>
+
+
+
+      
+      <div style="margin-bottom: 20px; float: right;">
+        <a class="page-link" href="archive.html">Archive</a>
+      </div>
+      
+    </div>
+    
+    <footer class="site-footer" style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--code-border); font-size: 0.85rem; color: var(--text-color); opacity: 0.8;">
+      <div class="wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
+            <img alt="Creative Commons License" style="border-width:0; height: 31px;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+          </a>
+        </div>
+        <div>
+          This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" style="color: var(--link-color); text-decoration: underline;">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+        </div>
+        <div style="font-size: 0.75rem; opacity: 0.6;">
+          &copy; 2026 Nur Azhar. Build in public.
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.getElementById('theme-toggle');
+        if (toggleButton) {
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          toggleButton.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+          
+          toggleButton.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            try {
+              localStorage.setItem('theme', next);
+            } catch (e) {
+              console.warn('Storage blocked: theme preference will not persist.');
+            }
+            toggleButton.textContent = next === 'dark' ? '☀️' : '🌙';
+          });
+        }
+      });
+    </script>
+    <script>
+      (function() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+        
+        fetch('https://asia-southeast1-nurazhardotcom.cloudfunctions.net/blog-analytics-api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: window.location.pathname,
+            referrer: document.referrer || null
+          })
+        }).catch(err => console.error('Tracking failed', err));
+      })();
+    </script>
+  </body>
+</html>
