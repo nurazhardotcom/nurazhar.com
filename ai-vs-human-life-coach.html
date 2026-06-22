@@ -157,129 +157,16 @@
   AI Life Coach vs Human Life Coach — A Systems Comparison
   
 </h1>
-<div><hr /><p>A lifestyle design coach helps you map your constraints, identify leverage points, and design a daily reality that serves you instead of draining you.</p><p>That role can now be performed by two different entities: a human or a large language model. They have complementary strengths and blind spots. This post compares them without marketing spin.</p><h2 id="the-comparison">The Comparison</h2><div class="d2-diagram">
-<!-- D2:
-direction: down
-#
-Title: "AI Life Coach vs Human Life Coach" {
-  shape: text
-  style.font-size: 16
-  style.bold: true
-}
-#
-Human Coach: "Human Coach\nAccountability\nEmotional support\nRelationship" {
-  style.fill: "#e0f2fe"
-  style.stroke: "#0284c7"
-}
-#
-AI Coach: "AI Coach (LLM)\nData-driven analysis\n24/7 availability\nLow cost" {
-  style.fill: "#f0f9ff"
-  style.stroke: "#0ea5e9"
-}
-#
-Best: "Best Together\nAI does the audit.\nHuman does the grounding." {
-  style.fill: "#d5f5e3"
-  style.stroke: "#10b981"
-  shape: square
-  style.stroke-dash: 2
-}
-#
-Human Coach -> Best
-AI Coach -> Best
--->
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" data-d2-version="v0.7.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 772 498"><svg class="d2-2171990398 d2-svg" width="772" height="498" viewBox="-21 -21 772 498"><rect x="-21.000000" y="-21.000000" width="772.000000" height="498.000000" rx="0.000000" fill="#FFFFFF" class=" fill-N7" stroke-width="0" /><style type="text/css"><![CDATA[
-.d2-2171990398 .text-bold {
-	font-family: "d2-2171990398-font-bold";
-}
-@font-face {
-	font-family: d2-2171990398-font-bold;
-	src: url("data:application/font-woff;base64,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");
-}]]></style><style type="text/css"><![CDATA[.shape {
-  shape-rendering: geometricPrecision;
-  stroke-linejoin: round;
-}
-.connection {
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.blend {
-  mix-blend-mode: multiply;
-  opacity: 0.5;
-}
-
-		.d2-2171990398 .fill-N1{fill:#0A0F25;}
-		.d2-2171990398 .fill-N2{fill:#676C7E;}
-		.d2-2171990398 .fill-N3{fill:#9499AB;}
-		.d2-2171990398 .fill-N4{fill:#CFD2DD;}
-		.d2-2171990398 .fill-N5{fill:#DEE1EB;}
-		.d2-2171990398 .fill-N6{fill:#EEF1F8;}
-		.d2-2171990398 .fill-N7{fill:#FFFFFF;}
-		.d2-2171990398 .fill-B1{fill:#0D32B2;}
-		.d2-2171990398 .fill-B2{fill:#0D32B2;}
-		.d2-2171990398 .fill-B3{fill:#E3E9FD;}
-		.d2-2171990398 .fill-B4{fill:#E3E9FD;}
-		.d2-2171990398 .fill-B5{fill:#EDF0FD;}
-		.d2-2171990398 .fill-B6{fill:#F7F8FE;}
-		.d2-2171990398 .fill-AA2{fill:#4A6FF3;}
-		.d2-2171990398 .fill-AA4{fill:#EDF0FD;}
-		.d2-2171990398 .fill-AA5{fill:#F7F8FE;}
-		.d2-2171990398 .fill-AB4{fill:#EDF0FD;}
-		.d2-2171990398 .fill-AB5{fill:#F7F8FE;}
-		.d2-2171990398 .stroke-N1{stroke:#0A0F25;}
-		.d2-2171990398 .stroke-N2{stroke:#676C7E;}
-		.d2-2171990398 .stroke-N3{stroke:#9499AB;}
-		.d2-2171990398 .stroke-N4{stroke:#CFD2DD;}
-		.d2-2171990398 .stroke-N5{stroke:#DEE1EB;}
-		.d2-2171990398 .stroke-N6{stroke:#EEF1F8;}
-		.d2-2171990398 .stroke-N7{stroke:#FFFFFF;}
-		.d2-2171990398 .stroke-B1{stroke:#0D32B2;}
-		.d2-2171990398 .stroke-B2{stroke:#0D32B2;}
-		.d2-2171990398 .stroke-B3{stroke:#E3E9FD;}
-		.d2-2171990398 .stroke-B4{stroke:#E3E9FD;}
-		.d2-2171990398 .stroke-B5{stroke:#EDF0FD;}
-		.d2-2171990398 .stroke-B6{stroke:#F7F8FE;}
-		.d2-2171990398 .stroke-AA2{stroke:#4A6FF3;}
-		.d2-2171990398 .stroke-AA4{stroke:#EDF0FD;}
-		.d2-2171990398 .stroke-AA5{stroke:#F7F8FE;}
-		.d2-2171990398 .stroke-AB4{stroke:#EDF0FD;}
-		.d2-2171990398 .stroke-AB5{stroke:#F7F8FE;}
-		.d2-2171990398 .background-color-N1{background-color:#0A0F25;}
-		.d2-2171990398 .background-color-N2{background-color:#676C7E;}
-		.d2-2171990398 .background-color-N3{background-color:#9499AB;}
-		.d2-2171990398 .background-color-N4{background-color:#CFD2DD;}
-		.d2-2171990398 .background-color-N5{background-color:#DEE1EB;}
-		.d2-2171990398 .background-color-N6{background-color:#EEF1F8;}
-		.d2-2171990398 .background-color-N7{background-color:#FFFFFF;}
-		.d2-2171990398 .background-color-B1{background-color:#0D32B2;}
-		.d2-2171990398 .background-color-B2{background-color:#0D32B2;}
-		.d2-2171990398 .background-color-B3{background-color:#E3E9FD;}
-		.d2-2171990398 .background-color-B4{background-color:#E3E9FD;}
-		.d2-2171990398 .background-color-B5{background-color:#EDF0FD;}
-		.d2-2171990398 .background-color-B6{background-color:#F7F8FE;}
-		.d2-2171990398 .background-color-AA2{background-color:#4A6FF3;}
-		.d2-2171990398 .background-color-AA4{background-color:#EDF0FD;}
-		.d2-2171990398 .background-color-AA5{background-color:#F7F8FE;}
-		.d2-2171990398 .background-color-AB4{background-color:#EDF0FD;}
-		.d2-2171990398 .background-color-AB5{background-color:#F7F8FE;}
-		.d2-2171990398 .color-N1{color:#0A0F25;}
-		.d2-2171990398 .color-N2{color:#676C7E;}
-		.d2-2171990398 .color-N3{color:#9499AB;}
-		.d2-2171990398 .color-N4{color:#CFD2DD;}
-		.d2-2171990398 .color-N5{color:#DEE1EB;}
-		.d2-2171990398 .color-N6{color:#EEF1F8;}
-		.d2-2171990398 .color-N7{color:#FFFFFF;}
-		.d2-2171990398 .color-B1{color:#0D32B2;}
-		.d2-2171990398 .color-B2{color:#0D32B2;}
-		.d2-2171990398 .color-B3{color:#E3E9FD;}
-		.d2-2171990398 .color-B4{color:#E3E9FD;}
-		.d2-2171990398 .color-B5{color:#EDF0FD;}
-		.d2-2171990398 .color-B6{color:#F7F8FE;}
-		.d2-2171990398 .color-AA2{color:#4A6FF3;}
-		.d2-2171990398 .color-AA4{color:#EDF0FD;}
-		.d2-2171990398 .color-AA5{color:#F7F8FE;}
-		.d2-2171990398 .color-AB4{color:#EDF0FD;}
-		.d2-2171990398 .color-AB5{color:#F7F8FE;}.appendix text.text{fill:#0A0F25}.md{--color-fg-default:#0A0F25;--color-fg-muted:#676C7E;--color-fg-subtle:#9499AB;--color-canvas-default:#FFFFFF;--color-canvas-subtle:#EEF1F8;--color-border-default:#0D32B2;--color-border-muted:#0D32B2;--color-neutral-muted:#EEF1F8;--color-accent-fg:#0D32B2;--color-accent-emphasis:#0D32B2;--color-attention-subtle:#676C7E;--color-danger-fg:red;}.sketch-overlay-B1{fill:url(#streaks-darker-d2-2171990398);mix-blend-mode:lighten}.sketch-overlay-B2{fill:url(#streaks-darker-d2-2171990398);mix-blend-mode:lighten}.sketch-overlay-B3{fill:url(#streaks-bright-d2-2171990398);mix-blend-mode:darken}.sketch-overlay-B4{fill:url(#streaks-bright-d2-2171990398);mix-blend-mode:darken}.sketch-overlay-B5{fill:url(#streaks-bright-d2-2171990398);mix-blend-mode:darken}.sketch-overlay-B6{fill:url(#streaks-bright-d2-2171990398);mix-blend-mode:darken}.sketch-overlay-AA2{fill:url(#streaks-dark-d2-2171990398);mix-blend-mode:overlay}.sketch-overlay-AA4{fill:url(#streaks-bright-d2-2171990398);mix-blend-mode:darken}.sketch-overlay-AA5{fill:url(#streaks-bright-d2-2171990398);mix-blend-mode:darken}.sketch-overlay-AB4{fill:url(#streaks-bright-d2-2171990398);mix-blend-mode:darken}.sketch-overlay-AB5{fill:url(#streaks-bright-d2-2171990398);mix-blend-mode:darken}.sketch-overlay-N1{fill:url(#streaks-darker-d2-2171990398);mix-blend-mode:lighten}.sketch-overlay-N2{fill:url(#streaks-dark-d2-2171990398);mix-blend-mode:overlay}.sketch-overlay-N3{fill:url(#streaks-normal-d2-2171990398);mix-blend-mode:color-burn}.sketch-overlay-N4{fill:url(#streaks-normal-d2-2171990398);mix-blend-mode:color-burn}.sketch-overlay-N5{fill:url(#streaks-bright-d2-2171990398);mix-blend-mode:darken}.sketch-overlay-N6{fill:url(#streaks-bright-d2-2171990398);mix-blend-mode:darken}.sketch-overlay-N7{fill:url(#streaks-bright-d2-2171990398);mix-blend-mode:darken}.light-code{display: block}.dark-code{display: none}]]></style><g class="VGl0bGU="><g class="shape" ></g><text x="120.500000" y="63.000000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">AI Life Coach vs Human Life Coach</text></g><g class="SHVtYW4gQ29hY2g="><g class="shape" ><rect x="301.000000" y="0.000000" width="178.000000" height="114.000000" stroke="#0284c7" fill="#e0f2fe" style="stroke-width:2;" /></g><text x="390.000000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="390.000000" dy="0.000000">Human Coach</tspan><tspan x="390.000000" dy="17.250000">Accountability</tspan><tspan x="390.000000" dy="17.250000">Emotional support</tspan><tspan x="390.000000" dy="17.250000">Relationship</tspan></text></g><g class="QUkgQ29hY2g="><g class="shape" ><rect x="539.000000" y="0.000000" width="191.000000" height="114.000000" stroke="#0ea5e9" fill="#f0f9ff" style="stroke-width:2;" /></g><text x="634.500000" y="38.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="634.500000" dy="0.000000">AI Coach (LLM)</tspan><tspan x="634.500000" dy="17.250000">Data-driven analysis</tspan><tspan x="634.500000" dy="17.250000">24/7 availability</tspan><tspan x="634.500000" dy="17.250000">Low cost</tspan></text></g><g class="QmVzdA=="><g class="shape" ><rect x="391.000000" y="214.000000" width="242.000000" height="242.000000" stroke="#10b981" fill="#d5f5e3" style="stroke-width:2;stroke-dasharray:4.000000,3.946256;" /></g><text x="512.000000" y="324.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px"><tspan x="512.000000" dy="0.000000">Best Together</tspan><tspan x="512.000000" dy="17.666667">AI does the audit.</tspan><tspan x="512.000000" dy="17.666667">Human does the grounding.</tspan></text></g><g class="KEh1bWFuIENvYWNoIC0mZ3Q7IEJlc3QpWzBd"><marker id="mk-d2-2171990398-3488378134" markerWidth="10.000000" markerHeight="12.000000" refX="7.000000" refY="6.000000" viewBox="0.000000 0.000000 10.000000 12.000000" orient="auto" markerUnits="userSpaceOnUse"> <polygon points="0.000000,0.000000 10.000000,6.000000 0.000000,12.000000" fill="#0D32B2" class="connection fill-B1" stroke-width="2" /> </marker><path d="M 390.000000 116.000000 C 390.000000 154.000000 397.200012 174.000000 423.662782 210.753862" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2171990398-3488378134)" mask="url(#d2-2171990398)" /></g><g class="KEFJIENvYWNoIC0mZ3Q7IEJlc3QpWzBd"><path d="M 634.500000 116.000000 C 634.500000 154.000000 627.299988 174.000000 600.837218 210.753862" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-2171990398-3488378134)" mask="url(#d2-2171990398)" /></g><mask id="d2-2171990398" maskUnits="userSpaceOnUse" x="-21" y="-21" width="772" height="498">
-<rect x="-21" y="-21" width="772" height="498" fill="white"></rect><p></mask></svg></svg></p></div><p>Detailed dimension comparison:</p><table><thead><tr><th>Dimension</th><th>Human Coach</th><th>AI Coach</th></tr></thead><tbody><tr><td>Data Collection</td><td>Hour-long intake session. Takes your word. Cannot verify.</td><td>Reads GitHub, blog, bank statements, network diagnostics, contracts. Cross-references.</td></tr><tr><td>Context Retention</td><td>~50 min session. Takes notes. Forgets between weeks.</td><td>1M token context (~5 hrs conversation). Remembers everything. Saves to files.</td></tr><tr><td>Accountability</td><td>Pushes back. Sits with discomfort. Weekly commitments. Calls you out.</td><td>Session-bound. Cannot call or send reminders autonomously.</td></tr><tr><td>Cost</td><td>$200-500/session. Weekly commitment. 3-6 month minimum.</td><td>~$0.50/hr API cost. No commitment. Available 24/7.</td></tr><tr><td>Bias</td><td>Has own methodology to sell. Wants you to stay onboarded.</td><td>No methodology to protect. No retention incentive. Safety-constrained.</td></tr><tr><td>Domain Depth</td><td>Can&apos;t read repos. Can&apos;t audit your infrastructure. Self-assessment only.</td><td>Reads everything you&apos;ve built. Spots contradictions between words and output.</td></tr></tbody></table><h2 id="when-to-use-which">When to Use Which</h2><table><thead><tr><th>Situation</th><th>Human</th><th>AI</th></tr></thead><tbody><tr><td>Initial systems audit and constraint mapping</td><td>No</td><td><strong>Yes</strong></td></tr><tr><td>Weekly accountability check-in</td><td><strong>Yes</strong></td><td>No</td></tr><tr><td>Reading your entire digital footprint</td><td>No</td><td><strong>Yes</strong></td></tr><tr><td>Calling you on your bullshit with emotional intelligence</td><td><strong>Yes</strong></td><td>Partial</td></tr><tr><td>Available at 4am when you&apos;re thinking</td><td>No</td><td><strong>Yes</strong></td></tr><tr><td>Holding you to a commitment for 6 months</td><td><strong>Yes</strong></td><td>No</td></tr><tr><td>Zero-cost experimentation</td><td>Possibly</td><td><strong>Yes</strong></td></tr></tbody></table><h2 id="the-hybrid-model">The Hybrid Model</h2><p>The optimal configuration is both:</p><ol start="1"><li><p><strong>AI</strong> does the architectural work — maps your constraints, identifies leverage points, flags contradictions, generates options. This happens in extended sessions (2-5 hours) where the AI consumes your actual artifacts, not your self-summary.</p></li><li><p><strong>Human</strong> does the grounding work — weekly check-ins, accountability, emotional support when the architectural plan hits real-world resistance.</p></li><li><p><strong>One-shot summaries</strong> from the AI are fed to the human coach so they don&apos;t waste sessions on data collection.</p></li></ol><p>Most people skip step 1 because they can&apos;t afford $500/session for 8 weeks of discovery. The AI collapses discovery into one session at near-zero cost. The human then operates from a complete map instead of building one from scratch.</p><h2 id="the-trap">The Trap</h2><p>The trap is using only one or the other.</p><ul><li><strong>AI only:</strong> You get perfect architecture with no execution pressure. You know exactly what to do. You don&apos;t do it.</li><li><strong>Human only:</strong> You spend 8 weeks teaching them your context before they can give you useful advice. By then you&apos;ve lost momentum.</li></ul><p>The AI is a mapmaker. The human is a trainer. You need both to finish the race.</p></div>
+<div><hr /><p>A lifestyle design coach helps you map your constraints, identify leverage points, and design a daily reality that serves you instead of draining you.</p><p>That role can now be performed by two different entities: a human or a large language model. They have complementary strengths and blind spots. This post compares them without marketing spin.</p><h2 id="the-comparison">The Comparison</h2><div style="display: flex; flex-direction: column; gap: 12px; max-width: 400px; margin: 24px auto; font-size: 15px; line-height: 1.5;"><div style="border: 2px solid #0284c7; background: #e0f2fe; border-radius: 12px; padding: 20px; text-align: center;">
+  <strong style="font-size: 17px;">Human Coach</strong><br>
+  <span>Accountability · Emotional support · Relationship</span>
+</div><div style="text-align: center; font-size: 22px; color: #64748b;">↓</div><div style="border: 2px solid #0ea5e9; background: #f0f9ff; border-radius: 12px; padding: 20px; text-align: center;">
+  <strong style="font-size: 17px;">AI Coach (LLM)</strong><br>
+  <span>Data-driven analysis · 24/7 availability · Low cost</span>
+</div><div style="text-align: center; font-size: 22px; color: #64748b;">↓</div><div style="border: 2px dashed #10b981; background: #d5f5e3; border-radius: 12px; padding: 20px; text-align: center;">
+  <strong style="font-size: 17px;">Best Together</strong><br>
+  <span>AI does the audit. Human does the grounding.</span>
+</div></div><p>Detailed dimension comparison:</p><table><thead><tr><th>Dimension</th><th>Human Coach</th><th>AI Coach</th></tr></thead><tbody><tr><td>Data Collection</td><td>Hour-long intake session. Takes your word. Cannot verify.</td><td>Reads GitHub, blog, bank statements, network diagnostics, contracts. Cross-references.</td></tr><tr><td>Context Retention</td><td>~50 min session. Takes notes. Forgets between weeks.</td><td>1M token context (~5 hrs conversation). Remembers everything. Saves to files.</td></tr><tr><td>Accountability</td><td>Pushes back. Sits with discomfort. Weekly commitments. Calls you out.</td><td>Session-bound. Cannot call or send reminders autonomously.</td></tr><tr><td>Cost</td><td>$200-500/session. Weekly commitment. 3-6 month minimum.</td><td>~$0.50/hr API cost. No commitment. Available 24/7.</td></tr><tr><td>Bias</td><td>Has own methodology to sell. Wants you to stay onboarded.</td><td>No methodology to protect. No retention incentive. Safety-constrained.</td></tr><tr><td>Domain Depth</td><td>Can&apos;t read repos. Can&apos;t audit your infrastructure. Self-assessment only.</td><td>Reads everything you&apos;ve built. Spots contradictions between words and output.</td></tr></tbody></table><h2 id="when-to-use-which">When to Use Which</h2><table><thead><tr><th>Situation</th><th>Human</th><th>AI</th></tr></thead><tbody><tr><td>Initial systems audit and constraint mapping</td><td>No</td><td><strong>Yes</strong></td></tr><tr><td>Weekly accountability check-in</td><td><strong>Yes</strong></td><td>No</td></tr><tr><td>Reading your entire digital footprint</td><td>No</td><td><strong>Yes</strong></td></tr><tr><td>Calling you on your bullshit with emotional intelligence</td><td><strong>Yes</strong></td><td>Partial</td></tr><tr><td>Available at 4am when you&apos;re thinking</td><td>No</td><td><strong>Yes</strong></td></tr><tr><td>Holding you to a commitment for 6 months</td><td><strong>Yes</strong></td><td>No</td></tr><tr><td>Zero-cost experimentation</td><td>Possibly</td><td><strong>Yes</strong></td></tr></tbody></table><h2 id="the-hybrid-model">The Hybrid Model</h2><p>The optimal configuration is both:</p><ol start="1"><li><p><strong>AI</strong> does the architectural work — maps your constraints, identifies leverage points, flags contradictions, generates options. This happens in extended sessions (2-5 hours) where the AI consumes your actual artifacts, not your self-summary.</p></li><li><p><strong>Human</strong> does the grounding work — weekly check-ins, accountability, emotional support when the architectural plan hits real-world resistance.</p></li><li><p><strong>One-shot summaries</strong> from the AI are fed to the human coach so they don&apos;t waste sessions on data collection.</p></li></ol><p>Most people skip step 1 because they can&apos;t afford $500/session for 8 weeks of discovery. The AI collapses discovery into one session at near-zero cost. The human then operates from a complete map instead of building one from scratch.</p><h2 id="the-trap">The Trap</h2><p>The trap is using only one or the other.</p><ul><li><strong>AI only:</strong> You get perfect architecture with no execution pressure. You know exactly what to do. You don&apos;t do it.</li><li><strong>Human only:</strong> You spend 8 weeks teaching them your context before they can give you useful advice. By then you&apos;ve lost momentum.</li></ul><p>The AI is a mapmaker. The human is a trainer. You need both to finish the race.</p></div>
 
 <p><i>Published: 2026-06-22</i></p>
 
