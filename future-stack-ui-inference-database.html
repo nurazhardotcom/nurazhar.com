@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>
+      (function() {
+        try {
+          const savedTheme = localStorage.getItem('theme');
+          const systemPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+    <title>The Future Stack — UI, Inference, Database — Bitcoin, AI Agents, Protocol Engineering</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="application/atom+xml" rel="alternate" href="atom.xml" title="The Future Stack — UI, Inference, Database">
+    <link rel="stylesheet" href="style.css">
+    <link rel="sitemap" type="application/xml" href="sitemap.xml">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/components/prism-clojure.min.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.28.0/themes/prism.min.css">
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'default',
+        themeVariables: {
+          fontSize: '14px',
+          primaryTextColor: '#334155',
+          actorFontSize: '14px',
+          actorTextColor: '#334155',
+          noteFontSize: '13px',
+          messageFontSize: '13px',
+          labelFontSize: '13px',
+        },
+        flowchart: { useMaxWidth: false, htmlLabels: true },
+        sequence: { useMaxWidth: false, actorFontSize: 14, noteFontSize: 13, messageFontSize: 13 },
+      });
+      document.addEventListener("DOMContentLoaded", async () => {
+        const codeBlocks = document.querySelectorAll("pre code.language-mermaid");
+        for (const codeBlock of codeBlocks) {
+          const pre = codeBlock.parentElement;
+          const div = document.createElement("div");
+          div.className = "mermaid";
+          div.textContent = codeBlock.textContent;
+          pre.replaceWith(div);
+        }
+        await mermaid.run();
+      });
+    </script>
+
+
+
+    <!-- Social sharing (Facebook, Twitter, LinkedIn, etc.) -->
+    <meta name="title" content="The Future Stack — UI, Inference, Database">
+    <meta name="twitter:title" content="The Future Stack — UI, Inference, Database">
+    <meta property="og:title" content="The Future Stack — UI, Inference, Database">
+    <meta property="og:type" content="article">
+    <meta property="og:locale" content="en_SG">
+    <meta property="og:site_name" content="Nur Azhar's Blog">
+
+    <meta name="description" content="What if the traditional backend (REST APIs, business logic, middleware) gets absorbed by inference, leaving only UI, an LLM, and a database?">
+    <meta name="twitter:description" content="What if the traditional backend (REST APIs, business logic, middleware) gets absorbed by inference, leaving only UI, an LLM, and a database?">
+    <meta property="og:description" content="What if the traditional backend (REST APIs, business logic, middleware) gets absorbed by inference, leaving only UI, an LLM, and a database?">
+
+
+    <meta name="twitter:url" content="https://blog.nurazhar.com/future-stack-ui-inference-database.html">
+    <meta property="og:url" content="https://blog.nurazhar.com/future-stack-ui-inference-database.html">
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image" content="https://blog.nurazhar.com/assets/og-default.png">
+    <meta property="og:image:alt" content="Nur Azhar's Blog - Bitcoin, AI Agents, Protocol Engineering">
+
+
+    <meta name="author" content="Nur Azhar">
+
+
+
+    <!-- JSON-LD Structured Data: WebSite -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Nur Azhar's Blog",
+  "url": "https://blog.nurazhar.com",
+  "description": "Infrastructure, protocols, and systems engineering",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  }
+}
+    </script>
+
+    <!-- JSON-LD Structured Data: BlogPosting -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "The Future Stack — UI, Inference, Database",
+  "description": "What if the traditional backend (REST APIs, business logic, middleware) gets absorbed by inference, leaving only UI, an LLM, and a database?",
+  "datePublished": "2026-06-22",
+  "author": {
+    "@type": "Person",
+    "name": "Nur Azhar"
+  },
+  "url": "https://blog.nurazhar.com/future-stack-ui-inference-database.html",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://blog.nurazhar.com/future-stack-ui-inference-database.html"
+  }
+}
+    </script>
+
+  </head>
+  <body>
+
+    <div class="site-header">
+      <div class="wrapper">
+        <div class="site-nav">
+          <a class="page-link" href="stats.html">Stats</a>
+          <a class="page-link" href="kanban.html">Kanban</a>
+          <a class="page-link" href="archive.html">Archive</a>
+          <a class="page-link" href="tags/index.html">Tags</a>
+          
+	  <a class="page-link" href="atom.xml">
+            Feed
+          </a>
+	  
+	  
+	  <a class="page-link" href="https://nurazhar.com/">About</a>
+	  
+          <button id="theme-toggle" style="background: none; border: none; cursor: pointer; padding: 0 10px; font-size: 1.2rem; vertical-align: middle;" aria-label="Toggle theme">🌙</button>
+        </div>
+        <div style="display: flex; align-items: center;">
+          <div>
+            <h1 class="site-title" style="margin: 0;">
+              <a class="page-link" href="index.html">Nur Azhar</a>
+            </h1>
+            <p style="margin: 2px 0 0 0;">Infrastructure, protocols, and systems engineering</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrapper">
+
+      <h1>
+  
+  The Future Stack — UI, Inference, Database
+  
+</h1>
+<div><hr /><p>The traditional web stack has been stable for 20+ years:</p><pre><code>UI → API Gateway → Business Logic → Database
+</code></pre><p>Each layer is explicit. The API defines endpoints. The business logic defines rules. The database stores state.</p><p>But LLMs change this. An LLM with tool-calling can replace large swaths of the business logic layer. Instead of writing a REST endpoint for &quot;get recent orders for this user&quot;, you give the LLM a database connection and say: &quot;fetch the user&apos;s recent orders and format them as HTML.&quot;</p><p>This suggests a radically simpler stack:</p><pre><code>UI (voice/screen) → Inference → Database
+</code></pre><p>Does this make sense? Yes and no. Here&apos;s the breakdown.</p><hr /><h2 id="the-case-for-the-compressed-stack">The Case for the Compressed Stack</h2><h3 id="1.-business-logic-becomes-natural-language">1. Business Logic Becomes Natural Language</h3><p>In the traditional stack, every action needs code: a controller, a service, a repository, serialization, validation, error handling. In the inference stack, many of these become prompts:</p><pre><code class="language-sql">-- Traditional: 5 files across 3 layers
+-- Controller: GET /api/orders?user_id=X
+-- Service: getRecentOrders(userId, limit) { ... }
+-- Repository: SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC LIMIT ?
+
+-- Inference stack:
+-- Schema definition (one file)
+-- Prompt: &quot;Fetch the 10 most recent orders for user {userId}
+--          and return them as a JSON array with order_id, date, amount, status.&quot;
+</code></pre><p>The LLM generates the SQL (via tool calling), executes it against the database, and formats the result. The &quot;business logic&quot; is a description of what should happen, not imperative code.</p><p>This works today. It&apos;s what MCP (Model Context Protocol) enables — the LLM discovers tools (database queries, APIs, file reads), decides which to call, and composes the result.</p><h3 id="2.-rendering-on-demand">2. Rendering on Demand</h3><p>Traditional rendering has two modes:</p><ul><li><strong>Server-side</strong>: backend renders HTML, sends to browser</li><li><strong>Client-side</strong>: backend sends JSON, frontend renders</li></ul><p>Inference-native rendering:</p><ul><li><strong>LLM-side</strong>: the model decides what to render based on the current state and user intent</li><li>The LLM can output HTML, SVG, Markdown, JSON, or voice — whichever the UI client supports</li><li>The same model generates the content and the format</li></ul><p>This is what happens when you ask ChatGPT to &quot;show me a table of my recent orders&quot; — it writes the HTML/Markdown inline. No frontend component needed.</p><h3 id="3.-voice-and-screen-as-equal-citizens">3. Voice and Screen as Equal Citizens</h3><p>In the traditional stack, voice is an afterthought — you need a speech-to-text layer, an NLP layer, and a text-to-speech layer bolted on top.</p><p>In the inference stack, voice is native:</p><pre><code>Audio → STT → LLM → TTS → Audio
+              ↓
+            Screen (optional)
+</code></pre><p>The same model handles text and can drive both voice and screen output. The UI layer becomes thin — just a renderer for whatever the model outputs (audio, HTML, or structured data).</p><h3 id="4.-database-stays,-but-serves-inferences">4. Database Stays, But Serves Inferences</h3><p>The database doesn&apos;t go away. State is still state. But its role changes:</p><table><thead><tr><th>Traditional</th><th>Inference Stack</th></tr></thead><tbody><tr><td>DB returns raw rows</td><td>DB returns rows the LLM requested via tool calls</td></tr><tr><td>Schema is an internal detail</td><td>Schema is exposed as tool definitions for the LLM</td></tr><tr><td>Queries are hand-written</td><td>Queries are generated by the LLM from natural language intent</td></tr><tr><td>Joins happen in SQL or code</td><td>Joins happen via tool composition (LLM calls multiple tools)</td></tr><tr><td>Access control in middleware</td><td>Access control in tool definitions (describe what the tool can access)</td></tr></tbody></table><p>The DB becomes a <strong>resource the LLM discovers and queries</strong>, not a layer behind explicit API endpoints.</p><hr /><h2 id="where-it-breaks">Where It Breaks</h2><h3 id="determinism">Determinism</h3><p>If your business logic is &quot;charge the customer&apos;s card and update the inventory&quot;, you cannot have an LLM decide the SQL syntax. Mistakes cost real money. Traditional backends exist precisely because we need <strong>deterministic, auditable, testable</strong> operations on critical paths.</p><p>The inference stack works for <strong>read and transform</strong> — fetching, formatting, summarising, generating. It doesn&apos;t work for <strong>write-critical operations</strong> where every transaction must be exact.</p><h3 id="latency">Latency</h3><p>A traditional API call takes 5-50ms. An LLM call takes 500-5000ms. If every page load required an LLM call, the web would feel broken.</p><p>This means:</p><ul><li><strong>Caching becomes critical</strong> — but LLM outputs are non-deterministic, so caching is harder</li><li><strong>You need fast models for fast paths</strong> — a small local model for simple queries, a frontier model for complex synthesis</li><li><strong>Hydration patterns change</strong> — maybe the first render is cached static content, and the LLM enriches it after load</li></ul><h3 id="cost">Cost</h3><table><thead><tr><th>Operation</th><th>Traditional</th><th>Inference</th></tr></thead><tbody><tr><td>Fetch user profile</td><td>$0.000001 (DB read)</td><td>$0.001 (LLM + tool call)</td></tr><tr><td>List orders</td><td>$0.000001</td><td>$0.002</td></tr><tr><td>Render dashboard</td><td>$0.0001 (multiple queries)</td><td>$0.01 (complex synthesis)</td></tr></tbody></table><p>Inference is 100-1000x more expensive per operation. This is fine for valuable interactions (chat, support, analysis) but wasteful for simple CRUD that a traditional backend handles for near-zero cost.</p><h3 id="state-management">State Management</h3><p>LLMs are stateless by design. Every call is independent. Traditional backends use sessions, caches, queues, and transactions to manage state across requests.</p><p>Compressing to UI → Inference → Database means the &quot;state management&quot; layer disappears. But state still exists. Where does it go?</p><p>Options:</p><ul><li><strong>Embed in the prompt</strong> (context window — expensive but works for small state)</li><li><strong>Embed in the database</strong> (inference layer reads/writes state via tool calls)</li><li><strong>Client-side state</strong> (the UI manages session, the LLM is stateless)</li></ul><p>None of these fully replace a proper backend state machine for complex workflows.</p><hr /><h2 id="the-compromise:-three-layer-intelligent-stack">The Compromise: Three-Layer Intelligent Stack</h2><p>The realistic future isn&apos;t two layers — it&apos;s three, but with inference in the middle:</p><pre><code>┌─────────────────────────────────────┐
+│             UI Layer                │
+│  (Browser, Mobile, Voice, Terminal) │
+└────────────────┬────────────────────┘
+                 │
+┌────────────────┴────────────────────┐
+│         Inference Layer             │
+│  - LLM for natural language tasks   │
+│  - Small fast models for routing    │
+│  - Deterministic functions for CRUD │
+│  - Orchestration (which path?)      │
+└────────────────┬────────────────────┘
+                 │
+┌────────────────┴────────────────────┐
+│          Data Layer                 │
+│  - Database (structured state)      │
+│  - Vector store (semantic state)    │
+│  - Object store (files/blobs)       │
+│  - Cache (performance)              │
+└─────────────────────────────────────┘
+</code></pre><p>The inference layer <strong>replaces the traditional backend</strong> but <strong>splits into two paths</strong>:</p><table><thead><tr><th>Path</th><th>What</th><th>Engine</th></tr></thead><tbody><tr><td><strong>Fast path</strong></td><td>Deterministic CRUD, auth, simple queries</td><td>Traditional code or deterministic functions called by LLM</td></tr><tr><td><strong>Slow path</strong></td><td>Synthesis, generation, reasoning, format conversion</td><td>LLM (possibly expensive/frontier)</td></tr></tbody></table><p>The UI doesn&apos;t know which path was taken. It sends intent (&quot;show orders&quot;) and gets a result. The inference layer decides: is this a simple DB query (fast path) or a complex synthesis (slow path)?</p><p>This is essentially what happens when you call an API today, except the &quot;router&quot; is an LLM or an LLM-orchestrated dispatcher.</p><hr /><h2 id="real-world-example:-serverless-inference-+-database">Real-World Example: Serverless Inference + Database</h2><pre><code class="language-python"># Traditional &quot;get user dashboard&quot; — 3 files, 1 endpoint
+@app.get(&quot;/dashboard/{user_id}&quot;)
+def dashboard(user_id):
+    user = db.users.find(user_id)
+    orders = db.orders.recent(user_id, 5)
+    stats = db.analytics.user_stats(user_id)
+    return render_template(&quot;dashboard.html&quot;, user=user, orders=orders, stats=stats)
+
+# Inference stack — tool definitions + prompt
+tools = [
+    {
+        &quot;name&quot;: &quot;get_user&quot;,
+        &quot;fn&quot;: lambda id: db.users.find(id),
+        &quot;description&quot;: &quot;Fetch user profile by ID&quot;
+    },
+    {
+        &quot;name&quot;: &quot;get_recent_orders&quot;,
+        &quot;fn&quot;: lambda id, limit: db.orders.recent(id, limit),
+        &quot;description&quot;: &quot;Fetch recent orders for a user&quot;
+    },
+    {
+        &quot;name&quot;: &quot;get_user_stats&quot;,
+        &quot;fn&quot;: lambda id: db.analytics.user_stats(id),
+        &quot;description&quot;: &quot;Get aggregated stats for a user&quot;
+    }
+]
+
+# Prompt: &quot;Render the dashboard for user {userId}.
+#          Include their name, 5 most recent orders in a table,
+#          and their lifetime stats. Output HTML.&quot;
+</code></pre><p>The LLM calls the tools, gets the data, and generates HTML. The UI just renders whatever the LLM outputs.</p><p>This works today (I&apos;ve built this). The question is not whether it works — it&apos;s whether it&apos;s <strong>better</strong>.</p><hr /><h2 id="when-the-inference-stack-wins">When the Inference Stack Wins</h2><table><thead><tr><th>Use Case</th><th>Traditional</th><th>Inference Stack</th><th>Winner</th></tr></thead><tbody><tr><td>Auth, payments, strict CRUD</td><td>Exact, cheap</td><td>Expensive, risk of errors</td><td>Traditional</td></tr><tr><td>Data dashboards, reports</td><td>Rigid, needs frontend code</td><td>Dynamic, natural language</td><td>Inference</td></tr><tr><td>Customer support</td><td>Needs full backend</td><td>LLM reads DB directly</td><td>Inference</td></tr><tr><td>Email/SMS generation</td><td>Template engine</td><td>LLM writes each one</td><td>Inference</td></tr><tr><td>Search</td><td>Elastic/Postgres FTS</td><td>Semantic + SQL</td><td>Hybrid</td></tr><tr><td>Admin panels</td><td>Weeks of UI work</td><td>Ask the DB in plain language</td><td>Inference</td></tr><tr><td>API for mobile app</td><td>REST/GraphQL needed</td><td>LLM generates responses</td><td>Hybrid</td></tr></tbody></table><p>The inference stack is better when:</p><ul><li>The output is consumed by a human (not another machine)</li><li>The query is ad-hoc or unpredictable (not a fixed set of endpoints)</li><li>The value of natural language output exceeds the cost of inference</li><li>The business logic is descriptive (&quot;show me X&quot;) not prescriptive (&quot;charge Y&quot;)</li></ul><hr /><h2 id="the-timeline">The Timeline</h2><table><thead><tr><th>Phase</th><th>What Happens</th><th>When</th></tr></thead><tbody><tr><td><strong>Phase 1</strong> (today)</td><td>Hybrid: traditional backend + LLM on top for chat/synthesis</td><td>Now</td></tr><tr><td><strong>Phase 2</strong> (1-2 years)</td><td>LLM reads DB directly for internal tools, analytics, admin</td><td>2027-2028</td></tr><tr><td><strong>Phase 3</strong> (3-5 years)</td><td>Inference layer absorbs most read paths; write paths stay deterministic</td><td>2029-2031</td></tr><tr><td><strong>Phase 4</strong> (5+ years)</td><td>Write paths also go through inference with deterministic guards and human-in-loop</td><td>2031+</td></tr></tbody></table><hr /><h2 id="bottom-line">Bottom Line</h2><p>The stack compresses, but not to 2 layers. It compresses to <strong>3 layers with inference as the middle layer absorbing the traditional backend</strong>:</p><ul><li><strong>UI</strong> — thin, multi-modal (voice, screen, chat)</li><li><strong>Inference</strong> — LLM + deterministic guards + tool orchestration</li><li><strong>Database</strong> — structured + vector + object store, queried by the inference layer</li></ul><p>The traditional backend (controllers, services, serialization, middleware) becomes tool definitions and prompts. The database stays, but serves the inference layer directly instead of hiding behind API endpoints.</p><p>This works for read-heavy, human-facing, ad-hoc query workloads today. For write-critical, deterministic, machine-facing workloads, traditional backends remain better. The hybrid stack — where inference handles the human-facing parts and traditional code handles the machine-critical parts — is the pragmatic answer.</p><p>But the trend is clear: every layer that translates between human intent and data is being absorbed by inference. The database is the only layer that can&apos;t be absorbed — it&apos;s the source of truth. Everything above it is negotiable.</p><hr /><p><em>The author runs a hybrid stack where a Babashka/Clojure backend serves deterministic endpoints and an LLM layer handles synthesis, report generation, and natural language interfaces over the same database.</em></p></div>
+
+<p><i>Published: 2026-06-22</i></p>
+
+<p>
+  <i>
+  Tagged:
+  
+  <span class="tag">
+    <a href="tags/architecture.html">architecture</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/inference.html">inference</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/ai-native.html">ai-native</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/database.html">database</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/serverless.html">serverless</a>
+  </span>
+  
+  <span class="tag">
+    <a href="tags/stack.html">stack</a>
+  </span>
+  
+  </i>
+</p>
+
+
+
+      
+      <div style="margin-bottom: 20px; float: right;">
+        <a class="page-link" href="archive.html">Archive</a>
+      </div>
+      
+    </div>
+    
+    <footer class="site-footer" style="margin-top: 80px; padding: 40px 0; border-top: 1px solid var(--code-border); font-size: 0.85rem; color: var(--text-color); opacity: 0.8;">
+      <div class="wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 15px; text-align: center;">
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">
+            <img alt="Creative Commons License" style="border-width:0; height: 31px;" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+          </a>
+        </div>
+        <div>
+          This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" style="color: var(--link-color); text-decoration: underline;">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+        </div>
+        <div style="font-size: 0.75rem; opacity: 0.6;">
+          &copy; 2026 Nur Azhar. Build in public.
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.getElementById('theme-toggle');
+        if (toggleButton) {
+          const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          toggleButton.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+          
+          toggleButton.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme') || 'light';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            try {
+              localStorage.setItem('theme', next);
+            } catch (e) {
+              console.warn('Storage blocked: theme preference will not persist.');
+            }
+            toggleButton.textContent = next === 'dark' ? '☀️' : '🌙';
+          });
+        }
+      });
+    </script>
+    <script>
+      (function() {
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return;
+        
+        fetch('https://asia-southeast1-nurazhardotcom.cloudfunctions.net/blog-analytics-api/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: window.location.pathname,
+            referrer: document.referrer || null
+          })
+        }).catch(err => console.error('Tracking failed', err));
+      })();
+    </script>
+  </body>
+</html>
