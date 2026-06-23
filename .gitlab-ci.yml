@@ -1,21 +1,12 @@
-# Build site with Fabricate
-build:
-  script: echo "🏗️  Building site with Fabricate..."
-         clojure -M:build
-  artifacts:
-    paths: - public/
+image: alpine:latest
 
-# Deploy to GitLab Pages
 pages:
   stage: deploy
-  image: alpine:latest
-  dependencies:
-    - build
   script:
-    - echo "🚀 Deploying to GitLab Pages..."
     - mkdir -p public
-    - cp -r public/. public/
-    - echo "✅ Deploy complete"
+    - cp *.md public/
+    - cp -r src public/src
+    - cp bb.edn public/
   artifacts:
     paths:
       - public/
