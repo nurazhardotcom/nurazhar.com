@@ -154,7 +154,27 @@ Every single repo returned `fork: false`. The "fork network" problem was irrelev
 ## The Timeline
 
 ```d2
-# Diagram 100
+direction: right
+
+t0: "Day 0, 10 PM\nAsked AI about cleanup"
+t1: "Day 0, 11 PM\ngit repo edit --visibility private" {
+  style.fill: "#fff3cd"
+}
+t2: "Day 0, 11:30 PM\n21 repos → PRIVATE\nForks severed" {
+  style.fill: "#f8d7da"
+}
+t3: "Day 1, 8 AM\nNoticed repos gone" {
+  style.fill: "#f8d7da"
+}
+t4: "Day 1, 10 AM\nChecked API: no forks" {
+  style.fill: "#d4edda"
+}
+t5: "Day 1, 11 AM\nFlipped all → PUBLIC"
+t6: "Day 1, 12 PM\nProfile restored\nForks still orphaned" {
+  style.fill: "#fff3cd"
+}
+
+t0 -> t1 -> t2 -> t3 -> t4 -> t5 -> t6
 ```
 
 ---
