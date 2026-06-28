@@ -138,6 +138,8 @@
    ;; CSS
    [:link {:rel "stylesheet" :href "styles.css"}]
    [:link {:rel "stylesheet" :href "d2-mobile.css"}]
+   ;; Immediate Theme initialization script (Eliminates FOUC)
+   [:script "var t=localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t)"]
    ;; RSS
    [:link {:rel "alternate" :type "application/rss+xml" :title "nurazhar.com RSS Feed" :href (str base-url "/feed.xml")}]])
 
@@ -191,7 +193,9 @@
                        [:a {:href "index.html" :class "nav-link"} "← Home"]
                        [:div {:style "display: flex; gap: 12px; align-items: center;"}
                         [:button {:class "theme-toggle" :id "theme-toggle" :onclick "toggleTheme()"
-                                  :title "Toggle dark mode"}
+                                  :title "Toggle dark mode"
+                                  :aria-label "Toggle theme"
+                                  :aria-pressed "false"}
                          [:span {:class "icon-sun"} "Light"]
                          [:span {:class "icon-moon"} "Dark"]]
                         [:a {:href "https://www.linkedin.com/in/nur-azhar" :target "_blank" :rel "noopener noreferrer" :class "gitlab-link" :title "LinkedIn"}
@@ -210,7 +214,7 @@
                        [:div {:class "post-content"} "%%RAW_CONTENT%%"]]
                       [:footer {:class "post-footer"}
                        [:p "© 2026 nurazhar.com"]]
-                      [:script "function toggleTheme(){var e=document.documentElement.getAttribute('data-theme');var n=e==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('theme',n)}var t=localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t)"]]])]
+                      [:script "function toggleTheme(){var e=document.documentElement.getAttribute('data-theme');var n=e==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('theme',n);updateThemeToggleAria(n)}function updateThemeToggleAria(t){var btn=document.getElementById('theme-toggle');if(btn){btn.setAttribute('aria-pressed',t==='dark'?'true':'false');btn.setAttribute('aria-label',t==='dark'?'Switch to light theme':'Switch to dark theme')}}updateThemeToggleAria(document.documentElement.getAttribute('data-theme'));"]]])]
     (let [[before after] (str/split page-html #"%%RAW_CONTENT%%" 2)]
       (str before body-html after))))
 
@@ -243,7 +247,9 @@
          [:p {:class "tagline"} "Systems Automation, Identity Governance, and Security Infrastructure."]]
         [:div {:style "display: flex; gap: 12px; align-items: center;"}
          [:button {:class "theme-toggle" :id "theme-toggle" :onclick "toggleTheme()"
-                   :title "Toggle dark mode"}
+                   :title "Toggle dark mode"
+                   :aria-label "Toggle theme"
+                   :aria-pressed "false"}
           [:span {:class "icon-sun"} "Light"]
           [:span {:class "icon-moon"} "Dark"]]
          [:a {:href "https://www.linkedin.com/in/nur-azhar" :target "_blank" :rel "noopener noreferrer" :class "gitlab-link" :title "LinkedIn"}
@@ -260,7 +266,7 @@
              [:p {:class "post-card-description"} description])])]
        [:footer {:class "site-footer"}
         [:p "© 2026 nurazhar.com"]]
-       [:script "function toggleTheme(){var e=document.documentElement.getAttribute('data-theme');var n=e==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('theme',n)}var t=localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t)"]]])))
+       [:script "function toggleTheme(){var e=document.documentElement.getAttribute('data-theme');var n=e==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('theme',n);updateThemeToggleAria(n)}function updateThemeToggleAria(t){var btn=document.getElementById('theme-toggle');if(btn){btn.setAttribute('aria-pressed',t==='dark'?'true':'false');btn.setAttribute('aria-label',t==='dark'?'Switch to light theme':'Switch to dark theme')}}updateThemeToggleAria(document.documentElement.getAttribute('data-theme'));"]]])))
 
 ;; ─── Hiccup Template: Tag Page ─────────────────────────────────────
 
@@ -284,7 +290,9 @@
         [:a {:href "index.html" :class "nav-link"} "← Home"]
         [:div {:style "display: flex; gap: 12px; align-items: center;"}
          [:button {:class "theme-toggle" :id "theme-toggle" :onclick "toggleTheme()"
-                   :title "Toggle dark mode"}
+                   :title "Toggle dark mode"
+                   :aria-label "Toggle theme"
+                   :aria-pressed "false"}
           [:span {:class "icon-sun"} "Light"]
           [:span {:class "icon-moon"} "Dark"]]
          [:a {:href "https://www.linkedin.com/in/nur-azhar" :target "_blank" :rel "noopener noreferrer" :class "gitlab-link" :title "LinkedIn"}
@@ -302,7 +310,7 @@
              [:p {:class "post-card-description"} description])])]
        [:footer {:class "site-footer"}
         [:p "© 2026 nurazhar.com"]]
-       [:script "function toggleTheme(){var e=document.documentElement.getAttribute('data-theme');var n=e==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('theme',n)}var t=localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t)"]]])))
+       [:script "function toggleTheme(){var e=document.documentElement.getAttribute('data-theme');var n=e==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('theme',n);updateThemeToggleAria(n)}function updateThemeToggleAria(t){var btn=document.getElementById('theme-toggle');if(btn){btn.setAttribute('aria-pressed',t==='dark'?'true':'false');btn.setAttribute('aria-label',t==='dark'?'Switch to light theme':'Switch to dark theme')}}updateThemeToggleAria(document.documentElement.getAttribute('data-theme'));"]]])))
 
 ;; ─── Asset Copying ─────────────────────────────────────────────────
 
