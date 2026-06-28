@@ -118,4 +118,4 @@ This is why your latency is 4ms. SGIX is invisible to you, but it's the reason y
 
 The Simba difference: Simba is also at SGIX, so local content peering is just as fast. Their disadvantage isn't local — it's international transit, where they rely on paid upstream connections instead of their own infrastructure.
 
-*Related: [Transit vs Peering — The Economics of Internet Connectivity](./transit-vs-peering.md)*
+*Related: [Transit vs Peering — The Economics of Internet Connectivity](./transit-vs-peering.html)*

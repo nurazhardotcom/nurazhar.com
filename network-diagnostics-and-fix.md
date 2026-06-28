@@ -187,4 +187,4 @@ In our case the failure was at **Layer 3** (ICMP packets never reached the desti
 
 ---
 
-*Related: [CachyOS Mirror Timer Fix](./cachyos-rate-mirrors-timer-fix.md)*
+*Related: [CachyOS Mirror Timer Fix](./cachyos-rate-mirrors-timer-fix.html)*

@@ -180,4 +180,4 @@ The organizations that will survive the AI era are not the ones with the most po
 
 ---
 
-*Related: [Red Teaming AI Pipelines](./red-teaming-ai-pipelines.md)*
+*Related: [Red Teaming AI Pipelines](./red-teaming-ai-pipelines.html)*

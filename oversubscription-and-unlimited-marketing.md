@@ -142,4 +142,4 @@ The plans work because:
 
 The only time this breaks is when there's a massive shift in behavior (like everyone switching to 4K streaming overnight) or when an ISP oversubscribes too aggressively (hello, Simba 24:1).
 
-*Related: [Hardware Bottlenecks — Why Your Wi-Fi Caps Your Speed](./hardware-bottlenecks-wifi-vs-plan.md)*
+*Related: [Hardware Bottlenecks — Why Your Wi-Fi Caps Your Speed](./hardware-bottlenecks-wifi-vs-plan.html)*

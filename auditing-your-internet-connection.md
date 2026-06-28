@@ -137,4 +137,4 @@ WiFi -> Real: "Overhead, contention, signal"
 
 Your internet connection is a chain. The weakest link determines your experience. For most people on Wi-Fi, **the plan speed is irrelevant** — the wireless link is the bottleneck, not the subscription.
 
-*Related: [Hardware Bottlenecks — Why Your Wi-Fi Caps Your Speed](./hardware-bottlenecks-wifi-vs-plan.md)*
+*Related: [Hardware Bottlenecks — Why Your Wi-Fi Caps Your Speed](./hardware-bottlenecks-wifi-vs-plan.html)*

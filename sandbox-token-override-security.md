@@ -58,4 +58,4 @@ Using `env -u` tells the system to execute the subsequent command in an environm
 
 ---
 
-*Related: [Collapsing Auth Entropy to Zero](./collapsing-auth-entropy-to-zero.md)*
+*Related: [Collapsing Auth Entropy to Zero](./collapsing-auth-entropy-to-zero.html)*

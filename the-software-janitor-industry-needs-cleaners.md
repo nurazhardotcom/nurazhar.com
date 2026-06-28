@@ -62,4 +62,4 @@ So wear the "Software Janitor" badge with pride. Deleting 1,000 lines of redunda
 
 ---
 
-*Related: [Resilient PDF Generation](./resilient-pdf-rendering-playwright-fallback.md)*
+*Related: [Resilient PDF Generation](./resilient-pdf-rendering-playwright-fallback.html)*

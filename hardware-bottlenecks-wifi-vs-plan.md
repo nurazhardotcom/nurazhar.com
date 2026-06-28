@@ -119,4 +119,4 @@ The only practical ways to get more speed:
 
 For most people on Wi-Fi, the cheapest 10 Gbps plan is as fast (and as slow) as the most expensive one. Don't let the marketing fool you.
 
-*Related: [Oversubscription and "Unlimited" Marketing — The Hidden Math](./oversubscription-and-unlimited-marketing.md)*
+*Related: [Oversubscription and "Unlimited" Marketing — The Hidden Math](./oversubscription-and-unlimited-marketing.html)*

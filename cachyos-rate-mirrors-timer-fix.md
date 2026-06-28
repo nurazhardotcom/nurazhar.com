@@ -125,4 +125,4 @@ Rolling release = rolling mirrors. The default 10-day cadence assumes static inf
 
 ---
 
-*Related: [Userspace Rust Bootstrapping on Fish](./userspace-rust-bootstrapping-on-fish.md)*
+*Related: [Userspace Rust Bootstrapping on Fish](./userspace-rust-bootstrapping-on-fish.html)*

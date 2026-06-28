@@ -135,4 +135,4 @@ For LLMs, you don't notice because you read slower than the model generates.
 
 In both cases, the bottleneck is **you** — not the provider.
 
-*Related: [Oversubscription and "Unlimited" Marketing — The Hidden Math](./oversubscription-and-unlimited-marketing.md)*
+*Related: [Oversubscription and "Unlimited" Marketing — The Hidden Math](./oversubscription-and-unlimited-marketing.html)*

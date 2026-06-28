@@ -102,4 +102,4 @@ Prefix count isn't a perfect metric. A network could announce many small prefixe
 
 On the CAIDA AS rank, Hurricane Electric (AS6939) sits at #6 globally with 210,000 prefixes and connections to ~7,700 other networks. Singtel doesn't crack the top tier — it's a large regional player, not a global backbone.
 
-*Related: [Tier 1 and Tier 2 Networks Explained](./tier-1-2-networks-explained.md)*
+*Related: [Tier 1 and Tier 2 Networks Explained](./tier-1-2-networks-explained.html)*

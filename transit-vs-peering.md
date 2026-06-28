@@ -104,4 +104,4 @@ For popular content, premium ISPs (Singtel, StarHub) peer directly. Budget ISPs 
 
 The difference for you is negligible for everyday browsing. But during peak hours, transit-heavy ISPs can feel the pinch as their purchased bandwidth runs thin while peered ISPs hum along unaffected.
 
-*Related: [Tier 1 and Tier 2 Networks Explained](./tier-1-2-networks-explained.md)*
+*Related: [Tier 1 and Tier 2 Networks Explained](./tier-1-2-networks-explained.html)*

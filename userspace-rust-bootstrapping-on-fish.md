@@ -55,4 +55,4 @@ By confining the compiler, compiler tooling, and cargo crates to userspace, we a
 
 ---
 
-*Related: [CachyOS Mirror Timer Fix](./cachyos-rate-mirrors-timer-fix.md)*
+*Related: [CachyOS Mirror Timer Fix](./cachyos-rate-mirrors-timer-fix.html)*

@@ -125,4 +125,4 @@ The tier distinction matters for:
 - Business/enterprise connectivity where SLAs matter
 - Understanding why some ISPs are more expensive
 
-*Related: [What IP Prefixes Measure and Why They Matter](./what-ip-prefixes-measure.md)*
+*Related: [What IP Prefixes Measure and Why They Matter](./what-ip-prefixes-measure.html)*

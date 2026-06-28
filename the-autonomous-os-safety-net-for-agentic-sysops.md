@@ -112,4 +112,4 @@ The future of systems operations isn't just about making AI models smarter. It's
 
 ---
 
-*Related: [Network Diagnostics and Fix](./network-diagnostics-and-fix.md)*
+*Related: [Network Diagnostics and Fix](./network-diagnostics-and-fix.html)*

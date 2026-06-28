@@ -123,4 +123,4 @@ When you load a website as a Singtel customer:
 
 That's why your ping to Google DNS is 4ms. You're living on top of one of the best-connected pieces of land on earth.
 
-*Related: [SGIX and Internet Exchanges — Where Networks Meet](./sgix-and-internet-exchanges.md)*
+*Related: [SGIX and Internet Exchanges — Where Networks Meet](./sgix-and-internet-exchanges.html)*

@@ -92,4 +92,4 @@ For my use case (laptop on Wi-Fi), both deliver the same speed. But I value the 
 
 If you're on a tight budget and don't care about any of that, Simba works fine most of the time. Just know what you're trading away for that $12/month savings.
 
-*Related: [Transit vs Peering — The Economics of Internet Connectivity](./transit-vs-peering.md)*
+*Related: [Transit vs Peering — The Economics of Internet Connectivity](./transit-vs-peering.html)*
