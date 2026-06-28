@@ -1,7 +1,7 @@
 /* ─── Design System: Nur Azhar Technical Blog ─────────────────── */
 
 /* ─── Fonts ────────────────────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+/* Loaded via link tags in HTML head to eliminate render-blocking chains */
 
 /* ─── Reset ────────────────────────────────────────────────────── */
 *, *::before, *::after {
@@ -122,6 +122,18 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  transition: background-color var(--transition), 
+              color var(--transition), 
+              border-color var(--transition),
+              box-shadow var(--transition);
+}
+
+/* Smooth transitions for static text and container blocks during theme toggle */
+.post-content code, pre, th, td, blockquote {
+  transition: background-color var(--transition), 
+              color var(--transition), 
+              border-color var(--transition),
+              box-shadow var(--transition);
 }
 
 a {
@@ -515,13 +527,22 @@ a:hover {
   border-radius: var(--radius-md);
   background: var(--color-surface);
   box-shadow: var(--shadow-sm);
-  transition: transform var(--transition), box-shadow var(--transition);
+  transition: transform var(--transition), 
+              box-shadow var(--transition), 
+              filter var(--transition), 
+              background-color var(--transition);
 }
 
 .d2-diagram img:hover,
 .d2-diagram svg:hover {
   transform: scale(1.01);
   box-shadow: var(--shadow-md);
+}
+
+[data-theme="dark"] .d2-diagram img,
+[data-theme="dark"] .d2-diagram svg {
+  filter: invert(0.9) hue-rotate(180deg);
+  background-color: #11141b;
 }
 
 /* ─── Comparison Tables ────────────────────────────────────────── */

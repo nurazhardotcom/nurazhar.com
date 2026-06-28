@@ -115,16 +115,22 @@
    [:title title]
    [:meta {:name "description" :content description}]
    [:link {:rel "canonical" :href url}]
+   ;; Google Fonts Preconnect and loading (Eliminating CSS @import render-blocking chain)
+   [:link {:rel "preconnect" :href "https://fonts.googleapis.com"}]
+   [:link {:rel "preconnect" :href "https://fonts.gstatic.com" :crossorigin "anonymous"}]
+   [:link {:rel "stylesheet" :href "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"}]
    ;; Open Graph
    [:meta {:property "og:title" :content title}]
    [:meta {:property "og:description" :content description}]
    [:meta {:property "og:url" :content url}]
    [:meta {:property "og:type" :content "website"}]
    [:meta {:property "og:site_name" :content "nurazhar.com"}]
+   [:meta {:property "og:image" :content (str base-url "/assets/og-cover.png")}]
    ;; Twitter Card
    [:meta {:name "twitter:card" :content "summary_large_image"}]
    [:meta {:name "twitter:title" :content title}]
    [:meta {:name "twitter:description" :content description}]
+   [:meta {:name "twitter:image" :content (str base-url "/assets/og-cover.png")}]
    ;; CSS
    [:link {:rel "stylesheet" :href "styles.css"}]
    [:link {:rel "stylesheet" :href "d2-mobile.css"}]
