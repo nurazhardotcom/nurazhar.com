@@ -3,4 +3,4 @@
  :tasks {build {:doc "Build the static site"
                 :task (shell "bb -f src/site/fabricate/dev/dev.clj")}
          validate-links {:doc "Validate all built internal hyperlinks"
-                         :task (shell "python3 scripts/validate_links.py")}}}
+                         :task (shell "bb scripts/validate_links.clj")}}}
