@@ -7,8 +7,6 @@ Description: Commitment, Focus, Openness, Respect, Courage — the five Scrum Va
 
 ![The 5 Scrum Values That Make Self-Managing Teams Work](scrum-values.svg)
 
-![5 Scrum Values](scrum-values.svg)
-
 The 2020 Scrum Guide defines five values that underpin every Scrum event and artifact. Without them, the framework becomes mechanical.
 
 ---

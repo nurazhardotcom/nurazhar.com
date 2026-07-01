@@ -7,8 +7,6 @@ Description: Planning Poker is a consensus-based estimation technique using Fibo
 
 ![Why Your Team Should Estimate With Cards, Not Hours](planning-poker.svg)
 
-![Planning Poker Flow](planning-poker.svg)
-
 Hours-based estimation feels precise but is almost always wrong. **Planning Poker** fixes this by swapping calendar time for relative sizing.
 
 ---

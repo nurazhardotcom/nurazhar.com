@@ -7,8 +7,6 @@ Description: A framework that maps Agile jargon onto systems-thinking concepts f
 
 ![The Zero-Prep Agile Survival Framework](zero-prep-agile-framework.svg)
 
-![Zero-Prep Framework](zero-prep-agile-framework.svg)
-
 Agile follows a predictable pattern. This framework maps their jargon onto systems-thinking concepts — useful for translating between the two vocabularies.
 
 ---

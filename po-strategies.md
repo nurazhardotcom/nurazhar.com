@@ -7,8 +7,6 @@ Description: Four strategies that turn Product Owner ambiguity into team alignme
 
 ![4 Strategies Every Product Owner Needs to Stop the Chaos](po-strategies.svg)
 
-![PO Strategies for Clarity](po-strategies.svg)
-
 The difference between effective and ineffective Product Owners comes down to four specific habits that turn ambiguity into alignment.
 
 ---

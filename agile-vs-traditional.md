@@ -7,8 +7,6 @@ Description: A side-by-side comparison of Agile (Scrum) and Traditional (Waterfa
 
 ![Agile vs Traditional: Which Project Management Style Actually Works?](agile-vs-traditional.svg)
 
-![Agile vs Traditional (Waterfall)](agile-vs-traditional.svg)
-
 Two dominant approaches to project management exist — traditional (Waterfall) and Agile (Scrum). Here's how they compare.
 
 ---

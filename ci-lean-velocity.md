@@ -7,8 +7,6 @@ Description: How Continuous Improvement, Lean waste elimination, and Velocity wo
 
 ![Continuous Improvement, Lean, and Velocity — The Engine Room of Agile](ci-lean-velocity.svg)
 
-![Continuous Improvement + Lean + Velocity](ci-lean-velocity.svg)
-
 Three concepts fit together — Continuous Improvement drives adaptation, Lean identifies what to fix, and Velocity measures the result.
 
 ---

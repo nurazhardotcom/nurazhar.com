@@ -7,8 +7,6 @@ Description: Scrum Master is a servant-leader who coaches and removes blockers. 
 
 ![Your Scrum Master Is Not Your Project Manager](scrum-master-vs-pm.svg)
 
-![Scrum Master vs Project Manager](scrum-master-vs-pm.svg)
-
 Scrum has **no Project Manager role**. The Scrum Master exists because traditional command-and-control management kills self-managing teams. One role is a **servant-leader**; the other is a **command-and-control director**.
 
 ---

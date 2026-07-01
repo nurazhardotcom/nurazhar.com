@@ -7,8 +7,6 @@ Description: The Sprint Retrospective is Agile Principle 12 in action. Here's wh
 
 ![Why the Retrospective Is the Most Important Meeting You'll Skip](retrospectives.svg)
 
-![Retrospective Engine](retrospectives.svg)
-
 The **Sprint Retrospective** is Agile Principle 12 in action — the event that turns Sprints into a compounding improvement engine. Here's why it matters and how to run one effectively.
 
 ---

@@ -7,8 +7,6 @@ Description: The 12 principles behind the Agile Manifesto explained in plain lan
 
 ![The 12 Agile Principles That Made Scrum Possible](12-agile-principles.svg)
 
-![12 Agile Principles](12-agile-principles.svg)
-
 The Agile Manifesto (2001) defines 12 principles that every Scrum framework is built on. Here they are in plain language.
 
 ---

@@ -7,8 +7,6 @@ Description: Scrum is 3 roles, 5 events, 3 artifacts. Kanban is continuous flow 
 
 ![Scrum 3-5-3 vs Kanban: What Every Developer Needs to Know](scrum-3-5-3-vs-kanban.svg)
 
-![Scrum 3-5-3 vs Kanban](scrum-3-5-3-vs-kanban.svg)
-
 **Scrum = 3 roles, 5 events, 3 artifacts.** Kanban is the other major Agile framework. Here's how they compare.
 
 ---
