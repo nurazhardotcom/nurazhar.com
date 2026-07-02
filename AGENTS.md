@@ -1,15 +1,18 @@
 # Blog Conventions
 
 - Write in D2, output SVG. Skip PNG entirely. No Playwright needed.
-- H1 should be conversational, not academic.
-- D2 SVG image right below title.
-- Open with personal hook (2-3 sentences).
+- H1 should be conversational, not academic. No quotes around H1.
+- D2 SVG image right below title (but only if D2 compiles — check build output).
+- Open with personal hook (2-3 sentences) — not a technical statement.
 - Use tables for comparisons.
 - Short sections with bold subheads.
 - Short paragraphs (1-4 lines max).
 - Bold key terms for scanability.
 - No TOC, no footnotes, no fluff.
 - End with one-liner or takeaway.
+- Frontmatter (Title, Date, Tags, Description, `---`) is REQUIRED. Every post must have it at the top.
+- Check the build output before committing. If D2 diagrams fail to compile, fix them first.
+- After build, verify the post appears on the index: `grep "post-slug" public/index.html`. If missing, check frontmatter format (Title, Date, Tags are all required).
 
 # D2 Diagram Framework
 
@@ -31,6 +34,20 @@ When creating or editing diagrams in blog posts, use the three-tier decision fra
 - Use for dimension-by-dimension comparisons (e.g., feature matrices)
 - Built-in `overflow-x: auto` on tables handles horizontal scrolling
 - More efficient than wide D2 containers
+
+## Common D2 Mistakes
+
+These errors cause silent build failures. Fix them before committing.
+
+| Mistake | Wrong | Correct |
+|---------|-------|---------|
+| **No `as` keyword** | `Node: "Label" as Alias` | `Node: "Label"` (node name IS the alias) |
+| **No bare direction outside code fence** | Text before `` `d2` | Keep all direction inside `` `d2 code fence |
+| **Escape `$` signs** | `$VAR` in D2 string | `\$VAR` (D2 treats `$` as substitution prefix) |
+| **No `\n` in string labels** | `"Line1\nLine2"` | Use D2 shape stacking or separate nodes |
+| **Inline `d2` in prose** | `... like d2 does ...` | Reword to avoid `d2` outside code fences |
+| **No `:` in node name colon** | `Node:Name: "Label"` | `NodeName: "Label"` |
+| **Check build output** | D2 compiles silently fail | Look for `⚠️ D2 compilation failed` in build log |
 
 Validation:
 - Auto-escape $ signs in D2 code before compilation (D2 v0.6.9 treats $ as substitution prefix)
