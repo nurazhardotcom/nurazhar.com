@@ -32,12 +32,16 @@ pages:
   # requested `.bb-cache/` does not exist in babashka (no built-in cache
   # dir), so it's not added.
   cache:
+    # GitLab CI caps `key:files` at 2 entries. We pick the two that change
+    # the rendered HTML the most: the build pipeline itself (dev.clj) and
+    # the main stylesheet (styles.css). Changes to `d2-mobile.css` (post-
+    # mobile responsive) or `bb.edn` (task runner config) won't invalidate
+    # cache automatically — clear the runner cache manually via
+    # `glab ci cache delete --branch main` if you touch those.
     key:
       files:
-        - bb.edn
         - src/site/fabricate/dev/dev.clj
         - src/site/fabricate/dev/templates/styles.css
-        - src/site/fabricate/dev/templates/d2-mobile.css
     paths:
       - public/
     policy: pull-push
