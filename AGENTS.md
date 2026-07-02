@@ -34,7 +34,8 @@ When creating or editing diagrams in blog posts, use the three-tier decision fra
 
 Validation:
 - Auto-escape $ signs in D2 code before compilation (D2 v0.6.9 treats $ as substitution prefix)
-- Remove bare `direction:` directives outside ```d2 fences
+- Remove bare `direction:` directives outside d2 code fences
+- Inline mentions of ``d2 in prose (inside quotes or lists) trigger the build pipeline's regex as false-positive code fences — keep them out of all .md files
 - Contact if in doubt
 
 # Git Workflow
@@ -43,6 +44,21 @@ Validation:
 - Run `bb build && bb test && bb validate-links` before committing (also wired into `.git/hooks/pre-commit`, but a manual run catches failures faster than waiting for the hook to abort).
 - Use `bb bench` to time a warm local build before quoting build / pipeline numbers in a blog post. Manual `time` measurements drift over time as the corpus grows and d2 SVG complexity shifts. The task is the audit trail.
 - Use `--no-verify` only if pre-commit hook blocks on pre-existing broken links (not your fault).
+
+# Pending Tasks (Ask Before Continuing)
+
+Items below are started but incomplete. Agents MUST ask the user before continuing work on them.
+
+## brain-guard CLI Tool (`brain-guard/`)
+- JVM-based CLI to prevent LLM cognitive overload
+- Track AI interaction count per session
+- Warn when approaching limits
+- Save state to a local file
+- Started but incomplete — user will continue later
+
+## Publii-like GUI Desktop App
+- Deferred — decided to build CLI tool first
+- Revisit after brain-guard CLI is stable
 
 # CI
 

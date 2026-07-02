@@ -12,7 +12,7 @@ The current D2 setup in the blog produces broken diagrams with unreadable text o
 
 **Problem #2: Nested direction: down**
 - The financial-butler.md diagram shows multiple direction: down directives
-- D2 only uses the first one - subsequent ones are warnings: "bare 'direction:' directive (missing ```d2 fence?)"
+- D2 only uses the first one - subsequent ones are warnings: "bare 'direction:' directive (missing d2 fence)"
 - Creates corrupted blocks that show raw source in HTML
 
 **Problem #3: Mobile Layout Failures**
@@ -54,7 +54,7 @@ Current files needing conversion to HTML cards (Tier 1):
 - ai-vs-human-life-coach.md (Human Coach vs AI Coach relationship)
 
 ### 4. Fix Nested direction: in financial-butler.md
-- Remove "bare direction:" directives outside ```d2 fences
+- Remove "bare direction:" directives outside d2 fences
 - Keep one direction: down at the top level
 
 ## Pro-Freebuff (Working on Related Issues)
@@ -68,7 +68,7 @@ The freebuff discovery in demystifying-arch-packaging-pkgbuilds-aur-cachyos.md:
 
 ### financial-butler.md (before)
 
-```d2
+```text
 # Diagram 79
 direction: down
 
@@ -91,7 +91,7 @@ direction: down
 
 ### financial-butler.md (after)
 
-```d2
+```text
 # Diagram 79
 direction: down
 

@@ -1,0 +1,26 @@
+{:deps {}
+ :tasks
+ {tick   {:doc "Record an AI interaction"
+          :task (let [f (java.io.File. ".brain-guard.edn")
+                      s (if (.exists f)
+                          (clojure.edn/read-string (slurp f))
+                          {:max-interactions 10 :session-count 0 :total-count 0})
+                      s (-> s
+                            (update :session-count inc)
+                            (update :total-count inc))]
+                  (spit ".brain-guard.edn" (pr-str s))
+                  (println (str "  Interaction #" (:total-count s) " recorded"))
+                  (when (>= (:session-count s) (:max-interactions s))
+                    (println "  ⚠️  Brain DDoS threshold reached! Take a break.")))}
+  status {:doc "Show interaction counts"
+          :task (let [f (java.io.File. ".brain-guard.edn")
+                      s (if (.exists f)
+                          (clojure.edn/read-string (slurp f))
+                          {:max-interactions 10 :session-count 0 :total-count 0})]
+                  (println (str "Session: " (:session-count s) "/" (:max-interactions s) " interactions"))
+                  (println (str "Total:   " (:total-count s))))}
+  reset  {:doc "Reset session counter"
+          :task (let [s {:max-interactions 10 :session-count 0 :total-count 0}]
+                  (spit ".brain-guard.edn" (pr-str s))
+                  (println "  State reset."))}}
+ :description "Prevent LLM cognitive overload"}
