@@ -67,3 +67,12 @@ Items below are started but incomplete. Agents MUST ask the user before continui
 - Pipeline: `bb build` → `bb validate-links` → upload `public/` artifact. No docker dependency — `bb`, `pandoc`, `d2`, `make` are installed natively on the runner host.
 - The runner is intentionally the **only** path for the `pages` job — if the runner host is offline, jobs queue indefinitely (no shared-runner fallback by design).
 - Register/install commands and the architecture rationale live in [`local-gitlab-runner-unlimited-ci.md`](local-gitlab-runner-unlimited-ci.md).
+- The runner binary is at `~/.local/bin/gitlab-runner`, config at `~/.config/gitlab-runner/config.toml`. It runs headless via `setsid` as a background process (no systemd unit on this machine).
+- To check if the runner is alive: `ps aux | grep gitlab-runner` or check the log at `~/.local/var/gitlab-runner.log`.
+- After `git push origin main`, the runner picks up the `pages` job within ~10s. Pipeline does a full `bb build && bb validate-links` natively.
+- **Runner goes down when the shell dies.** If deployment is stuck after push, restart the runner manually:
+  ```bash
+  setsid ~/.local/bin/gitlab-runner run \
+    --config ~/.config/gitlab-runner/config.toml \
+    > ~/.local/var/gitlab-runner.log 2>&1 < /dev/null &
+```
